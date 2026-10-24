@@ -30,12 +30,23 @@ nav a:hover{background:rgba(255,253,245,.14);border-color:var(--chalk)}
 nav a[aria-current="page"]{background:var(--chalk);color:var(--bg-deep);border-color:var(--chalk)}
 /* Content */
 main{display:flex;flex-direction:column;gap:22px;margin-top:8px}
-.festive{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;text-decoration:none;
-  background:var(--accent);color:var(--ink);border-radius:18px;padding:22px 26px;transition:transform .15s, box-shadow .15s}
-.festive:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.festive{background:var(--accent);color:var(--ink);border-radius:18px;padding:22px 26px}
+.festive-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.festive .go{text-decoration:none;border-bottom:2px solid currentColor;padding-bottom:1px}
+.festive .go:hover{opacity:.75}
 .festive .lbl{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;opacity:.75}
 .festive .big{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.05;display:block}
 .festive .go{font-weight:700;white-space:nowrap}
+.act-list{list-style:none;margin:16px 0 0;padding:0;border-top:1.5px solid rgba(31,42,24,.22)}
+.act-list li{display:flex;align-items:baseline;gap:16px;padding:10px 0;border-bottom:1.5px solid rgba(31,42,24,.22)}
+.act-date{flex:0 0 7.5em;font-weight:600;font-variant-numeric:tabular-nums}
+.act-cat{font-weight:700;text-decoration:none;min-width:0;overflow-wrap:anywhere}
+.act-cat::after{content:" ↓";opacity:.6}
+.act-cat:hover{text-decoration:underline;text-underline-offset:3px}
+.act-empty{font-style:italic;opacity:.75}
+html{scroll-behavior:smooth}
+.run[id]{scroll-margin-top:16px}
+.run:target{box-shadow:0 0 0 4px var(--accent)}
 .run{background:var(--card);color:var(--ink);border-radius:16px;padding:22px 26px}
 .run h2{font-family:var(--f-display);font-weight:700;font-size:1.45rem;margin:0 0 4px;text-wrap:balance}
 .run .tag{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
@@ -60,4 +71,38 @@ main{display:flex;flex-direction:column;gap:22px;margin-top:8px}
   display:grid;place-items:center;color:var(--muted);font-size:.85rem;border:1px solid var(--line)}
 footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opacity:.85}
 @media (max-width:520px){ .run dl{grid-template-columns:1fr} .run dt{border-bottom:0;padding-bottom:0} .run,.panel{padding:18px} }
-@media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} html{scroll-behavior:auto} }
+/* Log-In-Popup (fest, nicht veränderbar) */
+.login-dialog{width:360px;height:420px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);padding:0;border:0;border-radius:18px;
+  background:var(--bg);overflow:hidden;resize:none;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.login-dialog::backdrop{background:rgba(20,30,15,.55)}
+.login-dialog iframe{display:block;width:100%;height:100%;border:0}
+.login-dialog .close{position:absolute;top:8px;right:10px;width:32px;height:32px;border:0;border-radius:50%;background:transparent;
+  color:var(--chalk);font-size:1.4rem;line-height:1;cursor:pointer}
+.login-dialog .close:hover{background:rgba(255,253,245,.15)}
+/* Run-Listen auf den Unterseiten */
+.run-list{overflow-x:auto;margin-top:8px}
+.runs-table{width:100%;border-collapse:collapse;font-size:.95rem;color:var(--ink)}
+.runs-table th{text-align:left;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);padding:8px 10px 8px 0;border-bottom:1px solid var(--line)}
+.runs-table td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums}
+.runs-table td:nth-child(2){white-space:nowrap}
+/* Eingabemaske */
+.form label{display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);margin:16px 0 6px}
+.form label:first-child{margin-top:0}
+.form input,.form select,.form textarea{width:100%;font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.form textarea{min-height:80px;resize:vertical}
+.form input:focus,.form select:focus,.form textarea:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.form .err{color:#8a2a1a;font-size:.88rem;min-height:1.2em;margin:12px 0 0}
+.btn{font:inherit;font-weight:700;padding:11px 22px;border:0;border-radius:999px;background:var(--accent);color:var(--ink);cursor:pointer}
+.btn:hover{filter:brightness(1.05)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.danger{background:#b5452e;color:#fff}
+.form .actions{margin-top:18px;display:flex;justify-content:flex-end}
+@media (max-width:520px){ .form .row{grid-template-columns:1fr} }
+/* Popups (wie Log-In-Fenster) */
+.modal{width:380px;max-width:calc(100vw - 32px);padding:22px;border:0;border-radius:18px;background:var(--bg);color:var(--chalk);resize:none;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.modal::backdrop{background:rgba(20,30,15,.55)}
+.modal h2{font-family:var(--f-display);font-weight:800;font-size:1.5rem;text-align:center;margin:0 0 14px}
+.modal .panel p{color:var(--ink)}
+.modal .buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
