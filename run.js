@@ -2,26 +2,26 @@
 var RUNS = [
   {
     "hash": "Angeles Hash",
-    "number": "1000",
-    "date": "30/04/1958",
-    "location": "Anunan",
-    "remarks": "Viel gerenne",
-    "hare": "Ich und du"
+    "number": "1001",
+    "date": "24/10/2028",
+    "location": "Angeles City",
+    "remarks": "long walk",
+    "hare": "just you"
   },
   {
     "hash": "Angeles Hash",
-    "number": "1001",
-    "date": "25/10/2026",
+    "number": "1000",
+    "date": "25/10/2028",
     "location": "Angeles City",
-    "remarks": "Hügelig",
-    "hare": "Ich und du"
+    "remarks": "Hilly",
+    "hare": "You and me"
   },
   {
     "hash": "Ladies Bushranger Hash",
     "number": "500",
-    "date": "26/10/2026",
-    "location": "Malabanias",
-    "remarks": "ladies only",
-    "hare": "nur du"
+    "date": "26/10/2028",
+    "location": "Dito",
+    "remarks": "Ladies only",
+    "hare": "the other one"
   }
 ];
