@@ -115,3 +115,17 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .steps li:last-child{margin:0}
 .status{font-weight:700;color:var(--ink)!important;margin-bottom:14px!important}
 .status.ok{color:#2f6b1f!important}
+/* Hasher-Liste */
+.sort-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.sort-head h3{margin:0}
+.sort-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sort-lbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);margin-right:2px}
+.sort-btn{font:inherit;font-size:.88rem;font-weight:600;padding:6px 14px;border-radius:999px;cursor:pointer;
+  border:1.5px solid var(--line);background:transparent;color:var(--ink)}
+.sort-btn:hover{border-color:var(--muted)}
+.sort-btn[aria-pressed="true"]{background:var(--bg-deep);border-color:var(--bg-deep);color:var(--chalk)}
+.sort-btn .dir:empty{display:none}
+.hasher-table th.num,.hasher-table td.num{text-align:right;white-space:nowrap}
+.hasher-table td:first-child{color:var(--muted);width:3.5em}
+.hasher-table td:nth-child(2){white-space:normal;overflow-wrap:anywhere}
+.hasher-table th:last-child,.hasher-table td:last-child{padding-right:0}

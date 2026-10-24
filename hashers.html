@@ -33,10 +33,28 @@
   </nav>
 </header>
 <main>
-<div><h2 class="page-h">Hashers</h2><p class="lead">The runners, walkers and hares of the Angeles City Hash.</p></div><section class="panel"><h3>Hash names</h3><p>The list of hashers and their hash names will appear here.</p></section>
+<div><h2 class="page-h">Hashers</h2><p class="lead">The runners, walkers and hares of the Angeles City Hash.</p></div><section class="panel">
+  <div class="sort-head">
+    <h3>Hash names</h3>
+    <div class="sort-bar" role="group" aria-label="Sort by">
+      <span class="sort-lbl">Sort by</span>
+      <button type="button" class="sort-btn" data-key="name" aria-pressed="true">Name <span class="dir">↑</span></button>
+      <button type="button" class="sort-btn" data-key="lastRun" aria-pressed="false">Last Run <span class="dir"></span></button>
+      <button type="button" class="sort-btn" data-key="runs" aria-pressed="false">Runs <span class="dir"></span></button>
+    </div>
+  </div>
+  <p id="hasher-info" aria-live="polite">Loading…</p>
+  <div class="run-list" id="hasher-list">
+    <table class="runs-table hasher-table">
+      <thead><tr><th class="num">#</th><th>Name</th><th class="num">Last Run</th><th class="num">Runs</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
 </main>
 <footer>Angeles City Hash House Harriers · <a href="https://www.facebook.com/groups/272838929527136" target="_blank" rel="noopener">Facebook group</a></footer>
 </div>
+<script src="hashers-view.js"></script>
 <script src="login.js"></script>
 </body>
 </html>
