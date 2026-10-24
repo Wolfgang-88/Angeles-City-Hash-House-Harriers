@@ -26,6 +26,22 @@ var RUNS = [
   },
   {
     "hash": "Beach Hash",
+    "number": "2000",
+    "date": "10/02/2028",
+    "location": "Angeles City",
+    "remarks": "walking on the streets",
+    "hare": "him"
+  },
+  {
+    "hash": "Beach Hash",
+    "number": "201",
+    "date": "12/02/2028",
+    "location": "Manila",
+    "remarks": "Street",
+    "hare": "him"
+  },
+  {
+    "hash": "Beach Hash",
     "number": "3000",
     "date": "10/12/2030",
     "location": "Malabanias",
@@ -38,6 +54,14 @@ var RUNS = [
     "date": "12/03/2028",
     "location": "Angeles City",
     "remarks": "Street walking",
+    "hare": "him"
+  },
+  {
+    "hash": "Full Moon Hash",
+    "number": "5001",
+    "date": "01/12/2032",
+    "location": "Angeles",
+    "remarks": "dito",
     "hare": "him"
   },
   {
