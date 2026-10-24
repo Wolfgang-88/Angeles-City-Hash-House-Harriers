@@ -3,5 +3,6 @@
 // webmaster: true  -> darf direkt in run.js speichern und Einträge übernehmen
 var MEMBERS = [
   { name: "wolfgang", password: "555555", webmaster: true },
-  { name: "Mustermann 1", password: "12345" }
+  { name: "Bilge Pump", password: "555555" },
+  { name: "DWD", password: "167542" }
 ];
