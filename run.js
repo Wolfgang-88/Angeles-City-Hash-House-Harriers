@@ -18,6 +18,14 @@ var RUNS = [
   },
   {
     "hash": "Angeles Hash",
+    "number": "100",
+    "date": "10/11/2026",
+    "location": "asdsaffdfa fadfafdafd dsafdfdf\n\ndfdfadf fdfdf fdfdfdf",
+    "remarks": "adfdfdfsdf",
+    "hare": "asdff"
+  },
+  {
+    "hash": "Angeles Hash",
     "number": "2001",
     "date": "10/12/2030",
     "location": "Angeles City",
@@ -47,6 +55,14 @@ var RUNS = [
     "location": "Malabanias",
     "remarks": "at the Beach",
     "hare": "him"
+  },
+  {
+    "hash": "Full Moon Hash",
+    "number": "70000",
+    "date": "10/12/2027",
+    "location": "ajhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh\najhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
+    "remarks": "ajhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
+    "hare": "me"
   },
   {
     "hash": "Full Moon Hash",
