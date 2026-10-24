@@ -46,7 +46,8 @@
 </main>
 <footer>Webmaster Bilge Pump</footer>
 </div>
-<script src="run.js"></script>
+<!-- run.js always fresh (never from cache), so new runs show up right away -->
+<script>document.write('<script src="run.js?t=' + Date.now() + '"><\/script>');</script>
 <script src="runs-view.js"></script>
 <script src="login.js"></script>
 </body>

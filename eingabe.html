@@ -63,7 +63,8 @@
 </main>
 <footer>Angeles City Hash House Harriers · <a href="https://www.facebook.com/groups/272838929527136" target="_blank" rel="noopener">Facebook group</a></footer>
 </div>
-<script src="run.js"></script>
+<!-- run.js always fresh (never from cache), so new runs show up right away -->
+<script>document.write('<script src="run.js?t=' + Date.now() + '"><\/script>');</script>
 <script src="pw.js"></script>
 <script src="login.js"></script>
 <script src="dropbox-config.js"></script>
