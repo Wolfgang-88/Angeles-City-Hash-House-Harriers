@@ -50,22 +50,6 @@ var RUNS = [
   },
   {
     "hash": "Full Moon Hash",
-    "number": "300",
-    "date": "01/12/2026",
-    "location": "khjgkjhgkhgakhsdkhsgAKHGDhgAhakhgsfjkajakjdfaksjdflkajflkaj",
-    "remarks": "ajhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh\najhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh\najhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
-    "hare": "sgkjhafhgkhgdskahgfkajsdhgfkajshgd"
-  },
-  {
-    "hash": "Full Moon Hash",
-    "number": "70000",
-    "date": "10/12/2027",
-    "location": "ajhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh\najhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
-    "remarks": "ajhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
-    "hare": "me"
-  },
-  {
-    "hash": "Full Moon Hash",
     "number": "200",
     "date": "12/03/2028",
     "location": "Angeles City",
