@@ -106,3 +106,12 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .modal h2{font-family:var(--f-display);font-weight:800;font-size:1.5rem;text-align:center;margin:0 0 14px}
 .modal .panel p{color:var(--ink)}
 .modal .buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+/* Webmaster-Bereich */
+.wm-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.wm-actions .btn{text-decoration:none}
+/* Dropbox-Einrichtung */
+.steps{margin:0;padding-left:1.3em;color:var(--ink)}
+.steps li{margin:0 0 14px}
+.steps li:last-child{margin:0}
+.status{font-weight:700;color:var(--ink)!important;margin-bottom:14px!important}
+.status.ok{color:#2f6b1f!important}

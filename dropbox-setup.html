@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dropbox einrichten · AC Hash</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>try{if(sessionStorage.getItem("achhh_member")===null){location.replace("index.html");}}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="site-head">
+  <p class="eyebrow">Pampanga · Philippines · On-On!</p>
+  <h1 class="site-title"><a href="index.html">Angeles City Hash House Harriers</a></h1>
+  <div class="trail" aria-hidden="true"><span></span><span></span><span></span></div>
+</header>
+<main>
+<div><h2 class="page-h">Dropbox einrichten</h2>
+<p class="lead">Nur für den Webmaster, nur einmal nötig. Danach können alle Mitglieder ihre Einträge in Ihre Dropbox schicken (Ordner Apps → ACH3_upload).</p></div>
+
+<section class="panel">
+  <p class="status" id="status"></p>
+  <ol class="steps">
+    <li>Auf <strong>„Mit Dropbox verbinden“</strong> klicken. Dropbox öffnet sich in einem neuen Tab – dort einloggen und <strong>„Zulassen“</strong> (Allow) klicken.<br>
+      <button class="btn" type="button" id="connect" style="margin-top:10px">Mit Dropbox verbinden</button></li>
+    <li>Dropbox zeigt danach einen <strong>Code</strong> an. Diesen kopieren, hier einfügen und auf „Prüfen“ klicken. Dabei wird die Datei <em>verbindungstest.txt</em> in den Dropbox-Ordner geschrieben.
+      <form class="form" id="codeForm" style="margin-top:10px" autocomplete="off">
+        <input id="code" placeholder="Code von Dropbox einfügen" aria-label="Code von Dropbox">
+        <div class="actions" style="margin-top:12px"><button class="btn" type="submit">Prüfen</button></div>
+      </form></li>
+    <li id="step3" hidden>Verbindung klappt. Jetzt auf <strong>„dropbox-config.js speichern“</strong> klicken und die Datei <strong>im Website-Ordner</strong> speichern – die vorhandene dropbox-config.js dabei ersetzen. Danach die Website wie gewohnt veröffentlichen.<br>
+      <button class="btn" type="button" id="save" style="margin-top:10px">dropbox-config.js speichern</button></li>
+  </ol>
+  <p id="err" role="alert" style="color:#8a2a1a;margin-top:12px"></p>
+  <p style="margin-top:14px"><a href="eingabe.html" style="color:var(--ink)">← Zurück zum Formular</a></p>
+</section>
+</main>
+<footer>Angeles City Hash House Harriers</footer>
+</div>
+<script src="dropbox-config.js"></script>
+<script src="dropbox.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function msg(e) { return e && e.message ? e.message : String(e); }
+  var token = '';
+
+  $('status').textContent = DROPBOX.configured()
+    ? '✓ Eingerichtet – Mitglieder können Einträge schicken. Nur bei Problemen erneut einrichten.'
+    : 'Noch nicht eingerichtet.';
+  $('status').classList.toggle('ok', DROPBOX.configured());
+
+  $('connect').addEventListener('click', async function () {
+    $('err').textContent = '';
+    var w = window.open('', '_blank'); // open right away so popup blockers allow it
+    try {
+      var url = await DROPBOX.startAuth();
+      if (w) w.location = url; else location.href = url;
+      $('code').focus();
+    } catch (e) { if (w) w.close(); $('err').textContent = 'Fehler: ' + msg(e); }
+  });
+
+  $('codeForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    $('err').textContent = '';
+    if (!$('code').value.trim()) { $('err').textContent = 'Bitte zuerst den Code von Dropbox einfügen.'; return; }
+    try {
+      $('err').textContent = 'Prüfe …';
+      token = await DROPBOX.finishAuth($('code').value);
+      await DROPBOX.test(token);
+      $('err').textContent = '';
+      $('code').value = '';
+      $('step3').hidden = false;
+      $('save').focus();
+    } catch (ex) {
+      $('err').textContent = 'Das hat nicht geklappt: ' + msg(ex) + ' – bitte noch einmal bei Schritt 1 beginnen.';
+    }
+  });
+
+  $('save').addEventListener('click', async function () {
+    var text = '// Dropbox access for sending new entries to the webmaster.\n' +
+      '// This file is created on dropbox-setup.html – do not edit by hand.\n' +
+      'var DROPBOX_CONFIG = {\n  appKey: ' + JSON.stringify(DROPBOX_CONFIG.appKey) + ',\n  refreshToken: ' + JSON.stringify(token) + '\n};\n';
+    try {
+      if ('showSaveFilePicker' in window) {
+        var h = await window.showSaveFilePicker({ suggestedName: 'dropbox-config.js', types: [{ description: 'dropbox-config.js', accept: { 'text/javascript': ['.js'] } }] });
+        var w = await h.createWritable(); await w.write(text); await w.close();
+      } else {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([text], { type: 'text/javascript' }));
+        a.download = 'dropbox-config.js'; document.body.appendChild(a); a.click(); a.remove();
+      }
+      $('status').textContent = '✓ Gespeichert. Seite neu laden – dann steht hier „Eingerichtet“.';
+      $('status').classList.add('ok');
+    } catch (ex) { if (ex && ex.name !== 'AbortError') $('err').textContent = 'Speichern fehlgeschlagen: ' + msg(ex); }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,13 +1,19 @@
-// Add Run form: validates input and saves it to run.js
+// Add Run form
+// - Members: the entry is sent to the webmaster's Dropbox (dropbox.js)
+// - Webmaster (webmaster: true in pw.js): saves directly to run.js and can
+//   import the entries sent by members ("Einträge übernehmen")
 (function () {
   var form = document.getElementById('runForm');
   var err = document.getElementById('err');
   var $ = function (id) { return document.getElementById(id); };
 
-  try {
-    var who = sessionStorage.getItem('achhh_member');
-    if (who) $('hello').textContent = 'Logged in as ' + who;
-  } catch (e) {}
+  var who = '';
+  try { who = sessionStorage.getItem('achhh_member') || ''; } catch (e) {}
+  if (who) $('hello').textContent = 'Logged in as ' + who;
+
+  var isWebmaster = typeof MEMBERS !== 'undefined' && MEMBERS.some(function (m) {
+    return m.webmaster && m.name.toLowerCase() === who.toLowerCase();
+  });
 
   // ---------- Popup (same look as the Log In window) ----------
   function popup(title, text, buttons) {
@@ -35,6 +41,8 @@
       d.showModal();
     });
   }
+  var OK = [{ label: 'OK', value: 1 }];
+  function msgOf(e) { return e && e.message ? e.message : String(e); }
 
   // ---------- Date helpers ----------
   function validDate(s) {
@@ -55,7 +63,7 @@
     this.value = v;
   });
 
-  // ---------- run.js file access ----------
+  // ---------- run.js text ----------
   function fileText(runs) {
     runs = runs.slice().sort(function (a, b) {
       return a.hash === b.hash ? key(a.date) - key(b.date) : (a.hash < b.hash ? -1 : 1);
@@ -67,8 +75,11 @@
     try { var r = new Function(text + '\n;return typeof RUNS !== "undefined" ? RUNS : [];')(); return Array.isArray(r) ? r : []; }
     catch (e) { return null; }
   }
+  function findRun(runs, run) {
+    return runs.findIndex(function (r) { return r.hash === run.hash && String(r.number) === String(run.number); });
+  }
 
-  // Remember the chosen run.js between visits (IndexedDB)
+  // ---------- Remember chosen files/folders between visits (IndexedDB) ----------
   function db() {
     return new Promise(function (res, rej) {
       var r = indexedDB.open('achhh', 1);
@@ -77,67 +88,99 @@
       r.onerror = function () { rej(r.error); };
     });
   }
-  function getHandle() {
+  function getHandle(name) {
     return db().then(function (d) {
       return new Promise(function (res) {
-        var q = d.transaction('kv').objectStore('kv').get('runFile');
+        var q = d.transaction('kv').objectStore('kv').get(name);
         q.onsuccess = function () { res(q.result || null); };
         q.onerror = function () { res(null); };
       });
     }).catch(function () { return null; });
   }
-  function setHandle(h) {
+  function setHandle(h, name) {
     return db().then(function (d) {
       return new Promise(function (res) {
-        var t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(h, 'runFile');
+        var t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(h, name);
         t.oncomplete = res; t.onerror = res;
       });
     }).catch(function () {});
   }
+  async function permitted(h, ask) {
+    try {
+      var p = await h.queryPermission({ mode: 'readwrite' });
+      if (p !== 'granted' && ask) p = await h.requestPermission({ mode: 'readwrite' });
+      return p === 'granted';
+    } catch (e) { return false; }
+  }
 
   var canWrite = 'showOpenFilePicker' in window;
 
-  // Returns a file handle with write permission, or null if the user cancelled
+  // run.js in the website folder
   async function runFileHandle() {
-    var h = await getHandle();
-    if (h) {
-      var p = await h.queryPermission({ mode: 'readwrite' });
-      if (p !== 'granted') p = await h.requestPermission({ mode: 'readwrite' });
-      if (p === 'granted') {
-        try { await h.getFile(); if (h.name.toLowerCase() === 'run.js') return h; } catch (e) {} // file renamed or moved: pick again
-      }
+    var h = await getHandle('runFile');
+    if (h && await permitted(h, true)) {
+      try { await h.getFile(); if (h.name.toLowerCase() === 'run.js') return h; } catch (e) {} // renamed or moved: pick again
     }
-    var go = await popup('Select run.js',
-      'To save runs, please select the file run.js in your website folder.\nThis is only needed once.',
-      [{ label: 'Select run.js', value: true }, { label: 'Cancel', value: false, cls: 'ghost' }]);
+    var go = await popup('run.js auswählen',
+      'Bitte einmalig die Datei run.js im Website-Ordner auswählen.',
+      [{ label: 'run.js auswählen', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
     if (!go) return null;
     try {
-      var picked = await window.showOpenFilePicker({
-        types: [{ description: 'run.js', accept: { 'text/javascript': ['.js'] } }]
-      });
-      h = picked[0];
+      h = (await window.showOpenFilePicker({ types: [{ description: 'run.js', accept: { 'text/javascript': ['.js'] } }] }))[0];
     } catch (e) { return null; }
     if (h.name.toLowerCase() !== 'run.js') {
-      await popup('Wrong file', 'Please select the file named run.js.', [{ label: 'OK', value: 1 }]);
+      await popup('Falsche Datei', 'Bitte die Datei run.js auswählen.', OK);
       return null;
     }
-    if ((await h.requestPermission({ mode: 'readwrite' })) !== 'granted') return null;
-    await setHandle(h);
+    if (!(await permitted(h, true))) return null;
+    await setHandle(h, 'runFile');
     return h;
   }
 
+  // Copy of run.js on the Desktop
+  async function desktopHandle() {
+    var h = await getHandle('desktopFile');
+    if (h && await permitted(h, true)) return h;
+    var go = await popup('Kopie auf den Desktop',
+      'run.js wird zusätzlich auf dem Desktop gespeichert.\nBitte einmalig den Speicherort bestätigen (Desktop, Dateiname run.js).',
+      [{ label: 'Desktop wählen', value: true }, { label: 'Jetzt nicht', value: false, cls: 'ghost' }]);
+    if (!go) return null;
+    try {
+      h = await window.showSaveFilePicker({
+        suggestedName: 'run.js', startIn: 'desktop',
+        types: [{ description: 'run.js', accept: { 'text/javascript': ['.js'] } }]
+      });
+    } catch (e) { return null; }
+    await setHandle(h, 'desktopFile');
+    return h;
+  }
+
+  async function writeFile(handle, text) {
+    var w = await handle.createWritable();
+    await w.write(text);
+    await w.close();
+  }
+
+  // Webmaster: write run.js (+ Desktop copy); without file access: download
   async function writeRuns(handle, runs) {
     var text = fileText(runs);
     if (handle) {
-      var w = await handle.createWritable();
-      await w.write(text);
-      await w.close();
-    } else { // Browser cannot write files (Firefox, Safari): download instead
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([text], { type: 'text/javascript' }));
-      a.download = 'run.js';
-      document.body.appendChild(a); a.click(); a.remove();
+      await writeFile(handle, text);
+      try {
+        var dh = await desktopHandle();
+        if (dh) await writeFile(dh, text);
+      } catch (e) {
+        await popup('Desktop-Kopie fehlgeschlagen', 'run.js wurde gespeichert, aber die Kopie auf dem Desktop nicht.\n' + msgOf(e), OK);
+      }
+    } else {
+      download('run.js', text, 'text/javascript');
     }
+  }
+  function download(name, text, type) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: type }));
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
   }
 
   // ---------- Save ----------
@@ -156,41 +199,170 @@
     if (!validDate(run.date)) { err.textContent = 'Please enter a valid date as DD/MM/YYYY.'; $('date').focus(); return; }
 
     try {
-      var handle = null, runs;
-      if (canWrite) {
-        handle = await runFileHandle();
-        if (!handle) return;
-        runs = parseRuns(await (await handle.getFile()).text());
-        if (!runs) { err.textContent = 'run.js could not be read. Please check the file.'; return; }
-      } else {
-        runs = (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS.slice() : [];
-      }
-
-      var idx = runs.findIndex(function (r) { return r.hash === run.hash && String(r.number) === run.number; });
-      var action = 'saved';
-      if (idx >= 0) {
-        var old = runs[idx];
-        var choice = await popup('Run already exists',
-          run.hash + ' #' + run.number + ' already exists (' + (old.date || 'no date') + (old.location ? ', ' + old.location : '') + ').\n' +
-          'Do you want to overwrite it with the new entry or delete it?',
-          [{ label: 'Overwrite', value: 'overwrite' },
-           { label: 'Delete', value: 'delete', cls: 'danger' },
-           { label: 'Cancel', value: 'cancel', cls: 'ghost' }]);
-        if (choice === 'cancel') return;
-        if (choice === 'overwrite') { runs[idx] = run; action = 'overwritten'; }
-        else { runs.splice(idx, 1); action = 'deleted'; }
-      } else {
-        runs.push(run);
-      }
-
-      await writeRuns(handle, runs);
-
-      var msg = run.hash + ' #' + run.number + ' has been ' + action + '.';
-      if (!handle) msg += '\nYour browser cannot save directly, so run.js has been downloaded. Please replace the run.js in your website folder with this file.';
-      await popup(action === 'deleted' ? 'Deleted' : 'Saved', msg, [{ label: 'OK', value: 1 }]);
-      location.href = 'index.html';
+      if (isWebmaster) await saveDirect(run);
+      else await sendToWebmaster(run);
     } catch (ex) {
-      err.textContent = 'Saving failed: ' + (ex && ex.message ? ex.message : ex);
+      err.textContent = 'Saving failed: ' + msgOf(ex);
     }
   });
+
+  // Asks what to do if the run already exists. Returns 'save' | 'delete' | null (cancel)
+  async function existingChoice(runs, run) {
+    var idx = findRun(runs, run);
+    if (idx < 0) return { type: 'save', idx: -1 };
+    var old = runs[idx];
+    var choice = await popup('Run already exists',
+      run.hash + ' #' + run.number + ' already exists (' + (old.date || 'no date') + (old.location ? ', ' + old.location : '') + ').\n' +
+      'Do you want to overwrite it with the new entry or delete it?',
+      [{ label: 'Overwrite', value: 'save' },
+       { label: 'Delete', value: 'delete', cls: 'danger' },
+       { label: 'Cancel', value: null, cls: 'ghost' }]);
+    return choice ? { type: choice, idx: idx } : null;
+  }
+
+  // Member: send the entry to the webmaster's Dropbox
+  async function sendToWebmaster(run) {
+    var published = (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS : [];
+    var c = await existingChoice(published, run);
+    if (!c) return;
+    var entry = { type: c.type, run: run, member: who, sentAt: new Date().toISOString() };
+    for (;;) {
+      try {
+        await DROPBOX.send(entry);
+        await popup('Sent', run.hash + ' #' + run.number + (c.type === 'delete' ? ' (delete)' : '') +
+          ' has been sent to the webmaster.\nIt will appear on the website as soon as the webmaster has published it.', OK);
+        location.href = 'index.html';
+        return;
+      } catch (ex) {
+        var next = await popup('Sending failed',
+          'Your entry could not be sent:\n' + msgOf(ex) + '\nPlease try again. If it keeps failing, download the entry and send the file to the webmaster.',
+          [{ label: 'Try again', value: 'again' }, { label: 'Download entry', value: 'dl', cls: 'ghost' }, { label: 'Cancel', value: 'x', cls: 'ghost' }]);
+        if (next === 'dl') { download('entry_' + run.hash.split(' ')[0] + '-' + run.number + '.json', JSON.stringify(entry, null, 2), 'application/json'); return; }
+        if (next !== 'again') return;
+      }
+    }
+  }
+
+  // Webmaster: save directly to run.js
+  async function saveDirect(run) {
+    var handle = null, runs;
+    if (canWrite) {
+      handle = await runFileHandle();
+      if (!handle) return;
+      runs = parseRuns(await (await handle.getFile()).text());
+      if (!runs) { err.textContent = 'run.js could not be read. Please check the file.'; return; }
+    } else {
+      runs = (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS.slice() : [];
+    }
+    var c = await existingChoice(runs, run);
+    if (!c) return;
+    var action = 'saved';
+    if (c.idx >= 0 && c.type === 'save') { runs[c.idx] = run; action = 'overwritten'; }
+    else if (c.type === 'delete') { runs.splice(c.idx, 1); action = 'deleted'; }
+    else runs.push(run);
+
+    await writeRuns(handle, runs);
+    var msg = run.hash + ' #' + run.number + ' has been ' + action + '.';
+    if (!handle) msg += '\nYour browser cannot save directly, so run.js has been downloaded. Please replace the run.js in your website folder with this file.';
+    await popup(action === 'deleted' ? 'Deleted' : 'Saved', msg, OK);
+    location.href = 'index.html';
+  }
+
+  // ---------- Webmaster: import entries from the Dropbox folder ----------
+  var INBOX_HINT = 'D:\\Dropbox\\Apps\\ACH3_upload';
+
+  async function inboxHandle(ask) {
+    var h = await getHandle('inboxDir');
+    if (h && await permitted(h, ask)) return h;
+    if (!ask) return null;
+    var go = await popup('Dropbox-Ordner auswählen',
+      'Bitte einmalig den Ordner auswählen, in dem die Meldungen der Mitglieder ankommen:\n' + INBOX_HINT,
+      [{ label: 'Ordner auswählen', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+    if (!go) return null;
+    try { h = await window.showDirectoryPicker({ id: 'achhh-inbox', mode: 'readwrite' }); }
+    catch (e) { return null; }
+    await setHandle(h, 'inboxDir');
+    return h;
+  }
+
+  async function readInbox(dir) {
+    var list = [], bad = [];
+    for await (var pair of dir.entries()) {
+      var name = pair[0], h = pair[1];
+      if (h.kind !== 'file' || !/\.json$/i.test(name)) continue;
+      try {
+        var e = JSON.parse(await (await h.getFile()).text());
+        if (!e || !e.run || !e.run.hash || !e.run.number || (e.type !== 'save' && e.type !== 'delete')) throw 0;
+        list.push({ name: name, handle: h, entry: e });
+      } catch (x) { bad.push(name); }
+    }
+    list.sort(function (a, b) { return (a.entry.sentAt || a.name) < (b.entry.sentAt || b.name) ? -1 : 1; });
+    return { list: list, bad: bad };
+  }
+
+  async function moveToDone(dir, item) {
+    var done = await dir.getDirectoryHandle('erledigt', { create: true });
+    var target = await done.getFileHandle(item.name, { create: true });
+    await writeFile(target, await (await item.handle.getFile()).text());
+    await dir.removeEntry(item.name);
+  }
+
+  async function importEntries() {
+    if (!canWrite) { await popup('Nicht möglich', 'Das Übernehmen funktioniert nur in Chrome oder Edge.', OK); return; }
+    var dir = await inboxHandle(true);
+    if (!dir) return;
+    var inbox = await readInbox(dir);
+    if (!inbox.list.length) {
+      await popup('Keine neuen Einträge', 'Im Ordner „' + dir.name + '“ liegen keine neuen Meldungen.' +
+        (inbox.bad.length ? '\nNicht lesbar: ' + inbox.bad.join(', ') : ''), OK);
+      return showPending();
+    }
+    var handle = await runFileHandle();
+    if (!handle) return;
+    var runs = parseRuns(await (await handle.getFile()).text());
+    if (!runs) { await popup('Fehler', 'run.js konnte nicht gelesen werden.', OK); return; }
+
+    var lines = inbox.list.map(function (it) {
+      var e = it.entry, idx = findRun(runs, e.run), what;
+      if (e.type === 'delete') {
+        if (idx >= 0) { runs.splice(idx, 1); what = 'gelöscht'; } else what = 'löschen – war nicht vorhanden';
+      } else if (idx >= 0) { runs[idx] = e.run; what = 'geändert'; }
+      else { runs.push(e.run); what = 'neu'; }
+      return '• ' + e.run.hash + ' #' + e.run.number + ' (' + (e.run.date || 'ohne Datum') + ') – ' + what +
+        (e.member ? ', von ' + e.member : '');
+    });
+    var ok = await popup('Einträge übernehmen',
+      inbox.list.length + ' Meldung(en) gefunden:\n' + lines.join('\n') +
+      (inbox.bad.length ? '\nNicht lesbar (bleiben liegen): ' + inbox.bad.join(', ') : '') +
+      '\nIn run.js übernehmen?',
+      [{ label: 'Übernehmen', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+    if (!ok) return;
+
+    await writeRuns(handle, runs);
+    var notMoved = [];
+    for (var i = 0; i < inbox.list.length; i++) {
+      try { await moveToDone(dir, inbox.list[i]); } catch (x) { notMoved.push(inbox.list[i].name); }
+    }
+    await popup('Übernommen', inbox.list.length + ' Meldung(en) wurden in run.js übernommen und in den Unterordner „erledigt“ verschoben.' +
+      (notMoved.length ? '\nKonnten nicht verschoben werden (bitte von Hand löschen): ' + notMoved.join(', ') : ''), OK);
+    location.reload();
+  }
+
+  async function showPending() {
+    var el = $('pending');
+    var dir = await inboxHandle(false);
+    if (!dir) { el.textContent = 'Klicken, um die Meldungen der Mitglieder zu prüfen.'; return; }
+    try {
+      var n = (await readInbox(dir)).list.length;
+      el.textContent = n ? n + ' neue Meldung(en) warten auf Übernahme.' : 'Keine neuen Meldungen.';
+    } catch (e) { el.textContent = ''; }
+  }
+
+  if (isWebmaster) {
+    $('webmaster').hidden = false;
+    $('importBtn').addEventListener('click', function () {
+      importEntries().catch(function (e) { popup('Fehler', msgOf(e), OK); });
+    });
+    showPending();
+  }
 })();
