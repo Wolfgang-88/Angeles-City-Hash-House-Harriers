@@ -183,9 +183,24 @@
     document.body.appendChild(a); a.click(); a.remove();
   }
 
-  // ---------- Save ----------
+  // ---------- Save (only with the Save button – Enter does not save) ----------
+  form.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') e.preventDefault();
+  });
+  var saveBtn = $('saveBtn'), busy = false;
+  function setBusy(on) {
+    busy = on;
+    saveBtn.disabled = on;
+    saveBtn.textContent = on ? 'Saving …' : 'Save';
+  }
+  function resetForm() {
+    ['number', 'date', 'location', 'remarks', 'hare'].forEach(function (id) { $(id).value = ''; });
+    $('number').focus();
+  }
+
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
+    if (e.submitter !== saveBtn || busy) return; // ignore anything but a click on Save, and double clicks
     err.textContent = '';
     var run = {
       hash: $('hash').value,
@@ -198,11 +213,14 @@
     if (!run.number) { err.textContent = 'Please enter the Hash Number.'; $('number').focus(); return; }
     if (!validDate(run.date)) { err.textContent = 'Please enter a valid date as DD/MM/YYYY.'; $('date').focus(); return; }
 
+    setBusy(true);
     try {
       if (isWebmaster) await saveDirect(run);
       else await sendToWebmaster(run);
     } catch (ex) {
       err.textContent = 'Saving failed: ' + msgOf(ex);
+    } finally {
+      setBusy(false);
     }
   });
 
@@ -231,7 +249,7 @@
         await DROPBOX.send(entry);
         await popup('Sent', run.hash + ' #' + run.number + (c.type === 'delete' ? ' (delete)' : '') +
           ' has been sent to the webmaster.\nIt will appear on the website as soon as the webmaster has published it.', OK);
-        location.href = 'index.html';
+        resetForm();
         return;
       } catch (ex) {
         var next = await popup('Sending failed',
@@ -262,10 +280,11 @@
     else runs.push(run);
 
     await writeRuns(handle, runs);
-    var msg = run.hash + ' #' + run.number + ' has been ' + action + '.';
-    if (!handle) msg += '\nYour browser cannot save directly, so run.js has been downloaded. Please replace the run.js in your website folder with this file.';
+    var msg = run.hash + ' #' + run.number + ' has been ' + action + ' in run.js on your computer.';
+    if (!handle) msg = run.hash + ' #' + run.number + ' has been ' + action + '. Your browser cannot save directly, so run.js has been downloaded – please replace the run.js in your website folder with it.';
+    msg += '\nTo show it on the website, upload run.js to GitHub.';
     await popup(action === 'deleted' ? 'Deleted' : 'Saved', msg, OK);
-    location.href = 'index.html';
+    resetForm();
   }
 
   // ---------- Webmaster: import entries from the Dropbox folder ----------
@@ -343,7 +362,7 @@
     for (var i = 0; i < inbox.list.length; i++) {
       try { await moveToDone(dir, inbox.list[i]); } catch (x) { notMoved.push(inbox.list[i].name); }
     }
-    await popup('Übernommen', inbox.list.length + ' Meldung(en) wurden in run.js übernommen und in den Unterordner „erledigt“ verschoben.' +
+    await popup('Übernommen', inbox.list.length + ' Meldung(en) wurden in run.js übernommen und in den Unterordner „erledigt“ verschoben.\nDamit sie auf der Website erscheinen: run.js bei GitHub hochladen.' +
       (notMoved.length ? '\nKonnten nicht verschoben werden (bitte von Hand löschen): ' + notMoved.join(', ') : ''), OK);
     location.reload();
   }

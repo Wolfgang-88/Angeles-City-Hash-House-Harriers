@@ -54,7 +54,7 @@ html{scroll-behavior:smooth}
 .run dl{display:grid;grid-template-columns:130px 1fr;margin:12px 0 0;border-top:1px solid var(--line)}
 .run dt,.run dd{padding:10px 0;border-bottom:1px solid var(--line);margin:0}
 .run dt{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);padding-top:12px}
-.run dd{font-weight:500;min-width:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.run dd{font-weight:500;min-width:0;white-space:pre-line;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 .run dd.tba{color:var(--muted);font-style:italic;font-weight:400}
 .note{text-align:center;margin:10px auto 0;max-width:60ch;color:var(--chalk)}
 .note strong{font-weight:700}
@@ -84,7 +84,7 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .run-list{overflow-x:auto;margin-top:8px}
 .runs-table{width:100%;border-collapse:collapse;font-size:.95rem;color:var(--ink)}
 .runs-table th{text-align:left;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);padding:8px 10px 8px 0;border-bottom:1px solid var(--line)}
-.runs-table td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums}
+.runs-table td{white-space:pre-line;padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums}
 .runs-table td:nth-child(2){white-space:nowrap}
 /* Eingabemaske */
 .form label{display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);margin:16px 0 6px}
