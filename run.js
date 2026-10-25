@@ -11,7 +11,7 @@ var RUNS = [
   {
     "hash": "Angeles Hash",
     "number": "1001",
-    "date": "25/10/2026",
+    "date": "25/10/2027",
     "location": "Angeles City",
     "remarks": "Hügelig",
     "hare": "Ich und du"
@@ -60,8 +60,8 @@ var RUNS = [
     "hash": "Full Moon Hash",
     "number": "70000",
     "date": "10/12/2027",
-    "location": "ajhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh\najhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
-    "remarks": "ajhlkjshdlsjkhaLAKSJHDLAJSHDLjshdlJHLjhlaljalfjahljdfhlajdfhaljdfhljfha\nadfashlkjhaljhfljhfljhfljhlajdhljsdhlkjhflfda\nasdahljhlahfdljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
+    "location": "ljkfhlasjhfljasddhflajshlfahslfdsjhalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
+    "remarks": "ajhlkjsalhfjahflkjhdf\nasdjhflkasjhkjhasjhljhlajshfldajhlkdjhfljdhldjhfljfh",
     "hare": "me"
   },
   {
@@ -83,7 +83,7 @@ var RUNS = [
   {
     "hash": "Ladies Bushranger Hash",
     "number": "500",
-    "date": "26/10/2026",
+    "date": "26/10/2027",
     "location": "Malabanias",
     "remarks": "ladies only",
     "hare": "nur du"
