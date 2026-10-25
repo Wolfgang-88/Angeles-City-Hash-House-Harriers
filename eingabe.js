@@ -201,10 +201,13 @@
   }
 
   // ---------- Load an existing run when its Hash Number is typed ----------
-  // 1. the online run.js on GitHub (if the run exists there, it is taken from there)
-  // 2. otherwise run.js on the computer (webmaster, if access was already granted)
-  //    or the run list this page was loaded with (RUNS from run.js)
-  var ONLINE_RUNS_URL = 'https://raw.githubusercontent.com/Wolfgang-88/Angeles-City-Hash-House-Harriers/main/run.js';
+  // Source: run.js on GitHub (always the current version).
+  // Only if GitHub cannot be reached: run.js on this computer / the run list of this page.
+  var GH_REPO = 'Wolfgang-88/Angeles-City-Hash-House-Harriers', GH_BRANCH = 'main', GH_FILE = 'run.js';
+  // GitHub API: delivers the current file (no 5-minute cache like raw.githubusercontent.com)
+  var GH_API_URL = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE + '?ref=' + GH_BRANCH;
+  // Fallback if the API refuses (limit: 60 requests per hour) – may be up to 5 minutes old
+  var GH_RAW_URL = 'https://raw.githubusercontent.com/' + GH_REPO + '/' + GH_BRANCH + '/' + GH_FILE;
   var FIELDS = ['date', 'location', 'remarks', 'hare'];
   var loadedKey = null;   // "<hash>#<number>" of the run currently shown in the form
   var loadedVals = null;  // field values as loaded (to see if the user changed them)
@@ -222,14 +225,28 @@
   function showLoaded(text) { var el = $('loaded'); el.textContent = text; el.hidden = !text; }
   function clearLoaded() { loadedKey = null; loadedVals = null; skipKey = null; showLoaded(''); delBtn.hidden = true; }
 
-  // Online run.js from GitHub, always fresh (?t= bypasses the cache). Kept for 30 s
-  // so typing does not cause a download for every key. null = not reachable.
+  // run.js from GitHub. Kept for 20 s so typing does not cause a download for
+  // every key. Returns the run list, or null if GitHub is not reachable.
   var online = { at: 0, runs: null, pending: null };
+  function b64utf8(b64) {
+    var bin = atob(String(b64).replace(/\s/g, ''));
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+  function fromApi() {
+    return fetch(GH_API_URL + '&t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) { if (!j || !j.content) throw new Error('no content'); return b64utf8(j.content); });
+  }
+  function fromRaw() {
+    return fetch(GH_RAW_URL + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); });
+  }
   function onlineRuns(fresh) {
-    if (!fresh && online.runs && Date.now() - online.at < 30000) return Promise.resolve(online.runs);
+    if (!fresh && online.runs && Date.now() - online.at < 20000) return Promise.resolve(online.runs);
     if (online.pending) return online.pending;
-    online.pending = fetch(ONLINE_RUNS_URL + '?t=' + Date.now(), { cache: 'no-store' })
-      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+    online.pending = fromApi().catch(fromRaw)
       .then(function (t) { var r = parseRuns(t); if (!r) throw new Error('run.js unreadable'); online.runs = r; online.at = Date.now(); return r; })
       .catch(function () { return null; })
       .then(function (r) { online.pending = null; return r; });
@@ -249,15 +266,14 @@
     return (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS : [];
   }
 
-  // Returns { run, online: true|false } or null
+  // Returns { run, online: true|false } – run is null if the number does not exist
   async function findExisting(hash, number) {
     var q = { hash: hash, number: number };
     var on = await onlineRuns();
-    var i = on ? findRun(on, q) : -1;
-    if (i >= 0) return { run: on[i], online: true };
-    var loc = await localRuns();
-    i = findRun(loc, q);
-    return i >= 0 ? { run: loc[i], online: false } : null;
+    if (on) { var i = findRun(on, q); return { run: i >= 0 ? on[i] : null, online: true }; }
+    var loc = await localRuns(); // GitHub not reachable
+    var j = findRun(loc, q);
+    return { run: j >= 0 ? loc[j] : null, online: false };
   }
 
   function fill(run, isOnline) {
@@ -266,7 +282,7 @@
     loadedVals = fieldVals();
     skipKey = null;
     showLoaded(run.hash + ' #' + run.number + ' already exists – the data has been loaded from ' +
-      (isOnline ? 'the online run.js' : 'run.js on this computer') + '. Edit the fields and click Save.');
+      (isOnline ? 'run.js on GitHub' : 'the local run.js (GitHub could not be reached)') + '. Edit the fields and click Save.');
     delBtn.hidden = false;
   }
 
