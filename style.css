@@ -192,3 +192,8 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .about-h3 li::marker{color:var(--accent)}
 .about-h3 strong{color:var(--ink)}
 .about-h3>p{max-width:72ch}
+
+/* Webmaster line in every footer */
+.webmaster{display:inline-block;margin-top:6px}
+.wm-gap{display:inline-block;width:2.5em}
+.webmaster a{color:inherit}
