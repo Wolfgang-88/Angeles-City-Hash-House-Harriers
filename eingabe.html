@@ -58,8 +58,10 @@
 <section class="panel" id="webmaster" hidden>
   <h3>Webmaster</h3>
   <p id="pending"></p>
+  <p id="ghStatus"></p>
   <div class="wm-actions">
     <button class="btn" type="button" id="importBtn">Einträge übernehmen</button>
+    <a class="btn ghost" href="github-setup.html">GitHub einrichten</a>
     <a class="btn ghost" href="dropbox-setup.html">Dropbox einrichten</a>
   </div>
 </section>
@@ -72,6 +74,8 @@
 <script src="login.js"></script>
 <script src="dropbox-config.js"></script>
 <script src="dropbox.js"></script>
+<script>document.write('<script src="github-config.js?t=' + Date.now() + '"><\/script>');</script>
+<script>document.write('<script src="github.js?t=' + Date.now() + '"><\/script>');</script>
 <!-- eingabe.js always fresh too, so changes to the form take effect right away -->
 <script>document.write('<script src="eingabe.js?t=' + Date.now() + '"><\/script>');</script>
 </body>

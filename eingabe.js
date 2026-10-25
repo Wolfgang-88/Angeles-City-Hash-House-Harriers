@@ -14,6 +14,8 @@
   var isWebmaster = typeof MEMBERS !== 'undefined' && MEMBERS.some(function (m) {
     return m.webmaster && m.name.toLowerCase() === who.toLowerCase();
   });
+  // Webmaster and GitHub set up (github-setup.html): save run.js directly on GitHub
+  function useGitHub() { return isWebmaster && typeof GITHUB !== 'undefined' && GITHUB.configured(); }
 
   // ---------- Popup (same look as the Log In window) ----------
   function popup(title, text, buttons) {
@@ -42,6 +44,38 @@
     });
   }
   var OK = [{ label: 'OK', value: 1 }];
+
+  // Asks for the webmaster password and unlocks GitHub for this browser tab.
+  // Returns true when unlocked, false when cancelled.
+  function ensureUnlocked() {
+    if (GITHUB.unlocked()) return Promise.resolve(true);
+    return new Promise(function (resolve) {
+      var d = document.createElement('dialog');
+      d.className = 'modal';
+      d.innerHTML = '<h2>Webmaster-Passwort</h2><form class="panel form" autocomplete="off">' +
+        '<p>Zum Speichern auf GitHub bitte das Webmaster-Passwort eingeben (einmal pro Sitzung).</p>' +
+        '<input type="password" aria-label="Webmaster-Passwort" style="margin-top:10px" autocomplete="current-password">' +
+        '<p class="err" role="alert"></p>' +
+        '<div class="buttons"><button class="btn" type="submit">Entsperren</button>' +
+        '<button class="btn ghost" type="button">Abbrechen</button></div></form>';
+      var f = d.querySelector('form'), inp = d.querySelector('input'), e = d.querySelector('.err');
+      var btns = d.querySelectorAll('button');
+      function done(v) { d.close(); d.remove(); resolve(v); }
+      btns[1].addEventListener('click', function () { done(false); });
+      f.addEventListener('submit', async function (ev) {
+        ev.preventDefault();
+        if (!inp.value) return;
+        btns[0].disabled = true; e.textContent = 'Prüfe …';
+        try { await GITHUB.unlock(inp.value); done(true); }
+        catch (x) { e.textContent = msgOf(x); inp.select(); }
+        finally { btns[0].disabled = false; }
+      });
+      d.addEventListener('cancel', function (ev) { ev.preventDefault(); });
+      document.body.appendChild(d);
+      d.showModal();
+      inp.focus();
+    });
+  }
   function msgOf(e) { return e && e.message ? e.message : String(e); }
 
   // ---------- Date helpers ----------
@@ -235,6 +269,8 @@
     return new TextDecoder('utf-8').decode(bytes);
   }
   function fromApi() {
+    // Webmaster with access code: read with the code (no limit of 60 requests per hour)
+    if (useGitHub() && GITHUB.unlocked()) return GITHUB.read(GH_FILE).then(function (f) { return f.text; });
     return fetch(GH_API_URL + '&t=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (j) { if (!j || !j.content) throw new Error('no content'); return b64utf8(j.content); });
@@ -403,8 +439,63 @@
     }
   }
 
+  // ---------- Webmaster: publish run.js directly on GitHub ----------
+  // file = { text, sha } as read from GitHub; apply(runs) makes the change in the list.
+  // If run.js was changed on GitHub in the meantime, it is read again and the change is applied once more.
+  async function commitToGitHub(file, apply, message) {
+    for (var attempt = 0; attempt < 3; attempt++) {
+      var runs = parseRuns(file.text);
+      if (!runs) throw new Error('run.js on GitHub could not be read. Please check the file.');
+      apply(runs);
+      var text = fileText(runs);
+      try {
+        await GITHUB.write(GH_FILE, text, file.sha, typeof message === 'function' ? message() : message);
+      } catch (e) {
+        if (!e.conflict) throw e;
+        file = await GITHUB.read(GH_FILE);
+        continue;
+      }
+      online.runs = runs; online.at = Date.now();
+      try { RUNS = runs; } catch (e) {}
+      await syncLocal(text);
+      return runs;
+    }
+    throw new Error('run.js keeps changing on GitHub. Please try again in a moment.');
+  }
+
+  // Keep the run.js in the website folder up to date as well – only if access was already granted (no prompt)
+  async function syncLocal(text) {
+    if (!canWrite) return;
+    try {
+      var h = await getHandle('runFile');
+      if (h && await permitted(h, false)) await writeFile(h, text);
+    } catch (e) {}
+  }
+
+  async function saveToGitHub(run, mode) {
+    if (!(await ensureUnlocked())) return;
+    var file = await GITHUB.read(GH_FILE);
+    var runs = parseRuns(file.text);
+    if (!runs) { err.textContent = 'run.js on GitHub could not be read. Please check the file.'; return; }
+    var c = await existingChoice(runs, run, mode);
+    if (!c) return;
+    var action = 'saved';
+    await commitToGitHub(file, function (list) {
+      var i = findRun(list, run);
+      if (c.type === 'delete') { if (i >= 0) list.splice(i, 1); action = 'deleted'; }
+      else if (i >= 0) { list[i] = run; action = 'updated'; }
+      else { list.push(run); action = 'saved'; }
+    }, function () {
+      return 'Run ' + run.hash + ' #' + run.number + ' ' + action + (who ? ' (' + who + ')' : '');
+    });
+    await popup(action === 'deleted' ? 'Deleted' : 'Saved',
+      run.hash + ' #' + run.number + ' has been ' + action + ' on GitHub.\nIt will be visible on the website in about 1–2 minutes.', OK);
+    resetForm();
+  }
+
   // Webmaster: save directly to run.js
   async function saveDirect(run, mode) {
+    if (useGitHub()) return saveToGitHub(run, mode);
     var handle = null, runs;
     if (canWrite) {
       handle = await runFileHandle();
@@ -425,7 +516,7 @@
     try { RUNS = runs; } catch (e) {} // later lookups on this page see the change
     var msg = run.hash + ' #' + run.number + ' has been ' + action + ' in run.js on your computer.';
     if (!handle) msg = run.hash + ' #' + run.number + ' has been ' + action + '. Your browser cannot save directly, so run.js has been downloaded – please replace the run.js in your website folder with it.';
-    msg += '\nTo show it on the website, upload run.js to GitHub.';
+    msg += '\nTo show it on the website, upload run.js to GitHub.\nTip: after „GitHub einrichten“ this happens automatically.';
     await popup(action === 'deleted' ? 'Deleted' : 'Saved', msg, OK);
     resetForm();
   }
@@ -479,33 +570,50 @@
         (inbox.bad.length ? '\nNicht lesbar: ' + inbox.bad.join(', ') : ''), OK);
       return showPending();
     }
-    var handle = await runFileHandle();
-    if (!handle) return;
-    var runs = parseRuns(await (await handle.getFile()).text());
+    var gh = useGitHub(), handle = null, file = null, runs;
+    if (gh) {
+      if (!(await ensureUnlocked())) return;
+      file = await GITHUB.read(GH_FILE);
+      runs = parseRuns(file.text);
+    } else {
+      handle = await runFileHandle();
+      if (!handle) return;
+      runs = parseRuns(await (await handle.getFile()).text());
+    }
     if (!runs) { await popup('Fehler', 'run.js konnte nicht gelesen werden.', OK); return; }
 
-    var lines = inbox.list.map(function (it) {
-      var e = it.entry, idx = findRun(runs, e.run), what;
-      if (e.type === 'delete') {
-        if (idx >= 0) { runs.splice(idx, 1); what = 'gelöscht'; } else what = 'löschen – war nicht vorhanden';
-      } else if (idx >= 0) { runs[idx] = e.run; what = 'geändert'; }
-      else { runs.push(e.run); what = 'neu'; }
-      return '• ' + e.run.hash + ' #' + e.run.number + ' (' + (e.run.date || 'ohne Datum') + ') – ' + what +
-        (e.member ? ', von ' + e.member : '');
-    });
+    function applyAll(list) {
+      return inbox.list.map(function (it) {
+        var e = it.entry, idx = findRun(list, e.run), what;
+        if (e.type === 'delete') {
+          if (idx >= 0) { list.splice(idx, 1); what = 'gelöscht'; } else what = 'löschen – war nicht vorhanden';
+        } else if (idx >= 0) { list[idx] = e.run; what = 'geändert'; }
+        else { list.push(e.run); what = 'neu'; }
+        return '• ' + e.run.hash + ' #' + e.run.number + ' (' + (e.run.date || 'ohne Datum') + ') – ' + what +
+          (e.member ? ', von ' + e.member : '');
+      });
+    }
+    var lines = applyAll(runs);
     var ok = await popup('Einträge übernehmen',
       inbox.list.length + ' Meldung(en) gefunden:\n' + lines.join('\n') +
       (inbox.bad.length ? '\nNicht lesbar (bleiben liegen): ' + inbox.bad.join(', ') : '') +
-      '\nIn run.js übernehmen?',
+      (gh ? '\nÜbernehmen und auf GitHub veröffentlichen?' : '\nIn run.js übernehmen?'),
       [{ label: 'Übernehmen', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
     if (!ok) return;
 
-    await writeRuns(handle, runs);
+    if (gh) {
+      await commitToGitHub(file, applyAll, inbox.list.length + ' Meldung(en) der Mitglieder übernommen' +
+        (lines.length ? '\n\n' + lines.join('\n') : ''));
+    } else {
+      await writeRuns(handle, runs);
+    }
     var notMoved = [];
     for (var i = 0; i < inbox.list.length; i++) {
       try { await moveToDone(dir, inbox.list[i]); } catch (x) { notMoved.push(inbox.list[i].name); }
     }
-    await popup('Übernommen', inbox.list.length + ' Meldung(en) wurden in run.js übernommen und in den Unterordner „erledigt“ verschoben.\nDamit sie auf der Website erscheinen: run.js bei GitHub hochladen.' +
+    await popup('Übernommen', inbox.list.length + ' Meldung(en) wurden übernommen und in den Unterordner „erledigt“ verschoben.\n' +
+      (gh ? 'run.js ist auf GitHub gespeichert – in etwa 1–2 Minuten auf der Website sichtbar.'
+          : 'Damit sie auf der Website erscheinen: run.js bei GitHub hochladen.') +
       (notMoved.length ? '\nKonnten nicht verschoben werden (bitte von Hand löschen): ' + notMoved.join(', ') : ''), OK);
     location.reload();
   }
@@ -522,6 +630,12 @@
 
   if (isWebmaster) {
     $('webmaster').hidden = false;
+    var ghEl = $('ghStatus');
+    if (ghEl) {
+      ghEl.textContent = useGitHub()
+        ? '✓ GitHub eingerichtet – Speichern veröffentlicht run.js direkt (Webmaster-Passwort einmal pro Sitzung).'
+        : 'GitHub ist nicht eingerichtet – run.js muss von Hand hochgeladen werden.';
+    }
     $('importBtn').addEventListener('click', function () {
       importEntries().catch(function (e) { popup('Fehler', msgOf(e), OK); });
     });

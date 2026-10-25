@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="ACH3.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GitHub einrichten · AC Hash</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>try{if(sessionStorage.getItem("achhh_member")===null){location.replace("index.html");}}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="site-head">
+  <p class="eyebrow">Pampanga · Philippines · On-On!</p>
+  <h1 class="site-title"><img class="title-icon title-icon--mirror" src="Bilder/Website_Pictures/apple-touch-icon.png" alt="" aria-hidden="true"><a href="index.html">Angeles City Hash House Harriers</a><img class="title-icon" src="Bilder/Website_Pictures/apple-touch-icon.png" alt="" aria-hidden="true"></h1>
+  <div class="trail" aria-hidden="true"><span></span><span></span><span></span></div>
+</header>
+<main>
+<div><h2 class="page-h">GitHub einrichten</h2>
+<p class="lead">Nur für den Webmaster, nur einmal nötig (und wenn der Zugangscode abläuft). Danach speichern „Save“ und „Einträge übernehmen“ die Datei run.js direkt auf GitHub – von jedem Computer aus, nach Eingabe des Webmaster-Passworts.</p></div>
+
+<section class="panel">
+  <p class="status" id="status"></p>
+  <ol class="steps">
+    <li>Bei GitHub einen Zugangscode anlegen:<br>
+      <a class="btn" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" style="margin-top:10px;display:inline-block;text-decoration:none">Zugangscode bei GitHub anlegen</a>
+      <ul style="margin-top:10px">
+        <li><strong>Token name:</strong> z. B. „ACH3 Website“</li>
+        <li><strong>Expiration:</strong> z. B. 1 Jahr (danach hier neu einrichten)</li>
+        <li><strong>Repository access:</strong> „Only select repositories“ → <em>Angeles-City-Hash-House-Harriers</em></li>
+        <li><strong>Permissions → Repository permissions → Contents:</strong> „Read and write“ (sonst nichts)</li>
+        <li>Unten auf <strong>„Generate token“</strong> klicken und den Code (beginnt mit <em>github_pat_</em>) kopieren.</li>
+      </ul></li>
+    <li>Den Code einfügen und ein <strong>neues Webmaster-Passwort</strong> festlegen. Mit diesem Passwort wird der Code verschlüsselt.
+      <ul style="margin-top:8px">
+        <li>Mindestens 12 Zeichen, am besten ein Satz aus mehreren Wörtern.</li>
+        <li><strong>Nicht</strong> das Log-In-Passwort und kein Passwort aus pw.js – die sind öffentlich lesbar.</li>
+      </ul>
+      <form class="form" id="setupForm" style="margin-top:10px" autocomplete="off">
+        <label for="token">GitHub-Zugangscode</label>
+        <input id="token" type="password" placeholder="github_pat_…" autocomplete="off">
+        <label for="pw1">Webmaster-Passwort</label>
+        <input id="pw1" type="password" autocomplete="new-password">
+        <label for="pw2">Webmaster-Passwort wiederholen</label>
+        <input id="pw2" type="password" autocomplete="new-password">
+        <div class="actions" style="margin-top:12px"><button class="btn" type="submit" id="go">Prüfen, verschlüsseln und speichern</button></div>
+      </form></li>
+    <li id="step3" hidden>Fertig – github-config.js ist auf GitHub gespeichert. Bitte auch <strong>im Website-Ordner auf dem Computer</strong> speichern (vorhandene Datei ersetzen), damit sie beim nächsten Hochladen von Hand nicht mit einer alten Version überschrieben wird.<br>
+      <button class="btn" type="button" id="saveLocal" style="margin-top:10px">github-config.js speichern</button></li>
+  </ol>
+  <p style="margin-top:12px">Der Code steht nur verschlüsselt auf der Website. Ohne das Webmaster-Passwort ist er nutzlos. Das Passwort nirgends aufschreiben, wo andere es sehen. Wird es doch bekannt: Zugangscode bei GitHub löschen (Settings → Developer settings → Personal access tokens) und hier neu einrichten.</p>
+  <p id="err" role="alert" style="color:#8a2a1a;margin-top:12px"></p>
+  <p style="margin-top:14px"><a href="eingabe.html" style="color:var(--ink)">← Zurück zum Formular</a></p>
+</section>
+</main>
+<footer>Angeles City Hash House Harriers<br><span class="webmaster">Webmaster Bilge Pump&nbsp;&nbsp;&nbsp;Email: <a href="mailto:tuloy@ymail.com">tuloy@ymail.com</a></span></footer>
+</div>
+<!-- always fresh, so a new setup takes effect right away -->
+<script>document.write('<script src="github-config.js?t=' + Date.now() + '"><\/script>');</script>
+<script>document.write('<script src="github.js?t=' + Date.now() + '"><\/script>');</script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function msg(e) { return e && e.message ? e.message : String(e); }
+  var configText = '';
+
+  function show(text) {
+    var on = GITHUB.configured() || !!configText;
+    $('status').textContent = text || (on
+      ? '✓ Eingerichtet – nur neu einrichten, wenn der Zugangscode abgelaufen ist oder das Passwort geändert werden soll.'
+      : 'Noch nicht eingerichtet.');
+    $('status').classList.toggle('ok', on);
+  }
+  show();
+
+  $('setupForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var t = $('token').value.trim(), p1 = $('pw1').value, p2 = $('pw2').value;
+    $('err').textContent = '';
+    if (!t) { $('err').textContent = 'Bitte zuerst den Code von GitHub einfügen.'; return; }
+    if (p1.length < 12) { $('err').textContent = 'Das Webmaster-Passwort muss mindestens 12 Zeichen lang sein.'; return; }
+    if (p1 !== p2) { $('err').textContent = 'Die beiden Passwörter stimmen nicht überein.'; return; }
+    var weak = (typeof MEMBERS !== 'undefined' ? MEMBERS : []).some(function (m) { return m.password === p1; });
+    if (weak) { $('err').textContent = 'Dieses Passwort steht in pw.js und ist damit öffentlich. Bitte ein anderes wählen.'; return; }
+    $('go').disabled = true;
+    try {
+      $('err').textContent = 'Prüfe und speichere …';
+      configText = await GITHUB.setup(t, p1);
+      $('token').value = $('pw1').value = $('pw2').value = '';
+      $('err').textContent = '';
+      show('✓ Eingerichtet und für diese Sitzung entsperrt. Auf anderen Computern in etwa 1–2 Minuten verfügbar.');
+      $('step3').hidden = false;
+      $('saveLocal').focus();
+    } catch (ex) {
+      $('err').textContent = 'Das hat nicht geklappt: ' + msg(ex);
+    } finally { $('go').disabled = false; }
+  });
+
+  $('saveLocal').addEventListener('click', async function () {
+    try {
+      if ('showSaveFilePicker' in window) {
+        var h = await window.showSaveFilePicker({ suggestedName: 'github-config.js', types: [{ description: 'github-config.js', accept: { 'text/javascript': ['.js'] } }] });
+        var w = await h.createWritable(); await w.write(configText); await w.close();
+      } else {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([configText], { type: 'text/javascript' }));
+        a.download = 'github-config.js'; document.body.appendChild(a); a.click(); a.remove();
+      }
+      $('err').textContent = '✓ Im Website-Ordner gespeichert.';
+    } catch (ex) { if (ex && ex.name !== 'AbortError') $('err').textContent = 'Speichern fehlgeschlagen: ' + msg(ex); }
+  });
+})();
+</script>
+<script src="pw.js"></script>
+</body>
+</html>
