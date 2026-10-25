@@ -35,7 +35,7 @@
   </nav>
 </header>
 <main>
-<div><h2 class="page-h">Add a run</h2><p class="lead" id="hello"></p></div>
+<div><h2 class="page-h">Add or edit a run</h2><p class="lead" id="hello"></p></div>
 <form class="panel form" id="runForm" novalidate autocomplete="off">
   <label for="hash">Hash</label>
   <select id="hash" required>
@@ -48,11 +48,12 @@
     <div><label for="number">Hash Number</label><input id="number" inputmode="numeric" required></div>
     <div><label for="date">Date</label><input id="date" placeholder="DD/MM/YYYY" maxlength="10" required></div>
   </div>
+  <p class="loaded" id="loaded" role="status" hidden></p>
   <label for="location">Location</label><textarea id="location"></textarea>
   <label for="remarks">Remarks</label><textarea id="remarks"></textarea>
   <label for="hare">Hare</label><input id="hare">
   <p class="err" id="err" role="alert"></p>
-  <div class="actions"><button class="btn" type="submit" id="saveBtn">Save</button></div>
+  <div class="actions"><button class="btn ghost danger-ghost" type="submit" id="delBtn" hidden>Delete run</button><button class="btn" type="submit" id="saveBtn">Save</button></div>
 </form>
 <section class="panel" id="webmaster" hidden>
   <h3>Webmaster</h3>

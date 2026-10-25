@@ -187,20 +187,110 @@
   form.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') e.preventDefault();
   });
-  var saveBtn = $('saveBtn'), busy = false;
+  var saveBtn = $('saveBtn'), delBtn = $('delBtn'), busy = false;
   function setBusy(on) {
     busy = on;
     saveBtn.disabled = on;
+    delBtn.disabled = on;
     saveBtn.textContent = on ? 'Saving …' : 'Save';
   }
   function resetForm() {
-    ['number', 'date', 'location', 'remarks', 'hare'].forEach(function (id) { $(id).value = ''; });
+    FIELDS.forEach(function (id) { $(id).value = ''; });
+    clearLoaded();
     $('number').focus();
   }
 
+  // ---------- Load an existing run when its Hash Number is typed ----------
+  // Source: run.js on the computer (webmaster, if access was already granted),
+  // otherwise the published run list (RUNS from run.js).
+  var FIELDS = ['date', 'location', 'remarks', 'hare'];
+  var loadedKey = null;   // "<hash>#<number>" of the run currently shown in the form
+  var loadedVals = null;  // field values as loaded (to see if the user changed them)
+  var skipKey = null;     // run the user chose not to load ("Keep my input")
+  var askingKey = null;   // run for which the "Load?" popup is open
+  var lookupSeq = 0, lookupTimer = null;
+
+  function runKey(hash, number) { return hash + '#' + String(number).trim(); }
+  function fieldVals() { var v = {}; FIELDS.forEach(function (id) { v[id] = $(id).value; }); return v; }
+  function anyInput() { return FIELDS.some(function (id) { return $(id).value.trim() !== ''; }); }
+  function unchangedSinceLoad() {
+    if (!loadedVals) return false;
+    return FIELDS.every(function (id) { return $(id).value === loadedVals[id]; });
+  }
+  function showLoaded(text) { var el = $('loaded'); el.textContent = text; el.hidden = !text; }
+  function clearLoaded() { loadedKey = null; loadedVals = null; skipKey = null; showLoaded(''); delBtn.hidden = true; }
+
+  async function knownRuns() {
+    if (isWebmaster && canWrite) {
+      try {
+        var h = await getHandle('runFile');
+        if (h && await permitted(h, false)) { // no prompt while typing
+          var r = parseRuns(await (await h.getFile()).text());
+          if (r) return r;
+        }
+      } catch (e) {}
+    }
+    return (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS : [];
+  }
+
+  function fill(run) {
+    FIELDS.forEach(function (id) { $(id).value = run[id] == null ? '' : String(run[id]); });
+    loadedKey = runKey(run.hash, run.number);
+    loadedVals = fieldVals();
+    skipKey = null;
+    showLoaded(run.hash + ' #' + run.number + ' already exists – the stored data has been loaded. Edit the fields and click Save.');
+    delBtn.hidden = false;
+  }
+
+  async function lookup() {
+    var seq = ++lookupSeq;
+    var hash = $('hash').value, number = $('number').value.trim();
+    var k = runKey(hash, number);
+    if (k === loadedKey || k === skipKey || k === askingKey) return;
+
+    var run = null;
+    if (number) {
+      var runs = await knownRuns();
+      if (seq !== lookupSeq) return; // a newer lookup has started meanwhile
+      var idx = findRun(runs, { hash: hash, number: number });
+      if (idx >= 0) run = runs[idx];
+    }
+
+    if (run) {
+      // Form holds the user's own input (not a loaded run): ask before replacing it
+      if (anyInput() && !unchangedSinceLoad()) {
+        askingKey = k;
+        var load = await popup('Run already exists',
+          hash + ' #' + number + ' already exists (' + (run.date || 'no date') + ').\nLoad the stored data into the form? Your current input will be replaced.',
+          [{ label: 'Load', value: true }, { label: 'Keep my input', value: false, cls: 'ghost' }]);
+        askingKey = null;
+        if (k !== runKey($('hash').value, $('number').value)) return; // number changed meanwhile
+        if (!load) {
+          loadedKey = null; loadedVals = null; skipKey = k; delBtn.hidden = true;
+          showLoaded(hash + ' #' + number + ' already exists – saving will overwrite it with your input.');
+          return;
+        }
+      }
+      fill(run);
+    } else {
+      // Number not found: remove the data of a previously loaded run, unless it was edited
+      if (loadedKey && unchangedSinceLoad()) FIELDS.forEach(function (id) { $(id).value = ''; });
+      clearLoaded();
+    }
+  }
+  function lookupSoon(delay) {
+    clearTimeout(lookupTimer);
+    lookupTimer = setTimeout(function () { lookup().catch(function () {}); }, delay);
+  }
+  $('number').addEventListener('input', function () { lookupSoon(500); });
+  $('number').addEventListener('change', function () { lookupSoon(0); });
+  $('hash').addEventListener('change', function () { lookupSoon(0); });
+
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
-    if (e.submitter !== saveBtn || busy) return; // ignore anything but a click on Save, and double clicks
+    var mode = e.submitter === saveBtn ? 'save' : e.submitter === delBtn ? 'delete' : null;
+    if (!mode || busy) return; // ignore anything but a click on Save / Delete, and double clicks
+    clearTimeout(lookupTimer);
     err.textContent = '';
     var run = {
       hash: $('hash').value,
@@ -211,12 +301,12 @@
       hare: $('hare').value.trim()
     };
     if (!run.number) { err.textContent = 'Please enter the Hash Number.'; $('number').focus(); return; }
-    if (!validDate(run.date)) { err.textContent = 'Please enter a valid date as DD/MM/YYYY.'; $('date').focus(); return; }
+    if (mode === 'save' && !validDate(run.date)) { err.textContent = 'Please enter a valid date as DD/MM/YYYY.'; $('date').focus(); return; }
 
     setBusy(true);
     try {
-      if (isWebmaster) await saveDirect(run);
-      else await sendToWebmaster(run);
+      if (isWebmaster) await saveDirect(run, mode);
+      else await sendToWebmaster(run, mode);
     } catch (ex) {
       err.textContent = 'Saving failed: ' + msgOf(ex);
     } finally {
@@ -224,10 +314,19 @@
     }
   });
 
-  // Asks what to do if the run already exists. Returns 'save' | 'delete' | null (cancel)
-  async function existingChoice(runs, run) {
+  // Decides what happens with the entry. Returns { type: 'save' | 'delete', idx } or null (cancel)
+  async function existingChoice(runs, run, mode) {
     var idx = findRun(runs, run);
+    if (mode === 'delete') {
+      if (idx < 0) { await popup('Not found', run.hash + ' #' + run.number + ' does not exist.', OK); return null; }
+      var del = await popup('Delete run',
+        'Do you really want to delete ' + run.hash + ' #' + run.number + ' (' + (runs[idx].date || 'no date') + ')?',
+        [{ label: 'Delete', value: true, cls: 'danger' }, { label: 'Cancel', value: false, cls: 'ghost' }]);
+      return del ? { type: 'delete', idx: idx } : null;
+    }
     if (idx < 0) return { type: 'save', idx: -1 };
+    // The run was loaded into the form and edited: just save the changes
+    if (loadedKey === runKey(run.hash, run.number)) return { type: 'save', idx: idx };
     var old = runs[idx];
     var choice = await popup('Run already exists',
       run.hash + ' #' + run.number + ' already exists (' + (old.date || 'no date') + (old.location ? ', ' + old.location : '') + ').\n' +
@@ -239,9 +338,9 @@
   }
 
   // Member: send the entry to the webmaster's Dropbox
-  async function sendToWebmaster(run) {
+  async function sendToWebmaster(run, mode) {
     var published = (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS : [];
-    var c = await existingChoice(published, run);
+    var c = await existingChoice(published, run, mode);
     if (!c) return;
     var entry = { type: c.type, run: run, member: who, sentAt: new Date().toISOString() };
     for (;;) {
@@ -262,7 +361,7 @@
   }
 
   // Webmaster: save directly to run.js
-  async function saveDirect(run) {
+  async function saveDirect(run, mode) {
     var handle = null, runs;
     if (canWrite) {
       handle = await runFileHandle();
@@ -272,14 +371,15 @@
     } else {
       runs = (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS.slice() : [];
     }
-    var c = await existingChoice(runs, run);
+    var c = await existingChoice(runs, run, mode);
     if (!c) return;
     var action = 'saved';
-    if (c.idx >= 0 && c.type === 'save') { runs[c.idx] = run; action = 'overwritten'; }
+    if (c.idx >= 0 && c.type === 'save') { runs[c.idx] = run; action = 'updated'; }
     else if (c.type === 'delete') { runs.splice(c.idx, 1); action = 'deleted'; }
     else runs.push(run);
 
     await writeRuns(handle, runs);
+    try { RUNS = runs; } catch (e) {} // later lookups on this page see the change
     var msg = run.hash + ' #' + run.number + ' has been ' + action + ' in run.js on your computer.';
     if (!handle) msg = run.hash + ' #' + run.number + ' has been ' + action + '. Your browser cannot save directly, so run.js has been downloaded – please replace the run.js in your website folder with it.';
     msg += '\nTo show it on the website, upload run.js to GitHub.';

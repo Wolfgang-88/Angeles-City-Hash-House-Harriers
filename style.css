@@ -97,12 +97,16 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .form textarea{min-height:80px;resize:vertical}
 .form input:focus,.form select:focus,.form textarea:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
 .form .row{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.form .loaded{margin:14px 0 0;padding:9px 12px;border-radius:10px;background:var(--flour);color:var(--ink);font-size:.9rem;font-weight:600}
+.form .loaded[hidden]{display:none}
 .form .err{color:#8a2a1a;font-size:.88rem;min-height:1.2em;margin:12px 0 0}
 .btn{font:inherit;font-weight:700;padding:11px 22px;border:0;border-radius:999px;background:var(--accent);color:var(--ink);cursor:pointer}
 .btn:hover{filter:brightness(1.05)}
 .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
 .btn.danger{background:#b5452e;color:#fff}
-.form .actions{margin-top:18px;display:flex;justify-content:flex-end}
+.form .actions{margin-top:18px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.form .actions [hidden]{display:none}
+.btn.danger-ghost{color:#8a2a1a;border-color:#c99a8e}
 @media (max-width:520px){ .form .row{grid-template-columns:1fr} }
 /* Popups (wie Log-In-Fenster) */
 .modal{width:380px;max-width:calc(100vw - 32px);padding:22px;border:0;border-radius:18px;background:var(--bg);color:var(--chalk);resize:none;box-shadow:0 20px 50px rgba(0,0,0,.35)}
