@@ -184,3 +184,11 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .hash-facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;max-width:68ch;margin:8px 0 0;color:var(--flour)}
 .hash-facts dt{font-weight:700;color:var(--chalk)}
 .hash-facts dd{margin:0}
+
+/* About: "What is Hash House Harriers?" panel */
+.about-h3 h4{font-family:var(--f-display);font-size:1rem;margin:20px 0 8px;color:var(--ink)}
+.about-h3 ul{margin:0;padding-left:1.2em;color:var(--muted)}
+.about-h3 li{margin:0 0 8px;max-width:72ch}
+.about-h3 li::marker{color:var(--accent)}
+.about-h3 strong{color:var(--ink)}
+.about-h3>p{max-width:72ch}
