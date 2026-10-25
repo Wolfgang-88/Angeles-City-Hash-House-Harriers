@@ -20,7 +20,7 @@ var RUNS = [
     "hash": "Angeles Hash",
     "number": "1111",
     "date": "11/11/2026",
-    "location": "Dies ist ein test direkt in run.js speichern als Webmaster",
+    "location": "geädert von dwd",
     "remarks": "testing",
     "hare": "me"
   },
