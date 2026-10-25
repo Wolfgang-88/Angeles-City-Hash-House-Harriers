@@ -26,6 +26,14 @@ var RUNS = [
   },
   {
     "hash": "Angeles Hash",
+    "number": "1112",
+    "date": "11/12/2026",
+    "location": "Dist ist ein Test, gespeichert von DWD und vom WM frei gegeben",
+    "remarks": "test",
+    "hare": "you"
+  },
+  {
+    "hash": "Angeles Hash",
     "number": "1001",
     "date": "25/10/2027",
     "location": "Angeles City",
