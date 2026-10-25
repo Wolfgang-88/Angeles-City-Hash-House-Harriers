@@ -172,3 +172,10 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .hasher-table tr.hit td:first-child{box-shadow:inset 4px 0 0 var(--accent);padding-left:8px}
 @keyframes hit-flash{0%,30%{background:var(--accent)}100%{background:rgba(217,165,33,.35)}}
 @media (max-width:620px){ .hasher-search{flex:1 1 100%;max-width:100%;min-width:0} }
+
+/* Upcoming Hares (angeles.html): darker beige panel, past dates muted */
+.hares-panel{background:var(--flour)}
+.hares-panel .runs-table th,.hares-panel .runs-table td{border-bottom-color:#cfc6a2}
+.hares-table tr.past td{color:var(--muted)}
+.hares-table td:first-child{width:7.5em;white-space:nowrap}
+.hares-table td:nth-child(2){white-space:normal}
