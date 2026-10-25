@@ -179,3 +179,8 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .hares-table tr.past td{color:var(--muted)}
 .hares-table td:first-child{width:7.5em;white-space:nowrap}
 .hares-table td:nth-child(2){white-space:normal}
+
+/* Who / When / Price under the hash page title */
+.hash-facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;max-width:68ch;margin:8px 0 0;color:var(--flour)}
+.hash-facts dt{font-weight:700;color:var(--chalk)}
+.hash-facts dd{margin:0}
