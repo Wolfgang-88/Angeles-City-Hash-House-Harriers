@@ -133,3 +133,9 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .hasher-table td:first-child{color:var(--muted);width:3.5em}
 .hasher-table td:nth-child(2){white-space:normal;overflow-wrap:anywhere}
 .hasher-table th:last-child,.hasher-table td:last-child{padding-right:0}
+
+/* Songbook PDF, horizontally centered on song.html */
+.pdf-embed{display:flex;flex-direction:column;align-items:center;gap:12px}
+.pdf-embed iframe{display:block;width:100%;max-width:820px;height:min(85vh, 1100px);border:0;border-radius:12px;background:var(--card)}
+.pdf-link{margin:0;text-align:center}
+.pdf-link a{color:var(--chalk);font-weight:600}
