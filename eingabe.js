@@ -201,8 +201,10 @@
   }
 
   // ---------- Load an existing run when its Hash Number is typed ----------
-  // Source: run.js on the computer (webmaster, if access was already granted),
-  // otherwise the published run list (RUNS from run.js).
+  // 1. the online run.js on GitHub (if the run exists there, it is taken from there)
+  // 2. otherwise run.js on the computer (webmaster, if access was already granted)
+  //    or the run list this page was loaded with (RUNS from run.js)
+  var ONLINE_RUNS_URL = 'https://raw.githubusercontent.com/Wolfgang-88/Angeles-City-Hash-House-Harriers/main/run.js';
   var FIELDS = ['date', 'location', 'remarks', 'hare'];
   var loadedKey = null;   // "<hash>#<number>" of the run currently shown in the form
   var loadedVals = null;  // field values as loaded (to see if the user changed them)
@@ -220,7 +222,21 @@
   function showLoaded(text) { var el = $('loaded'); el.textContent = text; el.hidden = !text; }
   function clearLoaded() { loadedKey = null; loadedVals = null; skipKey = null; showLoaded(''); delBtn.hidden = true; }
 
-  async function knownRuns() {
+  // Online run.js from GitHub, always fresh (?t= bypasses the cache). Kept for 30 s
+  // so typing does not cause a download for every key. null = not reachable.
+  var online = { at: 0, runs: null, pending: null };
+  function onlineRuns(fresh) {
+    if (!fresh && online.runs && Date.now() - online.at < 30000) return Promise.resolve(online.runs);
+    if (online.pending) return online.pending;
+    online.pending = fetch(ONLINE_RUNS_URL + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(function (t) { var r = parseRuns(t); if (!r) throw new Error('run.js unreadable'); online.runs = r; online.at = Date.now(); return r; })
+      .catch(function () { return null; })
+      .then(function (r) { online.pending = null; return r; });
+    return online.pending;
+  }
+
+  async function localRuns() {
     if (isWebmaster && canWrite) {
       try {
         var h = await getHandle('runFile');
@@ -233,12 +249,24 @@
     return (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS : [];
   }
 
-  function fill(run) {
+  // Returns { run, online: true|false } or null
+  async function findExisting(hash, number) {
+    var q = { hash: hash, number: number };
+    var on = await onlineRuns();
+    var i = on ? findRun(on, q) : -1;
+    if (i >= 0) return { run: on[i], online: true };
+    var loc = await localRuns();
+    i = findRun(loc, q);
+    return i >= 0 ? { run: loc[i], online: false } : null;
+  }
+
+  function fill(run, isOnline) {
     FIELDS.forEach(function (id) { $(id).value = run[id] == null ? '' : String(run[id]); });
     loadedKey = runKey(run.hash, run.number);
     loadedVals = fieldVals();
     skipKey = null;
-    showLoaded(run.hash + ' #' + run.number + ' already exists – the stored data has been loaded. Edit the fields and click Save.');
+    showLoaded(run.hash + ' #' + run.number + ' already exists – the data has been loaded from ' +
+      (isOnline ? 'the online run.js' : 'run.js on this computer') + '. Edit the fields and click Save.');
     delBtn.hidden = false;
   }
 
@@ -248,13 +276,12 @@
     var k = runKey(hash, number);
     if (k === loadedKey || k === skipKey || k === askingKey) return;
 
-    var run = null;
+    var found = null;
     if (number) {
-      var runs = await knownRuns();
+      found = await findExisting(hash, number);
       if (seq !== lookupSeq) return; // a newer lookup has started meanwhile
-      var idx = findRun(runs, { hash: hash, number: number });
-      if (idx >= 0) run = runs[idx];
     }
+    var run = found && found.run;
 
     if (run) {
       // Form holds the user's own input (not a loaded run): ask before replacing it
@@ -271,7 +298,7 @@
           return;
         }
       }
-      fill(run);
+      fill(run, found.online);
     } else {
       // Number not found: remove the data of a previously loaded run, unless it was edited
       if (loadedKey && unchangedSinceLoad()) FIELDS.forEach(function (id) { $(id).value = ''; });
@@ -339,7 +366,7 @@
 
   // Member: send the entry to the webmaster's Dropbox
   async function sendToWebmaster(run, mode) {
-    var published = (typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS : [];
+    var published = (await onlineRuns(true)) || ((typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS : []);
     var c = await existingChoice(published, run, mode);
     if (!c) return;
     var entry = { type: c.type, run: run, member: who, sentAt: new Date().toISOString() };
