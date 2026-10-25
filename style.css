@@ -160,15 +160,3 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .viewer .v-next{right:14px;top:50%;transform:translateY(-50%)}
 .viewer .v-count{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:.9rem;color:var(--flour)}
 @media (max-width:520px){ .album-grid{grid-template-columns:repeat(2,1fr)} .viewer .v-prev,.viewer .v-next{top:auto;bottom:6px;transform:none} }
-
-/* Hasher search (hashers.html): sits centered between "Hash names" and "Sort by" */
-.hasher-search{display:flex;align-items:center;gap:6px;flex:0 1 300px;margin:0 auto}
-.hasher-search input{flex:1 1 0;min-width:0;width:100%;font:inherit;font-size:.92rem;padding:6px 14px;border-radius:999px;
-  border:1.5px solid var(--line);background:#fff;color:var(--ink)}
-.hasher-search input:focus{outline:none;border-color:var(--bg-deep);box-shadow:0 0 0 3px rgba(93,128,72,.25)}
-.search-btn{background:var(--bg-deep);border-color:var(--bg-deep);color:var(--chalk);flex:none}
-.search-btn:hover{background:var(--bg);border-color:var(--bg)}
-.hasher-table tr.hit td{background:rgba(217,165,33,.35);font-weight:700;animation:hit-flash 1.6s ease-out}
-.hasher-table tr.hit td:first-child{box-shadow:inset 4px 0 0 var(--accent);padding-left:8px}
-@keyframes hit-flash{0%,30%{background:var(--accent)}100%{background:rgba(217,165,33,.35)}}
-@media (max-width:620px){ .hasher-search{flex:1 1 100%;max-width:100%;min-width:0} }
