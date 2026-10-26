@@ -18,14 +18,6 @@ var RUNS = [
   },
   {
     "hash": "Angeles Hash",
-    "number": "8888",
-    "date": "12/11/2026",
-    "location": "Draussen",
-    "remarks": "Walk",
-    "hare": "Me"
-  },
-  {
-    "hash": "Angeles Hash",
     "number": "2489",
     "date": "25/11/2026",
     "location": "Gumain underpass. Over TB2NW (The Bridge To Nowhere), Right at T-junction, Right at Rock Crushing Plant. Pass the Bailey Bridge and wall, turn 2nd Left at the sign Goshen Resort and then Left again onto the 4-lane road to the underpass. Distance to run site: 18km, 35 minutes",
