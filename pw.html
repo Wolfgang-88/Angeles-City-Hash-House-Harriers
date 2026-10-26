@@ -18,6 +18,8 @@
   .login-box input:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
   .login-box button{margin-top:20px;width:100%;font:inherit;font-weight:700;padding:11px 16px;border:0;border-radius:999px;background:var(--accent);color:var(--ink);cursor:pointer}
   .login-box button:hover{filter:brightness(1.05)}
+  .register{margin:4px 0 0;font-size:.82rem;line-height:1.4;text-align:center;color:var(--muted)}
+  .register a{color:var(--ink);font-weight:600}
   .msg{margin-top:12px;font-size:.9rem;color:#8a2a1a;min-height:1.2em;text-align:center}
 </style>
 </head>
@@ -31,6 +33,7 @@
     <input id="pw" name="pw" type="password" required>
     <button type="submit">Log In</button>
     <p class="msg" id="msg" role="status"></p>
+    <p class="register">To register, send your name and your desired password to <a href="mailto:tuloy@ymail.com">tuloy@ymail.com</a></p>
   </form>
 </div>
 <script src="pw.js"></script>
