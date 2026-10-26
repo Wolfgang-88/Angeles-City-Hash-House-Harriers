@@ -3,7 +3,7 @@ var RUNS = [
   {
     "hash": "Angeles Hash",
     "number": "2489",
-    "date": "	10/25/2026",
+    "date": "	25/10/2026",
     "location": "Gumain underpass. Over TB2NW (The Bridge To Nowhere), Right at T-junction, Right at Rock Crushing Plant. Pass the Bailey Bridge and wall, turn 2nd Left at the sign Goshen Resort and then Left again onto the 4-lane road to the underpass. Distance to run site: 18km, 35 minutes",
     "remarks": "Medium: 6km Short: 3km. Mainly flat, Wet feet. On home Premiere Hotel",
     "hare": "Hash Witch, Cock Whisperer & I choked Linda Lovelace"
@@ -27,7 +27,7 @@ var RUNS = [
   {
     "hash": "Beach Hash",
     "number": "478",
-    "date": "17/10/2026",
+    "date": "10/18/2026",
     "location": "Enjoy the lovely sites arround Angeles City",
     "remarks": "Leave Premier Hotel 3 PM 40 th Anniverary Run . 500 PHP includes drinks, snacks, and others. Tee Shirt Run; P500 those who have pre=paid/ ordered can collect at sign up. Easy flat trail with lots of refreshments before and after circle. It will be Ruby Red letter day",
     "hare": "Bangka Blower, Honeydew, Hughie Bler, Trucka"
