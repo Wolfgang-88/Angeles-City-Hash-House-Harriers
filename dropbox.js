@@ -150,7 +150,7 @@ var DROPBOX = (function () {
           if (!e || !e.run || !e.run.hash || !e.run.number || (e.type !== 'save' && e.type !== 'delete')) throw 0;
           list.push({ name: f.name, path: f.path_lower || f.path_display, entry: e });
         } catch (x) {
-          if (x && x.scope) throw x;
+          if (x && (x.scope || x instanceof TypeError)) throw x; // permissions / no internet
           bad.push(f.name);
         }
       }

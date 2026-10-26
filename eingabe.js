@@ -85,7 +85,15 @@
       inp.focus();
     });
   }
-  function msgOf(e) { return e && e.message ? e.message : String(e); }
+  // No internet: the browsers report this as TypeError "Failed to fetch" (Chrome/Edge),
+  // "NetworkError when attempting to fetch resource" (Firefox) or "Load failed" (Safari)
+  function isOffline(e) {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return true;
+    var m = e && e.message ? String(e.message) : '';
+    return e instanceof TypeError && /failed to fetch|networkerror|load failed|network request failed/i.test(m);
+  }
+  var OFFLINE_MSG = 'Keine Internetverbindung – bitte später erneut versuchen.';
+  function msgOf(e) { return isOffline(e) ? OFFLINE_MSG : e && e.message ? e.message : String(e); }
 
   // ---------- Date helpers ----------
   function validDate(s) { // exactly DD/MM/YYYY and a real calendar day
