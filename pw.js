@@ -8,7 +8,7 @@
 // Beispiel Moderator:  { name: "Max", password: "123456", moderator: true },
 var MEMBERS = [
   { name: "wolfgang", password: "11wolfgang11", webmaster: true },
+  { name: "Bilge Pump", password: "11wolfgang11",  moderator: true },
   { name: "Mustermann", password: "111111" },
-  { name: "Bilge Pump", password: "555555" },
   { name: "DWD", password: "111111" }
 ];
