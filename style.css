@@ -10,7 +10,14 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--chalk);font-family:var(--f-body);font-size:16px;line-height:1.55;
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 48px;
-  background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);background-size:22px 22px}
+  background-image:url("Bilder/Website_Pictures/topo.svg");background-size:640px 640px;background-position:center top}
+/* Hintergrund: Höhenlinien (Trail-Karte) + sanftes Licht/Schatten im selben Grün, fest hinter dem Inhalt */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 45% at 12% 0%, rgba(255,253,245,.13), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 95% 30%, rgba(217,165,33,.07), transparent 70%),
+    radial-gradient(ellipse 70% 55% at 85% 100%, rgba(31,48,22,.38), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 0% 75%, rgba(31,48,22,.22), transparent 70%)}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
 .wrap{max-width:860px;margin:0 auto}
