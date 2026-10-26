@@ -46,7 +46,7 @@
   </select>
   <div class="row">
     <div><label for="number">Hash Number</label><input id="number" inputmode="numeric" required></div>
-    <div><label for="date">Date</label><input id="date" placeholder="DD/MM/YYYY" maxlength="10" required></div>
+    <div><label for="date">Date</label><input id="date" placeholder="DD/MM/YYYY" maxlength="10" inputmode="numeric" required></div>
   </div>
   <p class="loaded" id="loaded" role="status" hidden></p>
   <label for="location">Location</label><textarea id="location"></textarea>
@@ -56,13 +56,13 @@
   <div class="actions"><button class="btn ghost danger-ghost" type="submit" id="delBtn" hidden>Delete run</button><button class="btn" type="submit" id="saveBtn">Save</button></div>
 </form>
 <section class="panel" id="webmaster" hidden>
-  <h3>Webmaster</h3>
+  <h3 id="wmTitle">Webmaster</h3>
   <p id="pending"></p>
   <p id="ghStatus"></p>
   <div class="wm-actions">
     <button class="btn" type="button" id="importBtn">Einträge übernehmen</button>
-    <a class="btn ghost" href="github-setup.html">GitHub einrichten</a>
-    <a class="btn ghost" href="dropbox-setup.html">Dropbox einrichten</a>
+    <a class="btn ghost wm-only" href="github-setup.html">GitHub einrichten</a>
+    <a class="btn ghost wm-only" href="dropbox-setup.html">Dropbox einrichten</a>
   </div>
 </section>
 </main>

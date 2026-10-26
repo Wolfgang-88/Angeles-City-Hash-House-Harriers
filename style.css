@@ -201,3 +201,19 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .webmaster{display:inline-block;margin-top:6px}
 .wm-gap{display:inline-block;width:2.5em}
 .webmaster a{color:inherit}
+/* Upcoming / Past runs: same look as "Next run", one block per run */
+.run-group .run-list{overflow:visible;margin-top:0}
+.run-group .run-list > p{margin:12px 0 0;color:var(--muted)}
+.run-group .run-list dl + dl{margin-top:22px;border-top:3px solid var(--bg)}
+.pager-wrap{margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.pager{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.pager-btn{font:inherit;font-size:.9rem;font-weight:600;min-width:38px;padding:6px 12px;border-radius:999px;cursor:pointer;
+  background:transparent;border:1.5px solid var(--line);color:var(--ink);font-variant-numeric:tabular-nums}
+.pager-btn:hover:not(:disabled){border-color:var(--muted)}
+.pager-btn[aria-current="page"]{background:var(--bg-deep);border-color:var(--bg-deep);color:var(--chalk);cursor:default}
+.pager-btn:disabled:not([aria-current]){opacity:.4;cursor:default}
+.pager-info{margin:0;font-size:.82rem;color:var(--muted)}
+.run-group{scroll-margin-top:16px}
+.wm-actions [hidden]{display:none}
+.form.locked input:disabled,.form.locked textarea:disabled{background:var(--flour);color:var(--muted);cursor:not-allowed}
+.form input[aria-invalid="true"]{border-color:#b5452e}

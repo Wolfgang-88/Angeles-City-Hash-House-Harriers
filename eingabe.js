@@ -2,6 +2,10 @@
 // - Members: the entry is sent to the webmaster's Dropbox (dropbox.js)
 // - Webmaster (webmaster: true in pw.js): saves directly to run.js and can
 //   import the entries sent by members ("Einträge übernehmen")
+// - Moderator (moderator: true in pw.js): like the webmaster, saves and imports
+//   directly into run.js on GitHub (moderator password, set up by the webmaster
+//   on github-setup.html) – but without "GitHub einrichten" / "Dropbox einrichten"
+// - Only upcoming runs can be added, changed or deleted – past runs are locked
 (function () {
   var form = document.getElementById('runForm');
   var err = document.getElementById('err');
@@ -11,11 +15,16 @@
   try { who = sessionStorage.getItem('achhh_member') || ''; } catch (e) {}
   if (who) $('hello').textContent = 'Logged in as ' + who;
 
-  var isWebmaster = typeof MEMBERS !== 'undefined' && MEMBERS.some(function (m) {
-    return m.webmaster && m.name.toLowerCase() === who.toLowerCase();
-  });
-  // Webmaster and GitHub set up (github-setup.html): save run.js directly on GitHub
-  function useGitHub() { return isWebmaster && typeof GITHUB !== 'undefined' && GITHUB.configured(); }
+  var me = (typeof MEMBERS !== 'undefined' ? MEMBERS : []).filter(function (m) {
+    return m.name.toLowerCase() === who.toLowerCase();
+  })[0] || null;
+  var isWebmaster = !!(me && me.webmaster);
+  var isModerator = !isWebmaster && !!(me && me.moderator);
+  var canPublish = isWebmaster || isModerator;   // saves directly instead of sending to the webmaster
+  var ghRole = isWebmaster ? 'webmaster' : 'moderator';
+  var roleName = isWebmaster ? 'Webmaster' : 'Moderator';
+  // Webmaster/Moderator and GitHub set up (github-setup.html): save run.js directly on GitHub
+  function useGitHub() { return canPublish && typeof GITHUB !== 'undefined' && GITHUB.configured(ghRole); }
 
   // ---------- Popup (same look as the Log In window) ----------
   function popup(title, text, buttons) {
@@ -52,9 +61,9 @@
     return new Promise(function (resolve) {
       var d = document.createElement('dialog');
       d.className = 'modal';
-      d.innerHTML = '<h2>Webmaster-Passwort</h2><form class="panel form" autocomplete="off">' +
-        '<p>Zum Speichern auf GitHub bitte das Webmaster-Passwort eingeben (einmal pro Sitzung).</p>' +
-        '<input type="password" aria-label="Webmaster-Passwort" style="margin-top:10px" autocomplete="current-password">' +
+      d.innerHTML = '<h2>' + roleName + '-Passwort</h2><form class="panel form" autocomplete="off">' +
+        '<p>Zum Speichern auf GitHub bitte das ' + roleName + '-Passwort eingeben (einmal pro Sitzung).</p>' +
+        '<input type="password" aria-label="' + roleName + '-Passwort" style="margin-top:10px" autocomplete="current-password">' +
         '<p class="err" role="alert"></p>' +
         '<div class="buttons"><button class="btn" type="submit">Entsperren</button>' +
         '<button class="btn ghost" type="button">Abbrechen</button></div></form>';
@@ -66,7 +75,7 @@
         ev.preventDefault();
         if (!inp.value) return;
         btns[0].disabled = true; e.textContent = 'Prüfe …';
-        try { await GITHUB.unlock(inp.value); done(true); }
+        try { await GITHUB.unlock(inp.value, ghRole); done(true); }
         catch (x) { e.textContent = msgOf(x); inp.select(); }
         finally { btns[0].disabled = false; }
       });
@@ -79,14 +88,43 @@
   function msgOf(e) { return e && e.message ? e.message : String(e); }
 
   // ---------- Date helpers ----------
-  function validDate(s) {
+  function validDate(s) { // exactly DD/MM/YYYY and a real calendar day
     var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);
     if (!m) return false;
     var d = +m[1], mo = +m[2], y = +m[3];
     var dt = new Date(y, mo - 1, d);
     return dt.getFullYear() === y && dt.getMonth() === mo - 1 && dt.getDate() === d;
   }
-  function key(s) { var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s || ''); return m ? +(m[3] + m[2] + m[1]) : 0; }
+  // Date of a stored run -> 20261024; tolerant like runs-view.js (spaces/tabs, MM/DD/YYYY)
+  function key(s) {
+    var m = /^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/.exec(String(s || '').trim());
+    if (!m) return 0;
+    var d = +m[1], mo = +m[2], y = +m[3];
+    if (mo > 12 && d <= 12) { var t = d; d = mo; mo = t; }
+    var dt = new Date(y, mo - 1, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return 0;
+    return y * 10000 + mo * 100 + d;
+  }
+  function todayKey() { var n = new Date(); return n.getFullYear() * 10000 + (n.getMonth() + 1) * 100 + n.getDate(); }
+  function isPastRun(r) { var k = key(r && r.date); return k > 0 && k < todayKey(); }
+  var MAX_YEARS_AHEAD = 2;
+  // Returns an error text, or '' if the date is fine (valid, today or later, not too far ahead)
+  function dateError(s) {
+    if (!s) return 'Please enter the date (DD/MM/YYYY).';
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return 'Please enter the date as DD/MM/YYYY, e.g. 01/11/2026.';
+    if (!validDate(s)) {
+      var mo = +s.slice(3, 5);
+      if (mo < 1 || mo > 12) return s + ' is not a valid date (month ' + s.slice(3, 5) + ' does not exist). Format: DD/MM/YYYY.';
+      return s + ' is not a valid date (day ' + s.slice(0, 2) + ' does not exist in month ' + s.slice(3, 5) + ').';
+    }
+    var k = key(s);
+    if (k < todayKey()) return s + ' is in the past. Only upcoming runs can be added or edited.';
+    if (Math.floor(k / 10000) > new Date().getFullYear() + MAX_YEARS_AHEAD) return s + ' is too far in the future – please check the year.';
+    return '';
+  }
+  function pastMsg(r) {
+    return r.hash + ' #' + r.number + ' (' + (String(r.date || '').trim()) + ') is a past run. Past runs cannot be edited or deleted.';
+  }
 
   // Auto-insert the slashes while typing (24102026 -> 24/10/2026)
   $('date').addEventListener('input', function (e) {
@@ -95,6 +133,15 @@
     if (v.length > 4) v = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4);
     else if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
     this.value = v;
+  });
+
+  // Check the date as soon as the field is left
+  $('date').addEventListener('blur', function () {
+    var v = this.value.trim();
+    var msg = v ? dateError(v) : '';
+    this.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    if (msg) err.textContent = msg;
+    else if (/date|DD\/MM\/YYYY/.test(err.textContent)) err.textContent = '';
   });
 
   // ---------- run.js text ----------
@@ -257,7 +304,13 @@
     return FIELDS.every(function (id) { return $(id).value === loadedVals[id]; });
   }
   function showLoaded(text) { var el = $('loaded'); el.textContent = text; el.hidden = !text; }
-  function clearLoaded() { loadedKey = null; loadedVals = null; skipKey = null; showLoaded(''); delBtn.hidden = true; }
+  function clearLoaded() { loadedKey = null; loadedVals = null; skipKey = null; showLoaded(''); delBtn.hidden = true; setLocked(false); }
+  // Past run typed in: form is locked (no Save), only another number can be entered
+  function setLocked(on) {
+    form.classList.toggle('locked', on);
+    FIELDS.forEach(function (id) { $(id).disabled = on; });
+    saveBtn.disabled = on || busy;
+  }
 
   // run.js from GitHub. Kept for 20 s so typing does not cause a download for
   // every key. Returns the run list, or null if GitHub is not reachable.
@@ -335,6 +388,22 @@
     }
     var run = found && found.run;
 
+    // A past run was shown before: empty the form again and unlock it
+    if (form.classList.contains('locked')) {
+      FIELDS.forEach(function (id) { $(id).value = ''; });
+      clearLoaded();
+    }
+
+    if (run && isPastRun(run)) {
+      // Past run: do not load it for editing
+      if (loadedKey && unchangedSinceLoad()) FIELDS.forEach(function (id) { $(id).value = ''; });
+      clearLoaded();
+      FIELDS.forEach(function (id) { $(id).value = id === 'date' ? String(run.date || '').trim() : ''; });
+      showLoaded(pastMsg(run) + ' Please enter the number of an upcoming run or a new run.');
+      setLocked(true);
+      return;
+    }
+
     if (run) {
       // Form holds the user's own input (not a loaded run): ask before replacing it
       if (anyInput() && !unchangedSinceLoad()) {
@@ -380,11 +449,15 @@
       hare: $('hare').value.trim()
     };
     if (!run.number) { err.textContent = 'Please enter the Hash Number.'; $('number').focus(); return; }
-    if (mode === 'save' && !validDate(run.date)) { err.textContent = 'Please enter a valid date as DD/MM/YYYY.'; $('date').focus(); return; }
+    if (form.classList.contains('locked')) { err.textContent = 'This is a past run – it cannot be edited.'; return; }
+    if (mode === 'save') {
+      var dErr = dateError(run.date);
+      if (dErr) { err.textContent = dErr; $('date').setAttribute('aria-invalid', 'true'); $('date').focus(); return; }
+    }
 
     setBusy(true);
     try {
-      if (isWebmaster) await saveDirect(run, mode);
+      if (canPublish) await saveDirect(run, mode);
       else await sendToWebmaster(run, mode);
     } catch (ex) {
       err.textContent = 'Saving failed: ' + msgOf(ex);
@@ -396,6 +469,10 @@
   // Decides what happens with the entry. Returns { type: 'save' | 'delete', idx } or null (cancel)
   async function existingChoice(runs, run, mode) {
     var idx = findRun(runs, run);
+    if (idx >= 0 && isPastRun(runs[idx])) {
+      await popup('Past run', pastMsg(runs[idx]), OK);
+      return null;
+    }
     if (mode === 'delete') {
       if (idx < 0) { await popup('Not found', run.hash + ' #' + run.number + ' does not exist.', OK); return null; }
       var del = await popup('Delete run',
@@ -493,9 +570,15 @@
     resetForm();
   }
 
-  // Webmaster: save directly to run.js
+  // Webmaster / Moderator: save directly to run.js
   async function saveDirect(run, mode) {
     if (useGitHub()) return saveToGitHub(run, mode);
+    if (isModerator) { // no moderator access on GitHub yet: send to the webmaster instead
+      var go = await popup('Moderator-Zugang fehlt',
+        'Der Moderator-Zugang zu GitHub ist noch nicht eingerichtet (macht der Webmaster auf „GitHub einrichten“).\nDer Eintrag wird deshalb an den Webmaster gesendet.',
+        [{ label: 'Senden', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+      return go ? sendToWebmaster(run, mode) : undefined;
+    }
     var handle = null, runs;
     if (canWrite) {
       handle = await runFileHandle();
@@ -560,13 +643,39 @@
     await dir.removeEntry(item.name);
   }
 
+  // Reads the members' entries: online from Dropbox (works on every computer).
+  // Only if that is not possible yet (Dropbox permissions not switched on), the webmaster
+  // can still use the local Dropbox folder as before.
+  // -> { online: bool, dir, list, bad, label } or null (cancelled)
+  async function loadInbox() {
+    try {
+      var r = await DROPBOX.inbox();
+      return { online: true, dir: null, list: r.list, bad: r.bad, label: 'Dropbox (Apps → ACH3_upload)' };
+    } catch (e) {
+      if (!(isWebmaster && canWrite && e.scope)) throw e;
+      var local = await popup('Dropbox online nicht lesbar', e.message + '\nStattdessen den Dropbox-Ordner auf diesem Computer verwenden?',
+        [{ label: 'Lokalen Ordner verwenden', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+      if (!local) return null;
+      var dir = await inboxHandle(true);
+      if (!dir) return null;
+      var l = await readInbox(dir);
+      return { online: false, dir: dir, list: l.list, bad: l.bad, label: 'Ordner „' + dir.name + '“' };
+    }
+  }
+
   async function importEntries() {
-    if (!canWrite) { await popup('Nicht möglich', 'Das Übernehmen funktioniert nur in Chrome oder Edge.', OK); return; }
-    var dir = await inboxHandle(true);
-    if (!dir) return;
-    var inbox = await readInbox(dir);
+    if (isModerator && !useGitHub()) {
+      await popup('Moderator-Zugang fehlt', 'Der Moderator-Zugang zu GitHub ist noch nicht eingerichtet. Bitte den Webmaster, ihn auf „GitHub einrichten“ anzulegen.', OK);
+      return;
+    }
+    if (!useGitHub() && !canWrite) {
+      await popup('Nicht möglich', 'Ohne GitHub-Zugang muss run.js auf diesem Computer gespeichert werden – das funktioniert nur in Chrome oder Edge.', OK);
+      return;
+    }
+    var inbox = await loadInbox();
+    if (!inbox) return;
     if (!inbox.list.length) {
-      await popup('Keine neuen Einträge', 'Im Ordner „' + dir.name + '“ liegen keine neuen Meldungen.' +
+      await popup('Keine neuen Einträge', 'In ' + inbox.label + ' liegen keine neuen Meldungen.' +
         (inbox.bad.length ? '\nNicht lesbar: ' + inbox.bad.join(', ') : ''), OK);
       return showPending();
     }
@@ -609,7 +718,10 @@
     }
     var notMoved = [];
     for (var i = 0; i < inbox.list.length; i++) {
-      try { await moveToDone(dir, inbox.list[i]); } catch (x) { notMoved.push(inbox.list[i].name); }
+      try {
+        if (inbox.online) await DROPBOX.done(inbox.list[i]);
+        else await moveToDone(inbox.dir, inbox.list[i]);
+      } catch (x) { notMoved.push(inbox.list[i].name); }
     }
     await popup('Übernommen', inbox.list.length + ' Meldung(en) wurden übernommen und in den Unterordner „erledigt“ verschoben.\n' +
       (gh ? 'run.js ist auf GitHub gespeichert – in etwa 1–2 Minuten auf der Website sichtbar.'
@@ -620,21 +732,39 @@
 
   async function showPending() {
     var el = $('pending');
+    try {
+      var c = await DROPBOX.count();
+      el.textContent = c ? c + ' neue Meldung(en) warten auf Übernahme.' : 'Keine neuen Meldungen.';
+      return;
+    } catch (e) {
+      if (!isWebmaster) {
+        el.textContent = e.scope
+          ? 'Die Meldungen können noch nicht online gelesen werden – der Webmaster muss dafür die Dropbox-Berechtigungen einschalten.'
+          : 'Meldungen konnten nicht geprüft werden: ' + msgOf(e);
+        return;
+      }
+      if (!e.scope) { el.textContent = 'Meldungen konnten nicht geprüft werden: ' + msgOf(e); return; }
+    }
+    // Webmaster, online reading not switched on yet: local Dropbox folder as before
     var dir = await inboxHandle(false);
-    if (!dir) { el.textContent = 'Klicken, um die Meldungen der Mitglieder zu prüfen.'; return; }
+    if (!dir) { el.textContent = 'Dropbox kann noch nicht online gelesen werden (Berechtigungen einschalten, siehe „Dropbox einrichten“). Klicken, um den lokalen Ordner zu prüfen.'; return; }
     try {
       var n = (await readInbox(dir)).list.length;
       el.textContent = n ? n + ' neue Meldung(en) warten auf Übernahme.' : 'Keine neuen Meldungen.';
     } catch (e) { el.textContent = ''; }
   }
 
-  if (isWebmaster) {
+  if (canPublish) {
     $('webmaster').hidden = false;
+    $('wmTitle').textContent = roleName;
+    if (isModerator) document.querySelectorAll('#webmaster .wm-only').forEach(function (el) { el.hidden = true; });
     var ghEl = $('ghStatus');
     if (ghEl) {
       ghEl.textContent = useGitHub()
-        ? '✓ GitHub eingerichtet – Speichern veröffentlicht run.js direkt (Webmaster-Passwort einmal pro Sitzung).'
-        : 'GitHub ist nicht eingerichtet – run.js muss von Hand hochgeladen werden.';
+        ? '✓ GitHub eingerichtet – Speichern veröffentlicht run.js direkt (' + roleName + '-Passwort einmal pro Sitzung).'
+        : isModerator
+          ? 'Moderator-Zugang zu GitHub ist noch nicht eingerichtet – bitte beim Webmaster melden.'
+          : 'GitHub ist nicht eingerichtet – run.js muss von Hand hochgeladen werden.';
     }
     $('importBtn').addEventListener('click', function () {
       importEntries().catch(function (e) { popup('Fehler', msgOf(e), OK); });

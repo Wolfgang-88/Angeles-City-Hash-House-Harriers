@@ -51,6 +51,20 @@
     <li id="step3" hidden>Fertig – github-config.js ist auf GitHub gespeichert. Bitte auch <strong>im Website-Ordner auf dem Computer</strong> speichern (vorhandene Datei ersetzen), damit sie beim nächsten Hochladen von Hand nicht mit einer alten Version überschrieben wird.<br>
       <button class="btn" type="button" id="saveLocal" style="margin-top:10px">github-config.js speichern</button></li>
   </ol>
+  <h3 style="margin-top:22px">Moderator-Zugang</h3>
+  <p>Moderatoren (in pw.js mit <em>moderator: true</em>) speichern ihre Einträge direkt in die run.js auf GitHub. Dafür wird der Zugangscode zusätzlich mit einem <strong>Moderator-Passwort</strong> verschlüsselt, das der Webmaster hier festlegt und den Moderatoren mitteilt. Das Webmaster-Passwort bleibt geheim.</p>
+  <p class="status" id="modStatus" style="margin-top:10px"></p>
+  <form class="form" id="modForm" style="margin-top:10px" autocomplete="off">
+    <div id="wmPwRow"><label for="wmpw">Webmaster-Passwort</label>
+    <input id="wmpw" type="password" autocomplete="current-password"></div>
+    <label for="mp1">Neues Moderator-Passwort</label>
+    <input id="mp1" type="password" autocomplete="new-password">
+    <label for="mp2">Moderator-Passwort wiederholen</label>
+    <input id="mp2" type="password" autocomplete="new-password">
+    <div class="actions" style="margin-top:12px"><button class="btn ghost danger-ghost" type="button" id="modDel" hidden>Moderator-Zugang entfernen</button><button class="btn" type="submit" id="modGo">Moderator-Passwort speichern</button></div>
+  </form>
+  <p style="margin-top:8px">Mindestens 12 Zeichen, nicht gleich dem Webmaster-Passwort und kein Passwort aus pw.js. Wird oben GitHub neu eingerichtet, muss auch das Moderator-Passwort neu gespeichert werden. Soll ein Moderator nicht mehr veröffentlichen können: ein neues Moderator-Passwort festlegen oder den Zugang entfernen.</p>
+  <p id="modErr" role="alert" style="color:#8a2a1a;margin-top:12px"></p>
   <p style="margin-top:12px">Der Code steht nur verschlüsselt auf der Website. Ohne das Webmaster-Passwort ist er nutzlos. Das Passwort nirgends aufschreiben, wo andere es sehen. Wird es doch bekannt: Zugangscode bei GitHub löschen (Settings → Developer settings → Personal access tokens) und hier neu einrichten.</p>
   <p id="err" role="alert" style="color:#8a2a1a;margin-top:12px"></p>
   <p style="margin-top:14px"><a href="eingabe.html" style="color:var(--ink)">← Zurück zum Formular</a></p>
@@ -89,6 +103,7 @@
     try {
       $('err').textContent = 'Prüfe und speichere …';
       configText = await GITHUB.setup(t, p1);
+      if (modOn) { modOn = false; showMod(); $('modErr').textContent = 'Hinweis: Der Moderator-Zugang muss jetzt neu gespeichert werden.'; }
       $('token').value = $('pw1').value = $('pw2').value = '';
       $('err').textContent = '';
       show('✓ Eingerichtet und für diese Sitzung entsperrt. Auf anderen Computern in etwa 1–2 Minuten verfügbar.');
@@ -97,6 +112,69 @@
     } catch (ex) {
       $('err').textContent = 'Das hat nicht geklappt: ' + msg(ex);
     } finally { $('go').disabled = false; }
+  });
+
+  // ---------- Moderator-Zugang ----------
+  var modOn = GITHUB.configured('moderator');
+  function showMod() {
+    $('modStatus').textContent = modOn ? '✓ Moderator-Zugang eingerichtet.' : 'Moderator-Zugang noch nicht eingerichtet.';
+    $('modStatus').classList.toggle('ok', modOn);
+    $('modDel').hidden = !modOn;
+    $('wmPwRow').hidden = GITHUB.unlocked();
+  }
+  showMod();
+  function isWebmaster() {
+    var who = ''; try { who = sessionStorage.getItem('achhh_member') || ''; } catch (e) {}
+    return (typeof MEMBERS !== 'undefined' ? MEMBERS : []).some(function (m) {
+      return m.webmaster && m.name.toLowerCase() === who.toLowerCase();
+    });
+  }
+  async function unlockForMod() {
+    if (GITHUB.unlocked()) return;
+    if (!GITHUB.configured()) throw new Error('Bitte zuerst oben GitHub einrichten.');
+    var p = $('wmpw').value;
+    if (!p) throw new Error('Bitte das Webmaster-Passwort eingeben.');
+    await GITHUB.unlock(p, 'webmaster');
+  }
+  $('modForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var m1 = $('mp1').value, m2 = $('mp2').value, e1 = $('modErr');
+    e1.textContent = '';
+    if (!isWebmaster()) { e1.textContent = 'Nur der Webmaster kann den Moderator-Zugang einrichten.'; return; }
+    if (m1.length < 12) { e1.textContent = 'Das Moderator-Passwort muss mindestens 12 Zeichen lang sein.'; return; }
+    if (m1 !== m2) { e1.textContent = 'Die beiden Moderator-Passwörter stimmen nicht überein.'; return; }
+    if (m1 === $('wmpw').value) { e1.textContent = 'Das Moderator-Passwort darf nicht das Webmaster-Passwort sein.'; return; }
+    var weak = (typeof MEMBERS !== 'undefined' ? MEMBERS : []).some(function (m) { return m.password === m1; });
+    if (weak) { e1.textContent = 'Dieses Passwort steht in pw.js und ist damit öffentlich. Bitte ein anderes wählen.'; return; }
+    $('modGo').disabled = true;
+    try {
+      e1.textContent = 'Prüfe und speichere …';
+      await unlockForMod();
+      configText = await GITHUB.setupModerator(m1);
+      $('mp1').value = $('mp2').value = $('wmpw').value = '';
+      modOn = true; showMod();
+      e1.textContent = '✓ Moderator-Passwort gespeichert (in etwa 1–2 Minuten aktiv). Bitte github-config.js auch im Website-Ordner speichern.';
+      $('step3').hidden = false;
+    } catch (ex) {
+      e1.textContent = 'Das hat nicht geklappt: ' + msg(ex);
+    } finally { $('modGo').disabled = false; showMod(); }
+  });
+  $('modDel').addEventListener('click', async function () {
+    var e1 = $('modErr');
+    e1.textContent = '';
+    if (!isWebmaster()) { e1.textContent = 'Nur der Webmaster kann den Moderator-Zugang entfernen.'; return; }
+    $('modDel').disabled = true;
+    try {
+      e1.textContent = 'Entferne …';
+      await unlockForMod();
+      configText = await GITHUB.removeModerator();
+      $('wmpw').value = '';
+      modOn = false; showMod();
+      e1.textContent = '✓ Moderator-Zugang entfernt. Bitte github-config.js auch im Website-Ordner speichern.';
+      $('step3').hidden = false;
+    } catch (ex) {
+      e1.textContent = 'Das hat nicht geklappt: ' + msg(ex);
+    } finally { $('modDel').disabled = false; showMod(); }
   });
 
   $('saveLocal').addEventListener('click', async function () {

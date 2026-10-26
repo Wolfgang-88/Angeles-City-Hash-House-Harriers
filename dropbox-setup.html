@@ -20,11 +20,17 @@
 </header>
 <main>
 <div><h2 class="page-h">Dropbox einrichten</h2>
-<p class="lead">Nur für den Webmaster, nur einmal nötig. Danach können alle Mitglieder ihre Einträge in Ihre Dropbox schicken (Ordner Apps → ACH3_upload).</p></div>
+<p class="lead">Nur für den Webmaster, nur einmal nötig. Danach können alle Mitglieder ihre Einträge in Ihre Dropbox schicken (Ordner Apps → ACH3_upload), und Webmaster und Moderatoren können sie mit „Einträge übernehmen“ von jedem Computer aus direkt aus der Dropbox übernehmen.</p></div>
 
 <section class="panel">
   <p class="status" id="status"></p>
   <ol class="steps">
+    <li>Vorher einmalig in der <a href="https://www.dropbox.com/developers/apps" target="_blank" rel="noopener" style="color:var(--ink)">Dropbox App Console</a> die App öffnen, Reiter <strong>„Permissions“</strong>, unter „Files and folders“ diese drei Häkchen setzen und unten auf <strong>„Submit“</strong> klicken:
+      <ul style="margin-top:8px">
+        <li><strong>files.metadata.read</strong> – Liste der Meldungen lesen</li>
+        <li><strong>files.content.read</strong> – Meldungen herunterladen</li>
+        <li><strong>files.content.write</strong> – Meldungen speichern und nach „erledigt“ verschieben (war schon an)</li>
+      </ul></li>
     <li>Auf <strong>„Mit Dropbox verbinden“</strong> klicken. Dropbox öffnet sich in einem neuen Tab – dort einloggen und <strong>„Zulassen“</strong> (Allow) klicken.<br>
       <button class="btn" type="button" id="connect" style="margin-top:10px">Mit Dropbox verbinden</button></li>
     <li>Dropbox zeigt danach einen <strong>Code</strong> an. Diesen kopieren, hier einfügen und auf „Prüfen“ klicken. Dabei wird die Datei <em>verbindungstest.txt</em> in den Dropbox-Ordner geschrieben.
@@ -72,7 +78,10 @@
       $('err').textContent = 'Prüfe …';
       token = await DROPBOX.finishAuth($('code').value);
       await DROPBOX.test(token);
-      $('err').textContent = '';
+      var readErr = await DROPBOX.testRead(token);
+      $('err').textContent = readErr
+        ? 'Achtung: Schreiben klappt, aber Lesen noch nicht – „Einträge übernehmen“ funktioniert so nur mit dem lokalen Ordner. Bitte Schritt 1 prüfen (Häkchen setzen und „Submit“) und danach ab Schritt 2 wiederholen. (' + readErr + ')'
+        : '';
       $('code').value = '';
       $('step3').hidden = false;
       $('save').focus();

@@ -1,7 +1,8 @@
 // Reads and writes files directly in the GitHub repository (GitHub API).
-// Only for the webmaster. The access code is stored ENCRYPTED in github-config.js
-// (AES-GCM, key derived from the webmaster password with PBKDF2). Without the
-// webmaster password it is useless. After unlocking, the plain code is kept only
+// Only for the webmaster and moderators. The access code is stored ENCRYPTED in
+// github-config.js (AES-GCM, key derived from the webmaster password with PBKDF2),
+// plus optionally a second copy encrypted with the moderator password
+// (GITHUB_CONFIG.moderator). Without one of these passwords it is useless. After unlocking, the plain code is kept only
 // for this browser tab (sessionStorage) and is gone when the tab is closed.
 // Set up / change on github-setup.html.
 var GITHUB = (function () {
@@ -50,17 +51,22 @@ var GITHUB = (function () {
     var data = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, new TextEncoder().encode(token)));
     return { v: 1, iter: ITER, salt: bytesToB64(salt), iv: bytesToB64(iv), data: bytesToB64(data) };
   }
-  async function decrypt(enc, password) {
+  async function decrypt(enc, password, label) {
     var key = await deriveKey(password, b64ToBytes(enc.salt), enc.iter);
     try {
       var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBytes(enc.iv) }, key, b64ToBytes(enc.data));
       return new TextDecoder().decode(plain);
-    } catch (e) { throw new Error('Falsches Webmaster-Passwort.'); }
+    } catch (e) { throw new Error('Falsches ' + (label || 'Webmaster-Passwort') + '.'); }
   }
-  function configText(enc) {
-    return '// GitHub access for the webmaster – ENCRYPTED with the webmaster password.\n' +
-      '// Created on github-setup.html – do not edit by hand.\n' +
-      'var GITHUB_CONFIG = ' + JSON.stringify(enc, null, 2) + ';\n';
+  function validEnc(c) { return !!(c && c.data && c.salt && c.iv); }
+  // enc = webmaster copy; mod = moderator copy (optional)
+  function configText(enc, mod) {
+    var all = Object.assign({}, enc);
+    delete all.moderator;
+    if (mod) all.moderator = mod;
+    return '// GitHub access for the webmaster (and moderators) – ENCRYPTED with the webmaster password\n' +
+      '// (and the moderator password). Created on github-setup.html – do not edit by hand.\n' +
+      'var GITHUB_CONFIG = ' + JSON.stringify(all, null, 2) + ';\n';
   }
 
   // ---------- GitHub API ----------
@@ -113,10 +119,16 @@ var GITHUB = (function () {
 
   return {
     repo: REPO,
-    configured: function () { var c = cfg(); return !!(c && c.data && c.salt && c.iv); },
+    // role: 'webmaster' (default) or 'moderator'
+    configured: function (role) {
+      var c = cfg();
+      return role === 'moderator' ? !!(c && validEnc(c.moderator)) : validEnc(c);
+    },
     unlocked: function () { return !!sessionToken(); },
-    unlock: async function (password) {
-      var t = await decrypt(cfg(), password);
+    unlock: async function (password, role) {
+      var t = role === 'moderator'
+        ? await decrypt(cfg().moderator, password, 'Moderator-Passwort')
+        : await decrypt(cfg(), password, 'Webmaster-Passwort');
       sessionStorage.setItem(SESSION_KEY, t);
     },
     lock: function () { try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {} },
@@ -132,6 +144,29 @@ var GITHUB = (function () {
       try { sha = (await read('github-config.js', token)).sha; } catch (e) { if (e.status !== 404) throw e; }
       await write('github-config.js', text, sha, 'GitHub-Zugang (verschlüsselt) aktualisiert', token);
       sessionStorage.setItem(SESSION_KEY, token);
+      return text;
+    },
+    // Webmaster: sets up (or changes) the moderator password. Needs GitHub to be unlocked
+    // (webmaster). Keeps the webmaster copy, adds/replaces the moderator copy.
+    setupModerator: async function (modPassword) {
+      var t = need(sessionToken());
+      var cur = await read('github-config.js', t);
+      var main = null;
+      try { main = new Function(cur.text + '\n;return typeof GITHUB_CONFIG !== "undefined" ? GITHUB_CONFIG : null;')(); } catch (e) {}
+      if (!validEnc(main)) throw new Error('github-config.js auf GitHub ist nicht lesbar. Bitte zuerst GitHub einrichten.');
+      var text = configText(main, await encrypt(t, modPassword));
+      await write('github-config.js', text, cur.sha, 'Moderator-Zugang (verschlüsselt) aktualisiert', t);
+      return text;
+    },
+    // Webmaster: removes the moderator access (moderators can no longer publish)
+    removeModerator: async function () {
+      var t = need(sessionToken());
+      var cur = await read('github-config.js', t);
+      var main = null;
+      try { main = new Function(cur.text + '\n;return typeof GITHUB_CONFIG !== "undefined" ? GITHUB_CONFIG : null;')(); } catch (e) {}
+      if (!validEnc(main)) throw new Error('github-config.js auf GitHub ist nicht lesbar.');
+      var text = configText(main, null);
+      await write('github-config.js', text, cur.sha, 'Moderator-Zugang entfernt', t);
       return text;
     }
   };
