@@ -1,4 +1,4 @@
-// Shows all hashers from hasher.json on hashers.html, sortable by name, last run or runs, with a name search
+// Shows all hashers from ACH3_Webpage.json on hashers.html, sortable by name, last run or runs, with a name search
 (function () {
   var box = document.getElementById('hasher-list');
   if (!box) return;
@@ -95,7 +95,7 @@
     q.addEventListener('input', function () { if (!q.value) { found = null; lastQ = ''; render(); info.textContent = hashers.length + ' hashers'; } });
   }
 
-  fetch('hasher.json', { cache: 'no-cache' })
+  fetch('ACH3_Webpage.json', { cache: 'no-cache' })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (data) {
       hashers = Array.isArray(data) ? data : [];
