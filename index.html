@@ -9,6 +9,12 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="style.css">
+<style>
+/* Event link right of "Activities": same size as "Activities", standout colour */
+.festive #event-link{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.05;
+  color:#a3161a;border-bottom:3px solid currentColor;padding-bottom:2px;white-space:normal;align-self:flex-end}
+.festive #event-link:hover{color:#fffdf5;opacity:1}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -36,7 +42,7 @@
 <section class="festive">
   <div class="festive-head">
     <span><span class="lbl">upcoming</span><span class="big">Activities</span></span>
-    <a class="go" id="event-link" href="events.html" style="white-space:normal" hidden></a>
+    <a class="go" id="event-link" href="events.html" hidden></a>
   </div>
   <ul class="act-list"><li class="act-empty">No upcoming runs yet.</li></ul>
 </section>
