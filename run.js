@@ -31,13 +31,5 @@ var RUNS = [
     "location": "Randy's farm San Martin. Go to Bridge to Nowhere (Sacobia River bridge) follow road 2.3km to the T-junction. Turn left and follow road 3.5km and turn right on marked concrete road. Go 100m turn left into gated land. Take left at Y and look for the cars at the grassy knoll. https://maps.app.goo.gl/mEtvbtUikioXuyu96 15.230972, 120.494528",
     "remarks": "Two Trails, both dry-feet weather permitting: the short is approximately 3 km, and the long is approximately 5.5 km. The On-Home is at Premiere Hotel",
     "hare": "Shewee, Not Yet & Paddy Pacquiao"
-  },
-  {
-    "hash": "Beach Hash",
-    "number": "478",
-    "date": "18/18/2026",
-    "location": "Enjoy the lovely sites arround Angeles City",
-    "remarks": "Leave Premier Hotel 3 PM 40 th Anniverary Run . 500 PHP includes drinks, snacks, and others. Tee Shirt Run; P500 those who have pre=paid/ ordered can collect at sign up. Easy flat trail with lots of refreshments before and after circle. It will be Ruby Red letter day",
-    "hare": "Bangka Blower, Honeydew, Hughie Bler, Trucka"
   }
 ];
