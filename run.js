@@ -18,14 +18,6 @@ var RUNS = [
   },
   {
     "hash": "Angeles Hash",
-    "number": "2489",
-    "date": "25/11/2026",
-    "location": "Gumain underpass. Over TB2NW (The Bridge To Nowhere), Right at T-junction, Right at Rock Crushing Plant. Pass the Bailey Bridge and wall, turn 2nd Left at the sign Goshen Resort and then Left again onto the 4-lane road to the underpass. Distance to run site: 18km, 35 minutes",
-    "remarks": "Medium: 6km Short: 3km. Mainly flat, Wet feet. On home Premiere Hotel",
-    "hare": "Hash Witch, Cock Whisperer & I choked Linda Lovelace"
-  },
-  {
-    "hash": "Angeles Hash",
     "number": "2810",
     "date": "10/10/2027",
     "location": "Randy's farm San Martin. Go to Bridge to Nowhere (Sacobia River bridge) follow road 2.3km to the T-junction. Turn left and follow road 3.5km and turn right on marked concrete road. Go 100m turn left into gated land. Take left at Y and look for the cars at the grassy knoll. https://maps.app.goo.gl/mEtvbtUikioXuyu96 15.230972, 120.494528",
