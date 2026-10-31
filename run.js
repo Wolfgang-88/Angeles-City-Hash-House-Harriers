@@ -161,6 +161,14 @@ var RUNS = [
     "hare": "Hash Witch, Cock Whisperer & I choked Linda Lovelace"
   },
   {
+    "hash": "Angeles Hash",
+    "number": "2490",
+    "date": "01/11/2026",
+    "location": "Location: Manuali-Cuayan, UNDER the Sapang Bato SCTEX Bridge. Location GPS: 15.142167, 120.518000 (15°08'31.8\"N 120°31'04.8\"E) 4GR9+V66 (https://maps.app.goo.gl/Hc6wAgxdScMSkKXU9). Directions: Drive through Barangay Cuayan past the Manuali Barangay Hall. Turn left at the end of the new concrete road, and then follow the dirt road down to the bridge. Turn will be marked with powder and/or paper. The distance and journey time from the Premiere Hotel is approximately 10 km and takes approximately 30 minutes. Jeepney(s) leave the Premiere Hotel at 2.00 pm SHARP; please arrive at least 15 minutes earlier if you wish to avail of this service. NOTE: Annunas- Cuayan bypass is now open.",
+    "remarks": "Two trails, Medium 5km, Short 4 km approximately. Dry feet weather permitting and trails avoid the lahar river as much as possible.",
+    "hare": "Stump Jumper and Social Distance"
+  },
+  {
     "hash": "Beach Hash",
     "number": "461",
     "date": "24/05/2025",
