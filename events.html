@@ -9,6 +9,16 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="style.css">
+<style>
+#events{display:grid;gap:18px}
+.event h3{font-size:clamp(1.25rem,3vw,1.6rem);margin-bottom:4px}
+.event .ev-date{display:inline-block;font-weight:700;color:var(--ink);background:var(--accent);border-radius:999px;padding:3px 12px;margin:2px 0 14px;font-variant-numeric:tabular-nums}
+.event .ev-text p{color:var(--ink);margin:0 0 12px;line-height:1.55;overflow-wrap:anywhere}
+.event .ev-text p:last-child{margin-bottom:0}
+.event .ev-text a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.event .ev-imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:16px}
+.event .ev-imgs img{width:100%;border-radius:10px;display:block}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -33,10 +43,68 @@
   </nav>
 </header>
 <main>
-<div><h2 class="page-h">Events</h2><p class="lead">Anniversary runs, special hashes and interhash trips.</p></div><section class="panel"><h3>Upcoming events</h3><p>Upcoming events will be announced here and in the Facebook group.</p></section>
+<div><h2 class="page-h">Events</h2><p class="lead">Anniversary runs, special hashes and interhash trips.</p></div><div id="events"><section class="panel"><h3>Upcoming events</h3><p>Upcoming events will be announced here and in the Facebook group.</p></section></div>
 </main>
 <footer>Angeles City Hash House Harriers · <a href="https://www.facebook.com/groups/272838929527136" target="_blank" rel="noopener">Facebook group</a><br><span class="webmaster">Webmaster © 2026 Wolfgang (Bilge Pump)&nbsp;&nbsp;&nbsp;Email: <a href="mailto:tuloy@ymail.com">tuloy@ymail.com</a></span></footer>
 </div>
+<!-- Upcoming_Events.js always fresh, so a new event shows up right away -->
+<script>document.write('<script src="Upcoming_Events.js?t=' + Date.now() + '"><\/script>');</script>
+<script>
+// Shows the events from Upcoming_Events.js
+(function () {
+  var box = document.getElementById('events');
+  var list = (typeof upcomingEvents !== 'undefined' && Array.isArray(upcomingEvents)) ? upcomingEvents : [];
+  var today = new Date().toISOString().slice(0, 10);
+  list = list
+    .filter(function (e) { return e && e.Event_Headline && (!e.Event_Date || e.Event_Date >= today); })
+    .sort(function (a, b) { return String(a.Event_Date || '9999').localeCompare(String(b.Event_Date || '9999')); });
+  if (!box || !list.length) return; // keep the placeholder text
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  // escape, then turn e-mails and web addresses into links
+  function linkify(s) {
+    return esc(s)
+      .replace(/\b([\w.+-]+@[\w-]+(?:\.[\w-]+)+)\b/g, '<a href="mailto:$1">$1</a>')
+      .replace(/(^|[\s(])((?:https?:\/\/|www\.)[^\s<]+[^\s<.,;:)])/g, function (m, pre, url) {
+        var href = /^https?:/.test(url) ? url : 'https://' + url;
+        return pre + '<a href="' + href + '" target="_blank" rel="noopener">' + url + '</a>';
+      });
+  }
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  function showDate(s) { // 2027-10-24 -> Sunday, 24 October 2027
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || ''));
+    if (!m) return String(s || '');
+    var d = new Date(+m[1], +m[2] - 1, +m[3]);
+    return DAYS[d.getDay()] + ', ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  // blank lines -> paragraphs, single line breaks -> <br>
+  function paragraphs(text) {
+    return String(text || '').replace(/\r/g, '').split(/\n\s*\n/)
+      .map(function (p) { return p.replace(/^[\s ]+|[\s ]+$/g, ''); })
+      .filter(Boolean)
+      .map(function (p) {
+        return '<p>' + p.split(/\n/).map(function (l) { return linkify(l.trim()); }).join('<br>') + '</p>';
+      }).join('');
+  }
+
+  box.innerHTML = list.map(function (e, i) {
+    var imgs = (Array.isArray(e.Event_Images) ? e.Event_Images : []).map(function (src) {
+      return '<img src="' + esc(src) + '" alt="" loading="lazy">';
+    }).join('');
+    return '<section class="panel event" id="event-' + (i + 1) + '">' +
+      '<h3>' + esc(e.Event_Headline) + '</h3>' +
+      (e.Event_Date ? '<span class="ev-date">' + esc(showDate(e.Event_Date)) + '</span>' : '') +
+      '<div class="ev-text">' + paragraphs(e.Event_Description) + '</div>' +
+      (imgs ? '<div class="ev-imgs">' + imgs + '</div>' : '') +
+      '</section>';
+  }).join('');
+})();
+</script>
 <script src="login.js"></script>
 </body>
 </html>

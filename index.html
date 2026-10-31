@@ -36,6 +36,7 @@
 <section class="festive">
   <div class="festive-head">
     <span><span class="lbl">upcoming</span><span class="big">Activities</span></span>
+    <a class="go" id="event-link" href="events.html" style="white-space:normal" hidden></a>
   </div>
   <ul class="act-list"><li class="act-empty">No upcoming runs yet.</li></ul>
 </section>
@@ -51,6 +52,22 @@
 <!-- run.js always fresh (never from cache), so new runs show up right away -->
 <script>document.write('<script src="run.js?t=' + Date.now() + '"><\/script>');</script>
 <script src="runs-view.js"></script>
+<!-- Upcoming_Events.js always fresh, so a new event shows up right away -->
+<script>document.write('<script src="Upcoming_Events.js?t=' + Date.now() + '"><\/script>');</script>
+<script>
+// Next upcoming event (from Upcoming_Events.js) as link right of "Activities"
+(function () {
+  var link = document.getElementById('event-link');
+  var list = (typeof upcomingEvents !== 'undefined' && Array.isArray(upcomingEvents)) ? upcomingEvents : [];
+  var today = new Date().toISOString().slice(0, 10);
+  var next = list
+    .filter(function (e) { return e && e.Event_Headline && (!e.Event_Date || e.Event_Date >= today); })
+    .sort(function (a, b) { return String(a.Event_Date || '9999').localeCompare(String(b.Event_Date || '9999')); })[0];
+  if (!link || !next) return;
+  link.textContent = next.Event_Headline + ' →';
+  link.hidden = false;
+})();
+</script>
 <script src="login.js"></script>
 </body>
 </html>
