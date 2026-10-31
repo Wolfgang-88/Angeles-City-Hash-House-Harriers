@@ -1,4 +1,4 @@
-// Shows all hashers from ACH3_Webpage.json on hashers.html, sortable by name, last run or runs, with a name search
+// Shows all hashers from ACH3_Webpage.js (global "var hashers") on hashers.html, sortable by name, last run or runs, with a name search
 (function () {
   var box = document.getElementById('hasher-list');
   if (!box) return;
@@ -95,16 +95,26 @@
     q.addEventListener('input', function () { if (!q.value) { found = null; lastQ = ''; render(); info.textContent = hashers.length + ' hashers'; } });
   }
 
-  fetch('ACH3_Webpage.json', { cache: 'no-cache' })
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (data) {
-      hashers = Array.isArray(data) ? data : [];
-      info.textContent = hashers.length + ' hashers';
-      var dl = document.getElementById('hasher-names');
-      if (dl) dl.replaceChildren.apply(dl, hashers.map(function (h) { var o = document.createElement('option'); o.value = h.name || ''; return o; }));
-      render();
-    })
-    .catch(function () {
-      info.textContent = 'The hasher list could not be loaded.';
-    });
+  function show(data) {
+    hashers = Array.isArray(data) ? data : [];
+    info.textContent = hashers.length + ' hashers';
+    var dl = document.getElementById('hasher-names');
+    if (dl) dl.replaceChildren.apply(dl, hashers.map(function (h) { var o = document.createElement('option'); o.value = h.name || ''; return o; }));
+    render();
+  }
+  function failed() {
+    info.textContent = 'The hasher list could not be loaded.';
+  }
+
+  // ACH3_Webpage.js (created by ACH3 Data) defines the global list:  var hashers = [ ... ];
+  // It is loaded as a <script>, so it also works offline (file://), where fetch() is blocked.
+  // Online a timestamp is added so the browser always gets the latest version.
+  var s = document.createElement('script');
+  s.src = 'ACH3_Webpage.js' + (/^https?:$/.test(location.protocol) ? '?t=' + Date.now() : '');
+  s.onload = function () {
+    if (Array.isArray(window.hashers)) show(window.hashers);
+    else failed();
+  };
+  s.onerror = failed;
+  document.head.appendChild(s);
 })();
