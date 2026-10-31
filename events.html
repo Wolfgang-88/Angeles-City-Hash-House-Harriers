@@ -93,6 +93,7 @@
   function isExternal(u) { return /^(https?:)?\/\//i.test(u) || /^www\./i.test(u); }
   var SPAN = '(\\S(?:.*?\\S)??)';
   var INL = {
+    boldital: new RegExp('\\*\\*\\*' + SPAN + '\\*\\*\\*', 'g'),
     bold1: new RegExp('\\*\\*' + SPAN + '\\*\\*', 'g'),
     bold2: new RegExp('__' + SPAN + '__', 'g'),
     strike: new RegExp('~~' + SPAN + '~~', 'g'),
@@ -119,6 +120,7 @@
         return pre + hold('<a href="mailto:' + esc(mail) + '">' + esc(mail) + '</a>');
       });
     s = esc(s)
+      .replace(INL.boldital, '<strong><em>$1</em></strong>')
       .replace(INL.bold1, '<strong>$1</strong>')
       .replace(INL.bold2, '<strong>$1</strong>')
       .replace(INL.strike, '<del>$1</del>')
