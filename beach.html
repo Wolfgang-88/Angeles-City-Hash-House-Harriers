@@ -8,7 +8,7 @@
 <title>Beach · AC Hash</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20261101">
 </head>
 <body>
 <div class="wrap">
@@ -39,7 +39,8 @@
 </div>
 <!-- run.js always fresh (never from cache), so new runs show up right away -->
 <script>document.write('<script src="run.js?t=' + Date.now() + '"><\/script>');</script>
-<script src="runs-view.js"></script>
+<!-- runs-view.js always fresh too, so the 10-per-page paging of "Past runs" is always active -->
+<script>document.write('<script src="runs-view.js?t=' + Date.now() + '"><\/script>');</script>
 <script src="login.js"></script>
 </body>
 </html>

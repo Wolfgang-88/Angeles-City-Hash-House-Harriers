@@ -130,9 +130,9 @@
         else if (target !== page) b.addEventListener('click', function () { render(target, true); });
         nav.appendChild(b);
       }
-      btn('‹ Newer', page - 1, { cls: 'pager-step', disabled: page === 0 });
+      btn('‹ Previous', page - 1, { cls: 'pager-step', disabled: page === 0 });
       for (var i = 0; i < pages; i++) btn(String(i + 1), i, { title: 'Page ' + (i + 1) });
-      btn('Older ›', page + 1, { cls: 'pager-step', disabled: page === pages - 1 });
+      btn('Next ›', page + 1, { cls: 'pager-step', disabled: page === pages - 1 });
       var info = document.createElement('p');
       info.className = 'pager-info';
       info.textContent = 'Runs ' + (page * perPage + 1) + '–' + Math.min(list.length, (page + 1) * perPage) + ' of ' + list.length;
