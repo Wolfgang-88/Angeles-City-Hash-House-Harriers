@@ -15,13 +15,5 @@ var RUNS = [
     "location": "Randy's farm San Martin. Go to Bridge to Nowhere (Sacobia River bridge) follow road 2.3km to the T-junction. Turn left and follow road 3.5km and turn right on marked concrete road. Go 100m turn left into gated land. Take left at Y and look for the cars at the grassy knoll. https://maps.app.goo.gl/mEtvbtUikioXuyu96 15.230972, 120.494528",
     "remarks": "The medium trail is 4.5km and the long trail is 5km. Both trails involve some medium hills and rocks. The 3 river crossings at the beginning of the trail will probably get your feet wet, although, Hot Bum made with dry feet. Talk to the hares for a short option. On Home is the Octoberfest at Josefaville Subdivision II club house https://maps.app.goo.gl/bv3RFwUxfaSypJZm8 Jeeps leave Premier hotel at 1400 sharp.",
     "hare": "Meatless and Hot Bum"
-  },
-  {
-    "hash": "Angeles Hash",
-    "number": "2810",
-    "date": "10/10/2027",
-    "location": "Randy's farm San Martin. Go to Bridge to Nowhere (Sacobia River bridge) follow road 2.3km to the T-junction. Turn left and follow road 3.5km and turn right on marked concrete road. Go 100m turn left into gated land. Take left at Y and look for the cars at the grassy knoll. https://maps.app.goo.gl/mEtvbtUikioXuyu96 15.230972, 120.494528",
-    "remarks": "Two Trails, both dry-feet weather permitting: the short is approximately 3 km, and the long is approximately 5.5 km. The On-Home is at Premiere Hotel",
-    "hare": "Shewee, Not Yet & Paddy Pacquiao"
   }
 ];
