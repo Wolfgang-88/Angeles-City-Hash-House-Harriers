@@ -10,9 +10,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="style.css">
 <style>
-/* Event link right of "Activities": same size as "Activities", standout colour */
+/* Event link on its own line below "Activities": same size as "Activities", standout colour */
+.festive .festive-head{flex-direction:column;align-items:flex-start;gap:8px}
 .festive #event-link{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.05;
-  color:#a3161a;border-bottom:3px solid currentColor;padding-bottom:2px;white-space:normal;align-self:flex-end}
+  color:#a3161a;border-bottom:3px solid currentColor;padding-bottom:2px;white-space:normal;align-self:flex-start}
 .festive #event-link:hover{color:#fffdf5;opacity:1}
 </style>
 </head>
@@ -61,7 +62,7 @@
 <!-- Upcoming_Events.js always fresh, so a new event shows up right away -->
 <script>document.write('<script src="Upcoming_Events.js?t=' + Date.now() + '"><\/script>');</script>
 <script>
-// Next upcoming event (from Upcoming_Events.js) as link right of "Activities"
+// Next upcoming event (from Upcoming_Events.js) as link below "Activities"
 (function () {
   var link = document.getElementById('event-link');
   var list = (typeof upcomingEvents !== 'undefined' && Array.isArray(upcomingEvents)) ? upcomingEvents : [];
