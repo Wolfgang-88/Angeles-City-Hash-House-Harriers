@@ -172,7 +172,7 @@ var RUNS = [
     "hash": "Angeles Hash",
     "number": "9999",
     "date": "12/12/2027",
-    "location": "test",
+    "location": "testing",
     "remarks": "test",
     "hare": "you"
   },
