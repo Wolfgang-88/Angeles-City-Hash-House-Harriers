@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dropbox-setup.html
+Disallow: /github-setup.html
+Disallow: /leer.html
+
+Sitemap: https://www.ach3.org/sitemap.xml
