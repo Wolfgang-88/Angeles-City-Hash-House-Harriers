@@ -4,7 +4,8 @@
 //   import the entries sent by members ("Einträge übernehmen")
 // - Moderator (moderator: true in pw.js): like the webmaster, saves and imports
 //   directly into run.js on GitHub (moderator password, set up by the webmaster
-//   on github-setup.html) – but without "GitHub einrichten" / "Dropbox einrichten"
+//   on github-setup.html; if MODERATOR_PASSWORD is set in pw.js it unlocks
+//   automatically) – but without "GitHub einrichten" / "Dropbox einrichten"
 // - Only upcoming runs can be added, changed or deleted – past runs are locked
 (function () {
   var form = document.getElementById('runForm');
@@ -56,8 +57,25 @@
 
   // Asks for the webmaster password and unlocks GitHub for this browser tab.
   // Returns true when unlocked, false when cancelled.
-  function ensureUnlocked() {
+  // Moderator: password from pw.js (MODERATOR_PASSWORD) – unlocks automatically, no dialog
+  var autoPw = isModerator && typeof MODERATOR_PASSWORD === 'string' ? MODERATOR_PASSWORD : '';
+  var autoTried = null; // Promise of the automatic unlock (only tried once per page)
+  function autoUnlock() {
+    if (!autoPw || !useGitHub()) return Promise.resolve(false);
     if (GITHUB.unlocked()) return Promise.resolve(true);
+    if (!autoTried) autoTried = GITHUB.unlock(autoPw, ghRole).then(function () { return true; }, function (x) {
+      if (isOffline(x)) autoTried = null; // try again next time
+      else console.warn('MODERATOR_PASSWORD in pw.js passt nicht:', msgOf(x));
+      return false;
+    });
+    return autoTried;
+  }
+  async function ensureUnlocked() {
+    if (GITHUB.unlocked()) return true;
+    if (await autoUnlock()) return true;
+    return askPassword();
+  }
+  function askPassword() {
     return new Promise(function (resolve) {
       var d = document.createElement('dialog');
       d.className = 'modal';
@@ -769,7 +787,8 @@
     var ghEl = $('ghStatus');
     if (ghEl) {
       ghEl.textContent = useGitHub()
-        ? '✓ GitHub eingerichtet – Speichern veröffentlicht run.js direkt (' + roleName + '-Passwort einmal pro Sitzung).'
+        ? '✓ GitHub eingerichtet – Speichern veröffentlicht run.js direkt (' +
+          (autoPw ? 'automatisch entsperrt' : roleName + '-Passwort einmal pro Sitzung') + ').'
         : isModerator
           ? 'Moderator-Zugang zu GitHub ist noch nicht eingerichtet – bitte beim Webmaster melden.'
           : 'GitHub ist nicht eingerichtet – run.js muss von Hand hochgeladen werden.';
@@ -778,5 +797,6 @@
       importEntries().catch(function (e) { popup('Fehler', msgOf(e), OK); });
     });
     showPending();
+    autoUnlock(); // Moderator with MODERATOR_PASSWORD: unlock right away in the background
   }
 })();
