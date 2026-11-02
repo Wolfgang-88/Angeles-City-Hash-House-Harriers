@@ -18,5 +18,5 @@ var MEMBERS = [
   { name: "Bilge Pump", password: "300458", moderator: true },
   { name: "DWD", password: "585151" },
   { name: "Vendor Bender", password: "620595", moderator: true },
-  { name: "Facilitator", password: "102907" }
+  { name: "Facilitator", password: "102907", moderator: true }
 ];
