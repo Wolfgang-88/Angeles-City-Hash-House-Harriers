@@ -169,14 +169,6 @@ var RUNS = [
     "hare": "Stump Jumper and Social Distance"
   },
   {
-    "hash": "Angeles Hash",
-    "number": "9999",
-    "date": "12/12/2027",
-    "location": "testing",
-    "remarks": "test",
-    "hare": "you"
-  },
-  {
     "hash": "Beach Hash",
     "number": "461",
     "date": "24/05/2025",
