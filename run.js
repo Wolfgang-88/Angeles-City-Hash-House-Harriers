@@ -169,6 +169,14 @@ var RUNS = [
     "hare": "Stump Jumper and Social Distance"
   },
   {
+    "hash": "Angeles Hash",
+    "number": "2491",
+    "date": "08/11/2026",
+    "location": "Location: Lower Magic Mountain (LMM). Go over The Bridge To Nowhere aka Sacobia River Bridge (TB2NW), take the First Road Left, Next Road Right, Next dirt Road Left. Then take the left down the lower sandy road just before you come to the sharp right bend. You can also continue on the upper dirt road, but this is badly rutted and only suitable for high road clearance vehicles and motorbikes. The sandy road is also shorter and has had the steep incline at the end graded, so it is now a wide and easy incline for all vehicles. Turns will be marked with paper and/or powder. GPS: 15.211180, 120.512690 (15°12'40.3\"N 120°30'45.7\"E) E6G67+F3G https://maps.app.goo.gl/47uo6zJ1sxYP2otD7. Jeepney(s) leave the Premiere Hotel at 2.00 pm sharp. Please arrive at least 15 minutes before if you wish to avail of this service. Journey time from the Premiere Hotel is approx 35 minutes. The On Home is at the Premiere Hotel. PLEASE NOTE: I have added a photo of the newly graded slope on the ACH3 Facebook Pages.Jeepney(s) leave the Premiere Hotel at 2.00 pm SHARP; please arrive at least 15 minutes earlier if you wish to avail of this service. NOTE: Annunas- Cuayan bypass is now open.",
+    "remarks": "Time: 14:00 Jeepneys leave Premiere Hotel\nThe Longer Trail is approximately 5.5 km, the Medium Trail is around 3.5 km, and the Short Trail is around 2.5 km. The Long and Medium Trails do contain one slightly technical incline, so caution is advised. The Medium Trail is Dry Feet. The Short and Long Trails are Dry Feet possible, weather permitting. Trail routes have been laid to avoid as much of the soft lahar road as possible.",
+    "hare": "Facilitator & Bush Wanker (With Yakitty Yak as Driver)"
+  },
+  {
     "hash": "Beach Hash",
     "number": "461",
     "date": "24/05/2025",
@@ -486,14 +494,6 @@ var RUNS = [
     "date": "15/10/2026",
     "location": "VALDEZ. The next Full Moon Hash Run will form part of the Oktoberfest Celebrations and will be held on Thursday, the 15th of Oktober, 2026. The run will start and conclude at the Valdez Luxury Sari-Sari Store, 226 Valdes Street. GPS: 15.16471, 120.58020. Registration is from 6 pm, with the run starting at 6.30 pm. The On Home will be at the Valdez Store.",
     "remarks": "We will do an approximately 4 to 5 km run/walk starting and finishing at the Valdez Store, with the usual free drinks and conversation afterwards. It is advisable, but not essential, to bring a flashlight. The Run Fee is 300P for Men, and 200P for Women. The usual Hash Free Drinks are included after the run has been completed and will last until the funds run out. Valdez Store also offers affordable meals and snacks, which will be available at the Patron's expense.",
-    "hare": "Facilitator"
-  },
-  {
-    "hash": "Full Moon Hash",
-    "number": "177",
-    "date": "19/11/2026",
-    "location": "BARBARINOS. The next Full Moon Hash Run will be held on Thursday, the 19th of November, 2026. The run will start and conclude at Barbarinos Pub & Restaurant, on Zeppelin Street. GPS 15.15956, 120.58162 (15°09'34.4\"N 120°34'53.8\"E) 5H5J+RM . Registration is from 6 pm, with the run starting at 6.30 pm. The On Home will be inside Barbarinos.",
-    "remarks": "We will do an approximately 4 km run/walk starting and finishing at Barbarinos, with the usual free drinks and conversation afterwards. It is advisable, but not essential, to bring a flashlight. The Run Fee is 300P for Men, and 200P for Women. The usual Hash Free Drinks are included after the run has been completed and will last until the funds run out. Barbarinos also offers an extensive menu of affordable meals, which will be available at the Patrons expense.",
     "hare": "Facilitator"
   },
   {
