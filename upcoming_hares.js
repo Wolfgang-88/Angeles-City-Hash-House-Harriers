@@ -1,12 +1,6 @@
 // upcoming_hares.js – list of upcoming hares for angeles.html
 var upcomingHares = [
   {
-    "date": "13/09/2026",
-    "hares": [
-      "Bush Wanker"
-    ]
-  },
-  {
     "date": "20/09/2026",
     "hares": [
       "Facilitator",
@@ -55,6 +49,12 @@ var upcomingHares = [
     "hares": [
       "Stump Jumper",
       "Facilitator"
+    ]
+  },
+  {
+    "date": "12/12/2026",
+    "hares": [
+      "Test"
     ]
   }
 ];
