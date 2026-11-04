@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /dropbox-setup.html
+Disallow: /db-setup.html
 Disallow: /github-setup.html
 Disallow: /leer.html
 

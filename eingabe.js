@@ -1,11 +1,11 @@
 // Add Run form
-// - Members: the entry is sent to the webmaster's Dropbox (dropbox.js)
+// - Members: the entry is sent to the webmaster's db (db.js)
 // - Webmaster (webmaster: true in pw.js): saves directly to run.js and can
 //   import the entries sent by members ("Einträge übernehmen")
 // - Moderator (moderator: true in pw.js): like the webmaster, saves and imports
 //   directly into run.js on GitHub (moderator password, set up by the webmaster
 //   on github-setup.html; if MODERATOR_PASSWORD is set in pw.js it unlocks
-//   automatically) – but without "GitHub einrichten" / "Dropbox einrichten"
+//   automatically) – but without "GitHub einrichten" / "db einrichten"
 // - Only upcoming runs can be added, changed or deleted – past runs are locked
 (function () {
   var form = document.getElementById('runForm');
@@ -187,7 +187,7 @@
   }
 
   // ---------- Remember chosen files/folders between visits (IndexedDB) ----------
-  function db() {
+  function idb() {
     return new Promise(function (res, rej) {
       var r = indexedDB.open('achhh', 1);
       r.onupgradeneeded = function () { r.result.createObjectStore('kv'); };
@@ -196,7 +196,7 @@
     });
   }
   function getHandle(name) {
-    return db().then(function (d) {
+    return idb().then(function (d) {
       return new Promise(function (res) {
         var q = d.transaction('kv').objectStore('kv').get(name);
         q.onsuccess = function () { res(q.result || null); };
@@ -205,7 +205,7 @@
     }).catch(function () { return null; });
   }
   function setHandle(h, name) {
-    return db().then(function (d) {
+    return idb().then(function (d) {
       return new Promise(function (res) {
         var t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(h, name);
         t.oncomplete = res; t.onerror = res;
@@ -519,7 +519,7 @@
     return choice ? { type: choice, idx: idx } : null;
   }
 
-  // Member: send the entry to the webmaster's Dropbox
+  // Member: send the entry to the webmaster's db
   async function sendToWebmaster(run, mode) {
     var published = (await onlineRuns(true)) || ((typeof RUNS !== 'undefined' && Array.isArray(RUNS)) ? RUNS : []);
     var c = await existingChoice(published, run, mode);
@@ -527,7 +527,7 @@
     var entry = { type: c.type, run: run, member: who, sentAt: new Date().toISOString() };
     for (;;) {
       try {
-        await DROPBOX.send(entry);
+        await db.send(entry);
         await popup('Sent', run.hash + ' #' + run.number + (c.type === 'delete' ? ' (delete)' : '') +
           ' has been sent to the webmaster.\nIt will appear on the website as soon as the webmaster has published it.', OK);
         resetForm();
@@ -630,14 +630,14 @@
     resetForm();
   }
 
-  // ---------- Webmaster: import entries from the Dropbox folder ----------
+  // ---------- Webmaster: import entries from the db folder ----------
   var INBOX_HINT = 'D:\\Dropbox\\Apps\\ACH3_upload';
 
   async function inboxHandle(ask) {
     var h = await getHandle('inboxDir');
     if (h && await permitted(h, ask)) return h;
     if (!ask) return null;
-    var go = await popup('Dropbox-Ordner auswählen',
+    var go = await popup('db-Ordner auswählen',
       'Bitte einmalig den Ordner auswählen, in dem die Meldungen der Mitglieder ankommen:\n' + INBOX_HINT,
       [{ label: 'Ordner auswählen', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
     if (!go) return null;
@@ -669,17 +669,17 @@
     await dir.removeEntry(item.name);
   }
 
-  // Reads the members' entries: online from Dropbox (works on every computer).
-  // Only if that is not possible yet (Dropbox permissions not switched on), the webmaster
-  // can still use the local Dropbox folder as before.
+  // Reads the members' entries: online from db (works on every computer).
+  // Only if that is not possible yet (db permissions not switched on), the webmaster
+  // can still use the local db folder as before.
   // -> { online: bool, dir, list, bad, label } or null (cancelled)
   async function loadInbox() {
     try {
-      var r = await DROPBOX.inbox();
-      return { online: true, dir: null, list: r.list, bad: r.bad, label: 'Dropbox (Apps → ACH3_upload)' };
+      var r = await db.inbox();
+      return { online: true, dir: null, list: r.list, bad: r.bad, label: 'db (Apps → ACH3_upload)' };
     } catch (e) {
       if (!(isWebmaster && canWrite && e.scope)) throw e;
-      var local = await popup('Dropbox online nicht lesbar', e.message + '\nStattdessen den Dropbox-Ordner auf diesem Computer verwenden?',
+      var local = await popup('db online nicht lesbar', e.message + '\nStattdessen den db-Ordner auf diesem Computer verwenden?',
         [{ label: 'Lokalen Ordner verwenden', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
       if (!local) return null;
       var dir = await inboxHandle(true);
@@ -745,7 +745,7 @@
     var notMoved = [];
     for (var i = 0; i < inbox.list.length; i++) {
       try {
-        if (inbox.online) await DROPBOX.done(inbox.list[i]);
+        if (inbox.online) await db.done(inbox.list[i]);
         else await moveToDone(inbox.dir, inbox.list[i]);
       } catch (x) { notMoved.push(inbox.list[i].name); }
     }
@@ -759,21 +759,21 @@
   async function showPending() {
     var el = $('pending');
     try {
-      var c = await DROPBOX.count();
+      var c = await db.count();
       el.textContent = c ? c + ' neue Meldung(en) warten auf Übernahme.' : 'Keine neuen Meldungen.';
       return;
     } catch (e) {
       if (!isWebmaster) {
         el.textContent = e.scope
-          ? 'Die Meldungen können noch nicht online gelesen werden – der Webmaster muss dafür die Dropbox-Berechtigungen einschalten.'
+          ? 'Die Meldungen können noch nicht online gelesen werden – der Webmaster muss dafür die db-Berechtigungen einschalten.'
           : 'Meldungen konnten nicht geprüft werden: ' + msgOf(e);
         return;
       }
       if (!e.scope) { el.textContent = 'Meldungen konnten nicht geprüft werden: ' + msgOf(e); return; }
     }
-    // Webmaster, online reading not switched on yet: local Dropbox folder as before
+    // Webmaster, online reading not switched on yet: local db folder as before
     var dir = await inboxHandle(false);
-    if (!dir) { el.textContent = 'Dropbox kann noch nicht online gelesen werden (Berechtigungen einschalten, siehe „Dropbox einrichten“). Klicken, um den lokalen Ordner zu prüfen.'; return; }
+    if (!dir) { el.textContent = 'db kann noch nicht online gelesen werden (Berechtigungen einschalten, siehe „db einrichten“). Klicken, um den lokalen Ordner zu prüfen.'; return; }
     try {
       var n = (await readInbox(dir)).list.length;
       el.textContent = n ? n + ' neue Meldung(en) warten auf Übernahme.' : 'Keine neuen Meldungen.';
