@@ -50,11 +50,5 @@ var upcomingHares = [
       "Stump Jumper",
       "Facilitator"
     ]
-  },
-  {
-    "date": "12/12/2026",
-    "hares": [
-      "Test"
-    ]
   }
 ];
