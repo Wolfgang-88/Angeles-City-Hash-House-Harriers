@@ -489,6 +489,14 @@ var RUNS = [
     "hare": "Facilitator"
   },
   {
+    "hash": "Full Moon Hash",
+    "number": "177",
+    "date": "19/11/2026",
+    "location": "BARBARINOS. The next Full Moon Hash Run will be held on Thursday, the 19th of November, 2026. The run will start and conclude at Barbarinos Pub & Restaurant, on Zeppelin Street. GPS 15.15956, 120.58162 (15°09'34.4\"N 120°34'53.8\"E) 5H5J+RM . Registration is from 6 pm, with the run starting at 6.30 pm. The On Home will be inside Barbarinos.",
+    "remarks": "We will do an approximately 4 km run/walk starting and finishing at Barbarinos, with the usual free drinks and conversation afterwards. It is advisable, but not essential, to bring a flashlight. The Run Fee is 300P for Men, and 200P for Women. The usual Hash Free Drinks are included after the run has been completed and will last until the funds run out. Barbarinos also offers an extensive menu of affordable meals, which will be available at the Patrons expense.",
+    "hare": "Facilitator"
+  },
+  {
     "hash": "Ladies Bushranger Hash",
     "number": "143",
     "date": "13/05/2023",
