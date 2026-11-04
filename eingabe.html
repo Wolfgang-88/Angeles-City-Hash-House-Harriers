@@ -58,14 +58,30 @@
   <p class="err" id="err" role="alert"></p>
   <div class="actions"><button class="btn ghost danger-ghost" type="submit" id="delBtn" hidden>Delete run</button><button class="btn" type="submit" id="saveBtn">Save</button></div>
 </form>
+<section class="panel hare-editor" id="hareEditor" hidden>
+  <h3>Hare list</h3>
+  <p id="hlStatus" role="status">Loading…</p>
+  <div id="hlList" class="run-list"></div>
+  <form class="form hl-form" id="hlForm" novalidate autocomplete="off">
+    <div class="row">
+      <div><label for="hlName">Hare name</label><input id="hlName"></div>
+      <div><label for="hlDate">Date</label><input id="hlDate" placeholder="DD/MM/YYYY" maxlength="10" inputmode="numeric"></div>
+    </div>
+    <p class="err" id="hlErr" role="alert"></p>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="hlAdd">Add hare</button>
+      <button class="btn" type="button" id="hlSave">Save hare list</button>
+    </div>
+  </form>
+</section>
 <section class="panel" id="webmaster" hidden>
   <h3 id="wmTitle">Webmaster</h3>
   <p id="pending"></p>
   <p id="ghStatus"></p>
   <div class="wm-actions">
-    <button class="btn" type="button" id="importBtn">Einträge übernehmen</button>
-    <a class="btn ghost wm-only" href="github-setup.html">GitHub einrichten</a>
-    <a class="btn ghost wm-only" href="db-setup.html">db einrichten</a>
+    <button class="btn" type="button" id="importBtn">Import entries</button>
+    <a class="btn ghost wm-only" href="github-setup.html">Set up GitHub</a>
+    <a class="btn ghost wm-only" href="db-setup.html">Set up db</a>
   </div>
 </section>
 </main>

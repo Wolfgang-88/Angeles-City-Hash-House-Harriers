@@ -5,7 +5,7 @@
 // - Moderator (moderator: true in pw.js): like the webmaster, saves and imports
 //   directly into run.js on GitHub (moderator password, set up by the webmaster
 //   on github-setup.html; if MODERATOR_PASSWORD is set in pw.js it unlocks
-//   automatically) – but without "GitHub einrichten" / "db einrichten"
+//   automatically) – but without "Set up GitHub" / "Set up db"
 // - Only upcoming runs can be added, changed or deleted – past runs are locked
 (function () {
   var form = document.getElementById('runForm');
@@ -65,7 +65,7 @@
     if (GITHUB.unlocked()) return Promise.resolve(true);
     if (!autoTried) autoTried = GITHUB.unlock(autoPw, ghRole).then(function () { return true; }, function (x) {
       if (isOffline(x)) autoTried = null; // try again next time
-      else console.warn('MODERATOR_PASSWORD in pw.js passt nicht:', msgOf(x));
+      else console.warn('MODERATOR_PASSWORD in pw.js does not match:', msgOf(x));
       return false;
     });
     return autoTried;
@@ -79,12 +79,12 @@
     return new Promise(function (resolve) {
       var d = document.createElement('dialog');
       d.className = 'modal';
-      d.innerHTML = '<h2>' + roleName + '-Passwort</h2><form class="panel form" autocomplete="off">' +
-        '<p>Zum Speichern auf GitHub bitte das ' + roleName + '-Passwort eingeben (einmal pro Sitzung).</p>' +
-        '<input type="password" aria-label="' + roleName + '-Passwort" style="margin-top:10px" autocomplete="current-password">' +
+      d.innerHTML = '<h2>' + roleName + ' password</h2><form class="panel form" autocomplete="off">' +
+        '<p>To save on GitHub, please enter the ' + roleName + ' password (once per session).</p>' +
+        '<input type="password" aria-label="' + roleName + ' password" style="margin-top:10px" autocomplete="current-password">' +
         '<p class="err" role="alert"></p>' +
-        '<div class="buttons"><button class="btn" type="submit">Entsperren</button>' +
-        '<button class="btn ghost" type="button">Abbrechen</button></div></form>';
+        '<div class="buttons"><button class="btn" type="submit">Unlock</button>' +
+        '<button class="btn ghost" type="button">Cancel</button></div></form>';
       var f = d.querySelector('form'), inp = d.querySelector('input'), e = d.querySelector('.err');
       var btns = d.querySelectorAll('button');
       function done(v) { d.close(); d.remove(); resolve(v); }
@@ -92,7 +92,7 @@
       f.addEventListener('submit', async function (ev) {
         ev.preventDefault();
         if (!inp.value) return;
-        btns[0].disabled = true; e.textContent = 'Prüfe …';
+        btns[0].disabled = true; e.textContent = 'Checking …';
         try { await GITHUB.unlock(inp.value, ghRole); done(true); }
         catch (x) { e.textContent = msgOf(x); inp.select(); }
         finally { btns[0].disabled = false; }
@@ -110,7 +110,7 @@
     var m = e && e.message ? String(e.message) : '';
     return e instanceof TypeError && /failed to fetch|networkerror|load failed|network request failed/i.test(m);
   }
-  var OFFLINE_MSG = 'Keine Internetverbindung – bitte später erneut versuchen.';
+  var OFFLINE_MSG = 'No internet connection – please try again later.';
   function msgOf(e) { return isOffline(e) ? OFFLINE_MSG : e && e.message ? e.message : String(e); }
 
   // ---------- Date helpers ----------
@@ -228,15 +228,15 @@
     if (h && await permitted(h, true)) {
       try { await h.getFile(); if (h.name.toLowerCase() === 'run.js') return h; } catch (e) {} // renamed or moved: pick again
     }
-    var go = await popup('run.js auswählen',
-      'Bitte einmalig die Datei run.js im Website-Ordner auswählen.',
-      [{ label: 'run.js auswählen', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+    var go = await popup('Select run.js',
+      'Please select the file run.js in the website folder (only once).',
+      [{ label: 'Select run.js', value: true }, { label: 'Cancel', value: false, cls: 'ghost' }]);
     if (!go) return null;
     try {
       h = (await window.showOpenFilePicker({ types: [{ description: 'run.js', accept: { 'text/javascript': ['.js'] } }] }))[0];
     } catch (e) { return null; }
     if (h.name.toLowerCase() !== 'run.js') {
-      await popup('Falsche Datei', 'Bitte die Datei run.js auswählen.', OK);
+      await popup('Wrong file', 'Please select the file run.js.', OK);
       return null;
     }
     if (!(await permitted(h, true))) return null;
@@ -248,9 +248,9 @@
   async function desktopHandle() {
     var h = await getHandle('desktopFile');
     if (h && await permitted(h, true)) return h;
-    var go = await popup('Kopie auf den Desktop',
-      'run.js wird zusätzlich auf dem Desktop gespeichert.\nBitte einmalig den Speicherort bestätigen (Desktop, Dateiname run.js).',
-      [{ label: 'Desktop wählen', value: true }, { label: 'Jetzt nicht', value: false, cls: 'ghost' }]);
+    var go = await popup('Copy to the Desktop',
+      'run.js is also saved on the Desktop.\nPlease confirm the location once (Desktop, file name run.js).',
+      [{ label: 'Choose Desktop', value: true }, { label: 'Not now', value: false, cls: 'ghost' }]);
     if (!go) return null;
     try {
       h = await window.showSaveFilePicker({
@@ -277,7 +277,7 @@
         var dh = await desktopHandle();
         if (dh) await writeFile(dh, text);
       } catch (e) {
-        await popup('Desktop-Kopie fehlgeschlagen', 'run.js wurde gespeichert, aber die Kopie auf dem Desktop nicht.\n' + msgOf(e), OK);
+        await popup('Desktop copy failed', 'run.js has been saved, but the copy on the Desktop has not.\n' + msgOf(e), OK);
       }
     } else {
       download('run.js', text, 'text/javascript');
@@ -600,9 +600,9 @@
   async function saveDirect(run, mode) {
     if (useGitHub()) return saveToGitHub(run, mode);
     if (isModerator) { // no moderator access on GitHub yet: send to the webmaster instead
-      var go = await popup('Moderator-Zugang fehlt',
-        'Der Moderator-Zugang zu GitHub ist noch nicht eingerichtet (macht der Webmaster auf „GitHub einrichten“).\nDer Eintrag wird deshalb an den Webmaster gesendet.',
-        [{ label: 'Senden', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+      var go = await popup('Moderator access missing',
+        'Moderator access to GitHub has not been set up yet (the webmaster does this on "Set up GitHub").\nThe entry will therefore be sent to the webmaster.',
+        [{ label: 'Send', value: true }, { label: 'Cancel', value: false, cls: 'ghost' }]);
       return go ? sendToWebmaster(run, mode) : undefined;
     }
     var handle = null, runs;
@@ -625,7 +625,7 @@
     try { RUNS = runs; } catch (e) {} // later lookups on this page see the change
     var msg = run.hash + ' #' + run.number + ' has been ' + action + ' in run.js on your computer.';
     if (!handle) msg = run.hash + ' #' + run.number + ' has been ' + action + '. Your browser cannot save directly, so run.js has been downloaded – please replace the run.js in your website folder with it.';
-    msg += '\nTo show it on the website, upload run.js to GitHub.\nTip: after „GitHub einrichten“ this happens automatically.';
+    msg += '\nTo show it on the website, upload run.js to GitHub.\nTip: after "Set up GitHub" this happens automatically.';
     await popup(action === 'deleted' ? 'Deleted' : 'Saved', msg, OK);
     resetForm();
   }
@@ -637,9 +637,9 @@
     var h = await getHandle('inboxDir');
     if (h && await permitted(h, ask)) return h;
     if (!ask) return null;
-    var go = await popup('db-Ordner auswählen',
-      'Bitte einmalig den Ordner auswählen, in dem die Meldungen der Mitglieder ankommen:\n' + INBOX_HINT,
-      [{ label: 'Ordner auswählen', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+    var go = await popup('Select db folder',
+      'Please select the folder where the members\' entries arrive (only once):\n' + INBOX_HINT,
+      [{ label: 'Select folder', value: true }, { label: 'Cancel', value: false, cls: 'ghost' }]);
     if (!go) return null;
     try { h = await window.showDirectoryPicker({ id: 'achhh-inbox', mode: 'readwrite' }); }
     catch (e) { return null; }
@@ -679,30 +679,30 @@
       return { online: true, dir: null, list: r.list, bad: r.bad, label: 'db (Apps → ACH3_upload)' };
     } catch (e) {
       if (!(isWebmaster && canWrite && e.scope)) throw e;
-      var local = await popup('db online nicht lesbar', e.message + '\nStattdessen den db-Ordner auf diesem Computer verwenden?',
-        [{ label: 'Lokalen Ordner verwenden', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+      var local = await popup('db cannot be read online', e.message + '\nUse the db folder on this computer instead?',
+        [{ label: 'Use local folder', value: true }, { label: 'Cancel', value: false, cls: 'ghost' }]);
       if (!local) return null;
       var dir = await inboxHandle(true);
       if (!dir) return null;
       var l = await readInbox(dir);
-      return { online: false, dir: dir, list: l.list, bad: l.bad, label: 'Ordner „' + dir.name + '“' };
+      return { online: false, dir: dir, list: l.list, bad: l.bad, label: 'folder "' + dir.name + '"' };
     }
   }
 
   async function importEntries() {
     if (isModerator && !useGitHub()) {
-      await popup('Moderator-Zugang fehlt', 'Der Moderator-Zugang zu GitHub ist noch nicht eingerichtet. Bitte den Webmaster, ihn auf „GitHub einrichten“ anzulegen.', OK);
+      await popup('Moderator access missing', 'Moderator access to GitHub has not been set up yet. Please ask the webmaster to set it up on "Set up GitHub".', OK);
       return;
     }
     if (!useGitHub() && !canWrite) {
-      await popup('Nicht möglich', 'Ohne GitHub-Zugang muss run.js auf diesem Computer gespeichert werden – das funktioniert nur in Chrome oder Edge.', OK);
+      await popup('Not possible', 'Without GitHub access, run.js must be saved on this computer – this only works in Chrome or Edge.', OK);
       return;
     }
     var inbox = await loadInbox();
     if (!inbox) return;
     if (!inbox.list.length) {
-      await popup('Keine neuen Einträge', 'In ' + inbox.label + ' liegen keine neuen Meldungen.' +
-        (inbox.bad.length ? '\nNicht lesbar: ' + inbox.bad.join(', ') : ''), OK);
+      await popup('No new entries', 'There are no new entries in ' + inbox.label + '.' +
+        (inbox.bad.length ? '\nUnreadable: ' + inbox.bad.join(', ') : ''), OK);
       return showPending();
     }
     var gh = useGitHub(), handle = null, file = null, runs;
@@ -715,29 +715,29 @@
       if (!handle) return;
       runs = parseRuns(await (await handle.getFile()).text());
     }
-    if (!runs) { await popup('Fehler', 'run.js konnte nicht gelesen werden.', OK); return; }
+    if (!runs) { await popup('Error', 'run.js could not be read.', OK); return; }
 
     function applyAll(list) {
       return inbox.list.map(function (it) {
         var e = it.entry, idx = findRun(list, e.run), what;
         if (e.type === 'delete') {
-          if (idx >= 0) { list.splice(idx, 1); what = 'gelöscht'; } else what = 'löschen – war nicht vorhanden';
-        } else if (idx >= 0) { list[idx] = e.run; what = 'geändert'; }
-        else { list.push(e.run); what = 'neu'; }
-        return '• ' + e.run.hash + ' #' + e.run.number + ' (' + (e.run.date || 'ohne Datum') + ') – ' + what +
-          (e.member ? ', von ' + e.member : '');
+          if (idx >= 0) { list.splice(idx, 1); what = 'deleted'; } else what = 'delete – did not exist';
+        } else if (idx >= 0) { list[idx] = e.run; what = 'changed'; }
+        else { list.push(e.run); what = 'new'; }
+        return '• ' + e.run.hash + ' #' + e.run.number + ' (' + (e.run.date || 'no date') + ') – ' + what +
+          (e.member ? ', from ' + e.member : '');
       });
     }
     var lines = applyAll(runs);
-    var ok = await popup('Einträge übernehmen',
-      inbox.list.length + ' Meldung(en) gefunden:\n' + lines.join('\n') +
-      (inbox.bad.length ? '\nNicht lesbar (bleiben liegen): ' + inbox.bad.join(', ') : '') +
-      (gh ? '\nÜbernehmen und auf GitHub veröffentlichen?' : '\nIn run.js übernehmen?'),
-      [{ label: 'Übernehmen', value: true }, { label: 'Abbrechen', value: false, cls: 'ghost' }]);
+    var ok = await popup('Import entries',
+      inbox.list.length + ' entr(y/ies) found:\n' + lines.join('\n') +
+      (inbox.bad.length ? '\nUnreadable (left in place): ' + inbox.bad.join(', ') : '') +
+      (gh ? '\nImport and publish on GitHub?' : '\nImport into run.js?'),
+      [{ label: 'Import', value: true }, { label: 'Cancel', value: false, cls: 'ghost' }]);
     if (!ok) return;
 
     if (gh) {
-      await commitToGitHub(file, applyAll, inbox.list.length + ' Meldung(en) der Mitglieder übernommen' +
+      await commitToGitHub(file, applyAll, inbox.list.length + ' member entr(y/ies) imported' +
         (lines.length ? '\n\n' + lines.join('\n') : ''));
     } else {
       await writeRuns(handle, runs);
@@ -749,10 +749,10 @@
         else await moveToDone(inbox.dir, inbox.list[i]);
       } catch (x) { notMoved.push(inbox.list[i].name); }
     }
-    await popup('Übernommen', inbox.list.length + ' Meldung(en) wurden übernommen und in den Unterordner „erledigt“ verschoben.\n' +
-      (gh ? 'run.js ist auf GitHub gespeichert – in etwa 1–2 Minuten auf der Website sichtbar.'
-          : 'Damit sie auf der Website erscheinen: run.js bei GitHub hochladen.') +
-      (notMoved.length ? '\nKonnten nicht verschoben werden (bitte von Hand löschen): ' + notMoved.join(', ') : ''), OK);
+    await popup('Imported', inbox.list.length + ' entr(y/ies) imported and moved to the subfolder "erledigt" (done).\n' +
+      (gh ? 'run.js has been saved on GitHub – visible on the website in about 1–2 minutes.'
+          : 'To show them on the website: upload run.js to GitHub.') +
+      (notMoved.length ? '\nCould not be moved (please delete by hand): ' + notMoved.join(', ') : ''), OK);
     location.reload();
   }
 
@@ -760,41 +760,239 @@
     var el = $('pending');
     try {
       var c = await db.count();
-      el.textContent = c ? c + ' neue Meldung(en) warten auf Übernahme.' : 'Keine neuen Meldungen.';
+      el.textContent = c ? c + ' new entr(y/ies) waiting to be imported.' : 'No new entries.';
       return;
     } catch (e) {
       if (!isWebmaster) {
         el.textContent = e.scope
-          ? 'Die Meldungen können noch nicht online gelesen werden – der Webmaster muss dafür die db-Berechtigungen einschalten.'
-          : 'Meldungen konnten nicht geprüft werden: ' + msgOf(e);
+          ? 'The entries cannot be read online yet – the webmaster has to switch on the db permissions first.'
+          : 'Entries could not be checked: ' + msgOf(e);
         return;
       }
-      if (!e.scope) { el.textContent = 'Meldungen konnten nicht geprüft werden: ' + msgOf(e); return; }
+      if (!e.scope) { el.textContent = 'Entries could not be checked: ' + msgOf(e); return; }
     }
     // Webmaster, online reading not switched on yet: local db folder as before
     var dir = await inboxHandle(false);
-    if (!dir) { el.textContent = 'db kann noch nicht online gelesen werden (Berechtigungen einschalten, siehe „db einrichten“). Klicken, um den lokalen Ordner zu prüfen.'; return; }
+    if (!dir) { el.textContent = 'db cannot be read online yet (switch on the permissions, see "Set up db"). Click "Import entries" to check the local folder.'; return; }
     try {
       var n = (await readInbox(dir)).list.length;
-      el.textContent = n ? n + ' neue Meldung(en) warten auf Übernahme.' : 'Keine neuen Meldungen.';
+      el.textContent = n ? n + ' new entr(y/ies) waiting to be imported.' : 'No new entries.';
     } catch (e) { el.textContent = ''; }
   }
 
+  // ---------- Hare list (upcoming_hares.js) – Webmaster / Moderator ----------
+  // Read from GitHub, edited here, saved back to GitHub with the same access as run.js
+  var HL_FILE = 'upcoming_hares.js';
+  var hl = { list: [], sha: null, dirty: false, loaded: false };
+  var hlSaving = false;
+
+  function hlKey(d) { var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(d || ''); return m ? +(m[3] + m[2] + m[1]) : 0; }
+  function hlParse(text) {
+    try {
+      var r = new Function(text + '\n;return typeof upcomingHares !== "undefined" ? upcomingHares : [];')();
+      if (!Array.isArray(r)) return null;
+      return r.map(function (e) {
+        var h = Array.isArray(e && e.hares) ? e.hares : (e && e.hares ? [e.hares] : []);
+        return { date: String((e && e.date) || '').trim(), hares: h.map(function (x) { return String(x).trim(); }).filter(Boolean) };
+      });
+    } catch (e) { return null; }
+  }
+  function hlText(list) {
+    var clean = list.filter(function (e) { return e.hares.length; })
+      .sort(function (a, b) { return hlKey(a.date) - hlKey(b.date); });
+    return '// upcoming_hares.js – list of upcoming hares for angeles.html\n' +
+           'var upcomingHares = ' + JSON.stringify(clean, null, 2) + ';\n';
+  }
+  function hlStatus(text, dirty) {
+    var el = $('hlStatus'); el.textContent = text; el.classList.toggle('dirty', !!dirty);
+  }
+  function hlSetDirty(on) {
+    hl.dirty = on;
+    hlStatus(on ? 'Unsaved changes – click "Save hare list" to publish them.' :
+      'Upcoming hares. Add or delete hares below, then click "Save hare list".', on);
+  }
+
+  function hlRender() {
+    var box = $('hlList');
+    box.innerHTML = '';
+    var list = hl.list.filter(function (e) { return e.hares.length; })
+      .sort(function (a, b) { return hlKey(a.date) - hlKey(b.date); });
+    if (!list.length) { var p = document.createElement('p'); p.textContent = 'No hares listed yet.'; box.appendChild(p); return; }
+    var table = document.createElement('table');
+    table.className = 'runs-table hares-table';
+    table.innerHTML = '<thead><tr><th>Date</th><th>Hares</th></tr></thead><tbody></tbody>';
+    var tb = table.querySelector('tbody'), today = todayKey();
+    list.forEach(function (e) {
+      var tr = document.createElement('tr');
+      if (hlKey(e.date) && hlKey(e.date) < today) tr.className = 'past';
+      var td1 = document.createElement('td'); td1.textContent = e.date || '(no date)';
+      var td2 = document.createElement('td');
+      e.hares.forEach(function (name, i) {
+        var chip = document.createElement('span'); chip.className = 'hl-chip';
+        var t = document.createElement('span'); t.textContent = name;
+        var x = document.createElement('button');
+        x.type = 'button'; x.className = 'hl-del'; x.textContent = '×';
+        x.title = 'Delete ' + name + ' (' + e.date + ')';
+        x.setAttribute('aria-label', x.title);
+        x.addEventListener('click', function () { hlDelete(e, i); });
+        chip.appendChild(t); chip.appendChild(x); td2.appendChild(chip);
+      });
+      tr.appendChild(td1); tr.appendChild(td2); tb.appendChild(tr);
+    });
+    box.appendChild(table);
+  }
+
+  async function hlDelete(entry, i) {
+    var name = entry.hares[i];
+    var ok = await popup('Delete hare', 'Remove ' + name + ' from ' + entry.date + '?',
+      [{ label: 'Delete', value: true, cls: 'danger' }, { label: 'Cancel', value: false, cls: 'ghost' }]);
+    if (!ok) return;
+    entry.hares.splice(i, 1);
+    if (!entry.hares.length) hl.list.splice(hl.list.indexOf(entry), 1);
+    hlRender(); hlSetDirty(true);
+  }
+
+  function hlAdd() {
+    var e = $('hlErr'); e.textContent = '';
+    var name = $('hlName').value.trim(), date = $('hlDate').value.trim();
+    if (!name) { e.textContent = 'Please enter the hare name.'; $('hlName').focus(); return false; }
+    if (!date) { e.textContent = 'Please enter the date (DD/MM/YYYY).'; $('hlDate').focus(); return false; }
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) { e.textContent = 'Please enter the date as DD/MM/YYYY, e.g. 08/11/2026.'; $('hlDate').focus(); return false; }
+    if (!validDate(date)) { e.textContent = date + ' is not a valid date. Format: DD/MM/YYYY.'; $('hlDate').focus(); return false; }
+    if (hlKey(date) < todayKey()) { e.textContent = date + ' is in the past. Only upcoming hares can be added.'; $('hlDate').focus(); return false; }
+    if (Math.floor(hlKey(date) / 10000) > new Date().getFullYear() + MAX_YEARS_AHEAD) { e.textContent = date + ' is too far in the future – please check the year.'; $('hlDate').focus(); return false; }
+    var entry = hl.list.filter(function (x) { return x.date === date; })[0];
+    if (entry && entry.hares.some(function (h) { return h.toLowerCase() === name.toLowerCase(); })) {
+      e.textContent = name + ' is already listed for ' + date + '.'; return false;
+    }
+    if (entry) entry.hares.push(name); else hl.list.push({ date: date, hares: [name] });
+    $('hlName').value = '';
+    hlRender(); hlSetDirty(true);
+    $('hlName').focus();
+    return true;
+  }
+
+  // Current upcoming_hares.js: GitHub (with access code) -> public GitHub -> the copy on this website
+  async function hlLoad() {
+    hlStatus('Loading the hare list …');
+    var text = null, sha = null, src = 'GitHub';
+    try {
+      if (useGitHub() && (GITHUB.unlocked() || await autoUnlock())) {
+        var f = await GITHUB.read(HL_FILE); text = f.text; sha = f.sha;
+      }
+    } catch (e) { if (e.status === 404) { text = ''; } }
+    if (text === null) {
+      try {
+        var ra = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + HL_FILE + '?ref=' + GH_BRANCH + '&t=' + Date.now(), { cache: 'no-store' });
+        if (ra.ok) { var j = await ra.json(); if (j && typeof j.content === 'string') { text = b64utf8(j.content); sha = j.sha; } }
+        else if (ra.status === 404) text = '';
+      } catch (e) {}
+    }
+    if (text === null) {
+      try {
+        var r = await fetch('https://raw.githubusercontent.com/' + GH_REPO + '/' + GH_BRANCH + '/' + HL_FILE + '?t=' + Date.now(), { cache: 'no-store' });
+        if (r.ok) text = await r.text();
+      } catch (e) {}
+    }
+    if (text === null) {
+      try {
+        var r2 = await fetch(HL_FILE + '?t=' + Date.now(), { cache: 'no-store' });
+        if (r2.ok) { text = await r2.text(); src = 'this website'; }
+      } catch (e) {}
+    }
+    var list = text === '' ? [] : text === null ? null : hlParse(text);
+    if (!list) { hl.loaded = false; hlStatus('The hare list could not be loaded. Please reload the page.', true); return; }
+    hl.list = list; hl.sha = sha; hl.loaded = true;
+    hlRender(); hlSetDirty(false);
+    if (src !== 'GitHub') hlStatus('Loaded from ' + src + ' (GitHub could not be reached).', true);
+  }
+
+  async function hlSave() {
+    var e = $('hlErr'); e.textContent = '';
+    if (hlSaving) return;
+    if (!hl.loaded) { await popup('Not loaded', 'The hare list could not be loaded, so it cannot be saved.\nPlease reload the page.', OK); return; }
+    // Name/date typed but "Add hare" not clicked: add them first
+    if ($('hlName').value.trim() || $('hlDate').value.trim()) {
+      if (!hlAdd()) return; // error is shown below the fields
+    }
+    if (!hl.dirty) {
+      await popup('Nothing to save', 'The hare list has not been changed.\nEnter a hare name and date and click "Add hare", or delete a hare with ×, then click "Save hare list".', OK);
+      return;
+    }
+    var text = hlText(hl.list);
+    var btn = $('hlSave'); hlSaving = true; btn.disabled = true; btn.textContent = 'Saving …';
+    hlStatus('Saving the hare list …', true);
+    try {
+      if (!useGitHub()) {
+        download(HL_FILE, text, 'text/javascript');
+        await popup('Downloaded', 'GitHub is not set up, so ' + HL_FILE + ' has been downloaded.\nPlease upload it to GitHub by hand.', OK);
+        hlSetDirty(false);
+        return;
+      }
+      if (!(await ensureUnlocked())) { hlSetDirty(true); return; }
+      if (!hl.sha) { try { hl.sha = (await GITHUB.read(HL_FILE)).sha; } catch (x) { if (x.status !== 404) throw x; } }
+      try {
+        var res = await GITHUB.write(HL_FILE, text, hl.sha, 'Hare list updated' + (who ? ' (' + who + ')' : ''));
+        hl.sha = res && res.content ? res.content.sha : null;
+      } catch (x) {
+        if (!x.conflict) throw x;
+        var reload = await popup('Hare list changed',
+          HL_FILE + ' was changed on GitHub in the meantime (by someone else).\nReload the current list? Your unsaved changes will be lost.',
+          [{ label: 'Reload', value: true }, { label: 'Cancel', value: false, cls: 'ghost' }]);
+        if (reload) await hlLoad(); else hlSetDirty(true);
+        return;
+      }
+      hlSetDirty(false);
+      var t = new Date();
+      hlStatus('✓ Saved on GitHub at ' + ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2) +
+        ' – visible on the ACH3 page in about 1–2 minutes.');
+      await popup('Saved', 'The hare list has been saved on GitHub.\nIt will be visible on the ACH3 page (angeles.html) in about 1–2 minutes.', OK);
+    } catch (x) {
+      e.textContent = 'Saving failed: ' + msgOf(x);
+      hlStatus('Not saved – see the error below.', true);
+      await popup('Saving failed', 'The hare list could not be saved:\n' + msgOf(x), OK);
+    } finally {
+      hlSaving = false;
+      btn.textContent = 'Save hare list';
+      btn.disabled = false;
+    }
+  }
+
+  // Auto-insert the slashes in the hare date (same as the run date)
+  $('hlDate').addEventListener('input', function (e) {
+    if (e.inputType && e.inputType.indexOf('delete') === 0) return;
+    var v = this.value.replace(/[^\d]/g, '').slice(0, 8);
+    if (v.length > 4) v = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4);
+    else if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+    this.value = v;
+  });
+  $('hlForm').addEventListener('submit', function (e) { e.preventDefault(); });
+  $('hlForm').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); hlAdd(); }
+  });
+  $('hlAdd').addEventListener('click', hlAdd);
+  $('hlSave').addEventListener('click', function () {
+    hlSave().catch(function (x) { popup('Error', msgOf(x), OK); });
+  });
+  window.addEventListener('beforeunload', function (e) { if (hl.dirty) { e.preventDefault(); e.returnValue = ''; } });
+
   if (canPublish) {
+    $('hareEditor').hidden = false;
+    hlLoad();
     $('webmaster').hidden = false;
     $('wmTitle').textContent = roleName;
     if (isModerator) document.querySelectorAll('#webmaster .wm-only').forEach(function (el) { el.hidden = true; });
     var ghEl = $('ghStatus');
     if (ghEl) {
       ghEl.textContent = useGitHub()
-        ? '✓ GitHub eingerichtet – Speichern veröffentlicht run.js direkt (' +
-          (autoPw ? 'automatisch entsperrt' : roleName + '-Passwort einmal pro Sitzung') + ').'
+        ? '✓ GitHub is set up – Save publishes run.js and the hare list directly (' +
+          (autoPw ? 'unlocked automatically' : roleName + ' password once per session') + ').'
         : isModerator
-          ? 'Moderator-Zugang zu GitHub ist noch nicht eingerichtet – bitte beim Webmaster melden.'
-          : 'GitHub ist nicht eingerichtet – run.js muss von Hand hochgeladen werden.';
+          ? 'Moderator access to GitHub has not been set up yet – please contact the webmaster.'
+          : 'GitHub is not set up – run.js has to be uploaded by hand.';
     }
     $('importBtn').addEventListener('click', function () {
-      importEntries().catch(function (e) { popup('Fehler', msgOf(e), OK); });
+      importEntries().catch(function (e) { popup('Error', msgOf(e), OK); });
     });
     showPending();
     autoUnlock(); // Moderator with MODERATOR_PASSWORD: unlock right away in the background

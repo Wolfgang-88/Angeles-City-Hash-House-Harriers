@@ -40,7 +40,7 @@ var GITHUB = (function () {
 
   // ---------- Encryption of the access code ----------
   async function deriveKey(password, salt, iter) {
-    if (!window.crypto || !crypto.subtle) throw new Error('Dieser Browser kann hier nicht verschlüsseln. Bitte die Website über https:// öffnen.');
+    if (!window.crypto || !crypto.subtle) throw new Error('This browser cannot encrypt here. Please open the website via https://.');
     var base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
     return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: iter, hash: 'SHA-256' },
       base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
@@ -56,7 +56,7 @@ var GITHUB = (function () {
     try {
       var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBytes(enc.iv) }, key, b64ToBytes(enc.data));
       return new TextDecoder().decode(plain);
-    } catch (e) { throw new Error('Falsches ' + (label || 'Webmaster-Passwort') + '.'); }
+    } catch (e) { throw new Error('Wrong ' + (label || 'webmaster password') + '.'); }
   }
   function validEnc(c) { return !!(c && c.data && c.salt && c.iv); }
   // enc = webmaster copy; mod = moderator copy (optional)
@@ -73,12 +73,12 @@ var GITHUB = (function () {
   async function fail(r) {
     var j = await r.json().catch(function () { return {}; });
     var m = j.message || ('HTTP ' + r.status);
-    if (r.status === 401) m = 'Der GitHub-Zugangscode ist ungültig oder abgelaufen. Bitte auf „GitHub einrichten“ einen neuen eintragen.';
-    else if (r.status === 403) m = 'Der GitHub-Zugangscode hat keinen Schreib-/Lesezugriff auf ' + REPO +
-      ' (nötig: „Contents: Read and write“). GitHub meldet: ' + (j.message || r.status);
+    if (r.status === 401) m = 'The GitHub access code is invalid or has expired. Please enter a new one on "Set up GitHub".';
+    else if (r.status === 403) m = 'The GitHub access code has no read/write access to ' + REPO +
+      ' (needed: "Contents: Read and write"). GitHub says: ' + (j.message || r.status);
     var e = new Error(m); e.status = r.status; throw e;
   }
-  function need(t) { if (!t) throw new Error('GitHub ist nicht entsperrt.'); return t; }
+  function need(t) { if (!t) throw new Error('GitHub is not unlocked.'); return t; }
 
   // -> { text, sha }
   async function read(path, t) {
@@ -108,13 +108,13 @@ var GITHUB = (function () {
   async function test(t) {
     try { await read('run.js', t); }
     catch (e) {
-      if (e.status === 404) throw new Error('Der Zugangscode hat keinen Zugriff auf das Repository ' + REPO + ' (bei „Repository access“ auswählen).');
+      if (e.status === 404) throw new Error('The access code has no access to the repository ' + REPO + ' (select it under "Repository access").');
       throw e;
     }
     var r = await fetch(API, { headers: headers(t), cache: 'no-store' });
     if (!r.ok) await fail(r);
     var j = await r.json();
-    if (j.permissions && j.permissions.push === false) throw new Error('Dieser Zugangscode darf im Repository nicht schreiben.');
+    if (j.permissions && j.permissions.push === false) throw new Error('This access code is not allowed to write to the repository.');
   }
 
   return {
@@ -127,8 +127,8 @@ var GITHUB = (function () {
     unlocked: function () { return !!sessionToken(); },
     unlock: async function (password, role) {
       var t = role === 'moderator'
-        ? await decrypt(cfg().moderator, password, 'Moderator-Passwort')
-        : await decrypt(cfg(), password, 'Webmaster-Passwort');
+        ? await decrypt(cfg().moderator, password, 'moderator password')
+        : await decrypt(cfg(), password, 'webmaster password');
       sessionStorage.setItem(SESSION_KEY, t);
     },
     lock: function () { try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {} },
@@ -153,7 +153,7 @@ var GITHUB = (function () {
       var cur = await read('github-config.js', t);
       var main = null;
       try { main = new Function(cur.text + '\n;return typeof GITHUB_CONFIG !== "undefined" ? GITHUB_CONFIG : null;')(); } catch (e) {}
-      if (!validEnc(main)) throw new Error('github-config.js auf GitHub ist nicht lesbar. Bitte zuerst GitHub einrichten.');
+      if (!validEnc(main)) throw new Error('github-config.js on GitHub cannot be read. Please set up GitHub first.');
       var text = configText(main, await encrypt(t, modPassword));
       await write('github-config.js', text, cur.sha, 'Moderator-Zugang (verschlüsselt) aktualisiert', t);
       return text;
@@ -164,7 +164,7 @@ var GITHUB = (function () {
       var cur = await read('github-config.js', t);
       var main = null;
       try { main = new Function(cur.text + '\n;return typeof GITHUB_CONFIG !== "undefined" ? GITHUB_CONFIG : null;')(); } catch (e) {}
-      if (!validEnc(main)) throw new Error('github-config.js auf GitHub ist nicht lesbar.');
+      if (!validEnc(main)) throw new Error('github-config.js on GitHub cannot be read.');
       var text = configText(main, null);
       await write('github-config.js', text, cur.sha, 'Moderator-Zugang entfernt', t);
       return text;

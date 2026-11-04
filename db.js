@@ -40,10 +40,10 @@ var db = (function () {
     var summary = j.error_summary || t || ('HTTP ' + r.status);
     var e;
     if (/missing_scope/.test(summary) || (j.error && j.error['.tag'] === 'missing_scope')) {
-      e = new Error('Der db-Zugang darf die Meldungen noch nicht lesen. Der Webmaster muss in der db App Console die Berechtigungen „files.content.read“ und „files.metadata.read“ einschalten und danach „db einrichten“ neu durchlaufen.');
+      e = new Error('The db access is not yet allowed to read the entries. The webmaster has to switch on the permissions "files.content.read" and "files.metadata.read" in the db App Console and then run "Set up db" again.');
       e.scope = true;
     } else if (r.status === 401) {
-      e = new Error('Der db-Zugang ist ungültig oder abgelaufen. Der Webmaster muss „db einrichten“ neu durchlaufen.');
+      e = new Error('The db access is invalid or has expired. The webmaster has to run "Set up db" again.');
       e.scope = true;
     } else {
       e = new Error('db meldet: ' + summary);
@@ -138,14 +138,14 @@ var db = (function () {
     startAuth: startAuth, finishAuth: finishAuth,
     // Reads a text file from the app folder (e.g. '/pw.js' for the member list, see pw-loader.js)
     readFile: function (path) {
-      if (!this.configured()) return Promise.reject(new Error('db ist noch nicht eingerichtet (db-config.js).'));
+      if (!this.configured()) return Promise.reject(new Error('db has not been set up yet (db-config.js).'));
       return downloadText(path);
     },
 
     // ---------- Reading the members' entries (Webmaster / Moderator) ----------
     // -> { list: [{ name, path, entry }], bad: [names] }, oldest entry first
     inbox: async function () {
-      if (!this.configured()) throw new Error('db ist noch nicht eingerichtet (db-config.js).');
+      if (!this.configured()) throw new Error('db has not been set up yet (db-config.js).');
       var files = (await listFiles()).filter(function (f) { return /\.json$/i.test(f.name); });
       var list = [], bad = [];
       for (var i = 0; i < files.length; i++) {
