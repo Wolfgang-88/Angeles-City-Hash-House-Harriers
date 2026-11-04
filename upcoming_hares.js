@@ -3,7 +3,6 @@ var upcomingHares = [
   {
     "date": "20/09/2026",
     "hares": [
-      "Facilitator",
       "Brain Dead"
     ]
   },
