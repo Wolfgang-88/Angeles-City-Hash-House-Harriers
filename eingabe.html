@@ -73,13 +73,21 @@
 </div>
 <!-- run.js always fresh (never from cache), so new runs show up right away -->
 <script>document.write('<script src="run.js?t=' + Date.now() + '"><\/script>');</script>
-<script src="pw.js"></script>
 <script src="login.js"></script>
 <script src="dropbox-config.js"></script>
 <script src="dropbox.js"></script>
+<!-- pw.js (Mitgliederliste) kommt aus der Dropbox, nicht aus dem Repository -->
+<script src="pw-loader.js"></script>
 <script>document.write('<script src="github-config.js?t=' + Date.now() + '"><\/script>');</script>
 <script>document.write('<script src="github.js?t=' + Date.now() + '"><\/script>');</script>
-<!-- eingabe.js always fresh too, so changes to the form take effect right away -->
-<script>document.write('<script src="eingabe.js?t=' + Date.now() + '"><\/script>');</script>
+<!-- eingabe.js always fresh too, so changes to the form take effect right away.
+     Started only after pw.js has been loaded from Dropbox (needs MEMBERS). -->
+<script>
+PW_READY.then(function () {
+  var s = document.createElement('script');
+  s.src = 'eingabe.js?t=' + Date.now();
+  document.body.appendChild(s);
+});
+</script>
 </body>
 </html>

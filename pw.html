@@ -39,15 +39,21 @@
     <p class="register">To register, send your name and your desired password to <a href="mailto:tuloy@ymail.com">tuloy@ymail.com</a></p>
   </form>
 </div>
-<script src="pw.js"></script>
+<script src="dropbox-config.js"></script>
+<script src="dropbox.js"></script>
+<script src="pw-loader.js"></script>
 <script>
-document.getElementById('loginForm').addEventListener('submit', function (e) {
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
+  var btn = this.querySelector('button');
+  btn.disabled = true;
+  await PW_READY; // Mitgliederliste aus der Dropbox
+  btn.disabled = false;
   var name = document.getElementById('name').value.trim();
   var pw = document.getElementById('pw').value;
   var msg = document.getElementById('msg');
   if (typeof MEMBERS === 'undefined') {
-    msg.textContent = 'pw.js konnte nicht geladen werden.';
+    msg.textContent = PW_ERROR || 'pw.js konnte nicht geladen werden.';
     return;
   }
   var ok = MEMBERS.some(function (m) {

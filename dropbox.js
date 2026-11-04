@@ -136,6 +136,11 @@ var DROPBOX = (function () {
       return upload(refreshToken, '/verbindungstest.txt', 'Verbindungstest ' + new Date().toLocaleString() + ' – diese Datei kann gelöscht werden.', true);
     },
     startAuth: startAuth, finishAuth: finishAuth,
+    // Reads a text file from the app folder (e.g. '/pw.js' for the member list, see pw-loader.js)
+    readFile: function (path) {
+      if (!this.configured()) return Promise.reject(new Error('Dropbox ist noch nicht eingerichtet (dropbox-config.js).'));
+      return downloadText(path);
+    },
 
     // ---------- Reading the members' entries (Webmaster / Moderator) ----------
     // -> { list: [{ name, path, entry }], bad: [names] }, oldest entry first
