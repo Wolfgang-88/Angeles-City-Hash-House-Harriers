@@ -32,7 +32,7 @@
   <form class="panel" id="loginForm" autocomplete="off">
     <label for="name">Name</label>
     <input id="name" name="name" type="text" required autofocus>
-    <label for="pw">Passwort</label>
+    <label for="pw">Password</label>
     <input id="pw" name="pw" type="password" required>
     <button type="submit">Log In</button>
     <p class="msg" id="msg" role="status"></p>
@@ -65,7 +65,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
   if (!ok) {
     // Falscher Name oder Passwort: Log-In-Fenster schliessen
     if (embedded) { window.parent.postMessage({ type: 'login-fail' }, '*'); return; }
-    msg.textContent = 'Name oder Passwort falsch.';
+    msg.textContent = 'Name or Password wrong.';
     return;
   }
 
