@@ -11,7 +11,7 @@ const upcomingEvents = [
     "Event_Description": "Free Food and Drinks this coming Saturday 🍺🍺🍰🍰\n\nSoggy Butt Birthday Nov 7 Bad Decisions Bar 5 pm"
   },
   {
-    "Event_Headline": "Christmas Dinner 17 Dec. 2026",
+    "Event_Headline": "Christmas Dinner",
     "Event_Date": "2026-12-17",
     "Event_Description": "The **Hash Christmas Dinner** will be at ACEL (Kudu's place) just behind La Grande.  \nMeet at 6.00 with dinner at 6.30.\nThe format will be exactly the same as previous years.\nThe menu will also be the same as previous years and will be an all you-can-eat buffet, consisting of:\n---\n- Pumpkin Soup\n---\n- Turkey \n- Chicken \n- Ham \n- Pigs in Blankets\n- Stuffing\n- Boiled White Rice\n---\n- Roast Potatoes\n- Boiled/Mashed Potatoes\n- Carrots\n- Broccoli\n- Peas\n- Brussel Sprouts\n---\n- Gravy\n- Cranberry Sauce\n---\n- Mince Pies \n- Custard\n---\n- Brewed Coffee / Milk \n---\nMore important to the average hasher is the drinks menu and we will have ample supplies of beer, wine and soft drinks which are all included in the price.\nNo doubt the girls will organise games again and prizes will be provided for all winners.\nHash cash will be taking payments from this Sunday and the price will be P1,000 per person.  \nTickets are linited to 70 people so it is first in best dressed.\n"
   }

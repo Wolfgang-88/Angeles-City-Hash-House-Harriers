@@ -20,12 +20,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="style.css">
 <style>
-/* Event links below "Activities", one per line (earliest on top): same size as "Activities", standout colour */
-.festive .festive-head{flex-direction:column;align-items:flex-start;gap:8px}
-.festive #event-links{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+/* Event links below "Activities", one per line (earliest on top): date on the left like the run list, standout colour */
+.festive .festive-head{flex-direction:column;align-items:stretch;gap:8px}
+.festive #event-links{display:flex;flex-direction:column;gap:6px}
 .festive #event-links[hidden]{display:none}
-.festive .event-link{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,4.5vw,2.3rem);line-height:1.05;
-  color:#a3161a;border-bottom:3px solid currentColor;padding-bottom:2px;white-space:normal;align-self:flex-start}
+.festive .event-row{display:flex;align-items:baseline;gap:16px}
+.festive .event-date{flex:0 0 7.5em;font-weight:600;font-variant-numeric:tabular-nums}
+.festive .event-link{font-family:var(--f-display);font-weight:800;font-size:clamp(1.15rem,3vw,1.45rem);line-height:1.15;
+  color:#a3161a;text-decoration:none;border-bottom:0;padding-bottom:0;white-space:normal;min-width:0;overflow-wrap:anywhere}
 .festive .event-link:hover{color:#fffdf5;opacity:1}
 </style>
 <script type="application/ld+json">
@@ -93,12 +95,22 @@
     .filter(function (e) { return e && e.Event_Headline && (!e.Event_Date || e.Event_Date >= today); })
     .sort(function (a, b) { return String(a.Event_Date || '9999').localeCompare(String(b.Event_Date || '9999')); });
   if (!box || !list.length) return;
+  function showDate(d) { // "2026-11-07" -> "07/11/2026" (same as the run list)
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || '');
+    return m ? m[3] + '/' + m[2] + '/' + m[1] : 'TBA';
+  }
   list.forEach(function (e, i) {
+    var row = document.createElement('div');
+    row.className = 'event-row';
+    var d = document.createElement('span');
+    d.className = 'event-date';
+    d.textContent = showDate(e.Event_Date);
     var a = document.createElement('a');
     a.className = 'go event-link';
     a.href = 'events.html#event-' + (i + 1); // same numbering as on events.html
     a.textContent = e.Event_Headline + ' \u2192';
-    box.appendChild(a);
+    row.appendChild(d); row.appendChild(a);
+    box.appendChild(row);
   });
   box.hidden = false;
 })();
