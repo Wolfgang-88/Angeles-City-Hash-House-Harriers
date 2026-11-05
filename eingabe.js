@@ -178,6 +178,9 @@
 
   function picShow() {
     var img = $('picPreview'), has = false;
+    // Size set here as well, so the preview stays small even if the browser still has an old style.css
+    img.style.maxWidth = '220px'; img.style.maxHeight = '180px'; img.style.width = 'auto'; img.style.height = 'auto';
+    img.style.borderRadius = '10px';
     img.onerror = null;
     if (pic.blob) { img.src = pic.url; has = true; }
     else if (pic.existing && !pic.remove) {

@@ -54,9 +54,15 @@
       viewer.addEventListener('click', function () { viewer.close(); });
       document.body.appendChild(viewer);
     }
+    viewer.style.cssText = 'padding:0;border:0;background:transparent;max-width:96vw;max-height:94vh;overflow:visible';
     var im = viewer.querySelector('img'); im.src = src; im.alt = alt;
+    im.style.cssText = 'display:block;max-width:96vw;max-height:94vh;border-radius:10px;cursor:zoom-out';
     if (viewer.showModal) viewer.showModal(); else window.open(src, '_blank');
   }
+  // Picture not (yet) on this website – e.g. GitHub Pages still updating, or the website
+  // opened from the PC folder: then it is shown directly from GitHub.
+  var RAW = 'https://raw.githubusercontent.com/Wolfgang-88/Angeles-City-Hash-House-Harriers/main/';
+  function rawUrl(path) { return RAW + String(path).split('/').map(encodeURIComponent).join('/'); }
   function runPicture(r, cls) {
     if (!r || !r.image) return null;
     var b = document.createElement('button');
@@ -65,8 +71,16 @@
     var alt = r.hash + ' #' + r.number;
     b.setAttribute('aria-label', 'Show picture of ' + alt + ' larger');
     var im = document.createElement('img');
-    im.src = r.image; im.alt = 'Picture of ' + alt; im.loading = 'lazy';
-    im.onerror = function () { b.remove(); }; // picture missing: just leave it out
+    im.alt = 'Picture of ' + alt;
+    // Size set here as well, so it is right even if the browser still has an old style.css
+    b.style.cssText = 'display:block;padding:0;border:0;background:none;cursor:zoom-in;line-height:0;margin-top:' + (cls === 'run-pic--next' ? '16px' : '12px');
+    im.style.cssText = 'display:block;height:auto;border-radius:12px;max-width:100%;' +
+      (cls === 'run-pic--next' ? 'max-height:360px;width:auto' : 'width:180px;max-height:200px;object-fit:cover');
+    im.onerror = function () {
+      if (im.src.indexOf(RAW) !== 0) im.src = rawUrl(r.image);
+      else b.remove(); // picture not found anywhere: just leave it out
+    };
+    im.src = r.image;
     b.appendChild(im);
     b.addEventListener('click', function () { showLarge(im.src, im.alt); });
     return b;
