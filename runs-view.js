@@ -40,6 +40,33 @@
   }
   function past(hash) { return runsOf(hash).filter(isPast).sort(newestFirst); }
 
+  // Text with clickable links: every "https://…" / "http://…" (and "www.…") opens in a new tab
+  var URL_RE = /\b(?:https?:\/\/|www\.)[^\s<>"]+/gi;
+  function setText(el, text) {
+    el.textContent = '';
+    var last = 0, m;
+    URL_RE.lastIndex = 0;
+    while ((m = URL_RE.exec(text))) {
+      var url = m[0];
+      // punctuation at the end belongs to the sentence, not to the link: "(https://x.y/z)." -> https://x.y/z
+      while (/[.,;:!?'\]]$/.test(url) || (/\)$/.test(url) && (url.match(/\(/g) || []).length < (url.match(/\)/g) || []).length)) {
+        url = url.slice(0, -1);
+      }
+      if (!url) continue;
+      if (m.index > last) el.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var a = document.createElement('a');
+      a.href = /^www\./i.test(url) ? 'https://' + url : url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.className = 'run-link';
+      a.textContent = url;
+      el.appendChild(a);
+      last = m.index + url.length;
+      URL_RE.lastIndex = last;
+    }
+    if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+  }
+
   function vals(r) { return [r.number, showDate(r.date), r.location, r.remarks, r.hare]; }
   var LABELS = ['Hash Number', 'Date', 'Location', 'Remarks', 'Hare'];
 
@@ -93,7 +120,7 @@
     var v = vals(next);
     sec.querySelectorAll('dd').forEach(function (dd, i) {
       var t = (v[i] || '').toString().trim();
-      dd.textContent = t || 'TBA';
+      setText(dd, t || 'TBA');
       dd.classList.toggle('tba', !t);
     });
     var pic = runPicture(next, 'run-pic--next');
@@ -133,7 +160,7 @@
       var dt = document.createElement('dt'); dt.textContent = label;
       var dd = document.createElement('dd');
       var t = (v[i] || '').toString().trim();
-      dd.textContent = t || 'TBA';
+      setText(dd, t || 'TBA');
       if (!t) dd.className = 'tba';
       dl.appendChild(dt); dl.appendChild(dd);
     });
