@@ -174,7 +174,8 @@ var RUNS = [
     "date": "08/11/2026",
     "location": "Location: Lower Magic Mountain (LMM). Go over The Bridge To Nowhere aka Sacobia River Bridge (TB2NW), take the First Road Left, Next Road Right, Next dirt Road Left. Then take the left down the lower sandy road just before you come to the sharp right bend. You can also continue on the upper dirt road, but this is badly rutted and only suitable for high road clearance vehicles and motorbikes. The sandy road is also shorter and has had the steep incline at the end graded, so it is now a wide and easy incline for all vehicles. Turns will be marked with paper and/or powder. GPS: 15.211180, 120.512690 (15°12'40.3\"N 120°30'45.7\"E) E6G67+F3G https://maps.app.goo.gl/47uo6zJ1sxYP2otD7. Jeepney(s) leave the Premiere Hotel at 2.00 pm sharp. Please arrive at least 15 minutes before if you wish to avail of this service. Journey time from the Premiere Hotel is approx 35 minutes. The On Home is at the Premiere Hotel. PLEASE NOTE: I have added a photo of the newly graded slope on the ACH3 Facebook Pages.",
     "remarks": "Time: 14:00 Jeepneys leave Premiere Hotel\nThe Longer Trail is approximately 5.5 km, the Medium Trail is around 3.5 km, and the Short Trail is around 2.5 km. The Long and Medium Trails do contain one slightly technical incline, so caution is advised. The Medium Trail is Dry Feet. The Short and Long Trails are Dry Feet possible, weather permitting. Trail routes have been laid to avoid as much of the soft lahar road as possible.",
-    "hare": "Facilitator & Bush Wanker (With Yakitty Yak as Driver)"
+    "hare": "Facilitator & Bush Wanker (With Yakitty Yak as Driver)",
+    "image": "Bilder/Runs/Angeles-2491-20261105-081401.jpg"
   },
   {
     "hash": "Beach Hash",
