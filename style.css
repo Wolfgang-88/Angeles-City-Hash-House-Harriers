@@ -236,8 +236,8 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 /* Run pictures (runs-view.js): "Next run" and "Upcoming runs" */
 .run-pic{display:block;padding:0;border:0;background:none;cursor:zoom-in;border-radius:12px;overflow:hidden;line-height:0}
 .run-pic img{display:block;max-width:100%;height:auto;border-radius:12px}
-.run-pic--next{margin:16px 0 0}
-.run-pic--next img{max-height:360px;width:auto}
+.run-pic--next{margin:16px auto 0}
+.run-pic--next img{width:180px;max-height:200px;object-fit:cover}
 .run-with-pic{display:grid;grid-template-columns:1fr 180px;gap:0 18px;align-items:start}
 .run-pic--list{margin-top:12px}
 .run-pic--list img{width:180px;max-height:200px;object-fit:cover}
