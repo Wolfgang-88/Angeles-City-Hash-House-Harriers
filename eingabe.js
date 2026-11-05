@@ -170,6 +170,114 @@
     else if (/date|DD\/MM\/YYYY/.test(err.textContent)) err.textContent = '';
   });
 
+  // ---------- Picture of a run (Webmaster / Moderator with GitHub) ----------
+  // The picture is made smaller in the browser and uploaded as its own file to
+  // Bilder/Runs/ on GitHub; run.js only stores its path in "image".
+  var PIC_DIR = 'Bilder/Runs/', PIC_MAX = 1000, PIC_QUALITY = 0.8;
+  var pic = { existing: null, blob: null, url: null, remove: false };
+
+  function picShow() {
+    var img = $('picPreview'), has = false;
+    img.onerror = null;
+    if (pic.blob) { img.src = pic.url; has = true; }
+    else if (pic.existing && !pic.remove) {
+      has = true;
+      img.onerror = function () { // not on this website yet (GitHub Pages is still updating): show it from GitHub
+        img.onerror = function () { img.hidden = true; };
+        img.src = 'https://raw.githubusercontent.com/' + GH_REPO + '/' + GH_BRANCH + '/' + pic.existing.split('/').map(encodeURIComponent).join('/');
+      };
+      img.src = pic.existing;
+    }
+    img.hidden = !has;
+    $('picRemove').hidden = !has;
+    $('picChoose').textContent = has ? 'Replace picture' : 'Choose picture';
+  }
+  function picClearNew() {
+    if (pic.url) URL.revokeObjectURL(pic.url);
+    pic.blob = null; pic.url = null; $('picFile').value = '';
+  }
+  function picReset() { picClearNew(); pic.existing = null; pic.remove = false; picShow(); }
+  function picSetExisting(path) { picClearNew(); pic.existing = path || null; pic.remove = false; picShow(); }
+
+  function loadImage(file) {
+    return new Promise(function (res, rej) {
+      var u = URL.createObjectURL(file), im = new Image();
+      im.onload = function () { res(im); setTimeout(function () { URL.revokeObjectURL(u); }, 0); };
+      im.onerror = function () { URL.revokeObjectURL(u); rej(new Error('bad image')); };
+      im.src = u;
+    });
+  }
+  // Any photo -> JPEG, longest side at most PIC_MAX px (rotation of phone photos is respected)
+  async function shrink(file) {
+    var src;
+    try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (e) { src = await loadImage(file); }
+    var w = src.width || src.naturalWidth, h = src.height || src.naturalHeight;
+    var s = Math.min(1, PIC_MAX / Math.max(w, h));
+    var c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(h * s));
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); // transparent PNGs get a white background
+    ctx.drawImage(src, 0, 0, c.width, c.height);
+    if (src.close) src.close();
+    return new Promise(function (res, rej) {
+      c.toBlob(function (b) { b ? res(b) : rej(new Error('The picture could not be converted.')); }, 'image/jpeg', PIC_QUALITY);
+    });
+  }
+  function blobB64(blob) {
+    return new Promise(function (res, rej) {
+      var r = new FileReader();
+      r.onload = function () { res(String(r.result).split(',')[1]); };
+      r.onerror = function () { rej(r.error); };
+      r.readAsDataURL(blob);
+    });
+  }
+  function picPath(run) {
+    var n = new Date();
+    var stamp = n.getFullYear() + pad2(n.getMonth() + 1) + pad2(n.getDate()) + '-' + pad2(n.getHours()) + pad2(n.getMinutes()) + pad2(n.getSeconds());
+    var hash = run.hash.split(' ')[0].replace(/[^\w-]/g, '');
+    var num = String(run.number).replace(/[^\w-]/g, '') || 'run';
+    return PIC_DIR + hash + '-' + num + '-' + stamp + '.jpg';
+  }
+  function pad2(x) { return (x < 10 ? '0' : '') + x; }
+
+  $('picFile').addEventListener('change', async function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var note = $('picNote');
+    note.textContent = 'Preparing the picture …';
+    try {
+      var b = await shrink(f);
+      picClearNew();
+      pic.blob = b; pic.url = URL.createObjectURL(b); pic.remove = false;
+      note.textContent = 'New picture (' + Math.round(b.size / 1024) + ' KB) – it is uploaded when you click Save.';
+    } catch (e) {
+      this.value = '';
+      note.textContent = 'This picture could not be read. Please use a JPG or PNG photo.';
+    }
+    picShow();
+  });
+  $('picRemove').addEventListener('click', function () {
+    var hadNew = !!pic.blob;
+    picClearNew();
+    if (!hadNew && pic.existing) pic.remove = true;
+    $('picNote').textContent = pic.remove ? 'The picture will be removed when you click Save.' :
+      'One picture per run. It is made smaller automatically and shown with "Next run" and "Upcoming runs".';
+    picShow();
+  });
+
+  // Deletes pictures that are no longer used by any run (after run.js was saved)
+  async function cleanupImages(before, after) {
+    if (!before || typeof GITHUB === 'undefined') return;
+    var used = {};
+    after.forEach(function (r) { if (r.image) used[r.image] = 1; });
+    var gone = {};
+    before.forEach(function (r) { if (r.image && !used[r.image] && r.image.indexOf(PIC_DIR) === 0) gone[r.image] = 1; });
+    for (var p in gone) {
+      try { await GITHUB.remove(p, 'Picture removed: ' + p + (who ? ' (' + who + ')' : '')); } catch (e) { console.warn('Picture not deleted:', p, e); }
+    }
+  }
+
   // ---------- run.js text ----------
   function fileText(runs) {
     runs = runs.slice().sort(function (a, b) {
@@ -304,6 +412,8 @@
   function resetForm() {
     FIELDS.forEach(function (id) { $(id).value = ''; });
     clearLoaded();
+    picReset();
+    $('picNote').textContent = 'One picture per run. It is made smaller automatically and shown with "Next run" and "Upcoming runs".';
     $('number').focus();
   }
 
@@ -330,11 +440,13 @@
     return FIELDS.every(function (id) { return $(id).value === loadedVals[id]; });
   }
   function showLoaded(text) { var el = $('loaded'); el.textContent = text; el.hidden = !text; }
-  function clearLoaded() { loadedKey = null; loadedVals = null; skipKey = null; showLoaded(''); delBtn.hidden = true; setLocked(false); }
+  function clearLoaded() { loadedKey = null; loadedVals = null; skipKey = null; showLoaded(''); delBtn.hidden = true; setLocked(false); pic.existing = null; pic.remove = false; picShow(); }
   // Past run typed in: form is locked (no Save), only another number can be entered
   function setLocked(on) {
     form.classList.toggle('locked', on);
     FIELDS.forEach(function (id) { $(id).disabled = on; });
+    $('picFile').disabled = on; $('picRemove').disabled = on;
+    $('picChoose').classList.toggle('disabled', on);
     saveBtn.disabled = on || busy;
   }
 
@@ -393,6 +505,7 @@
 
   function fill(run, isOnline) {
     FIELDS.forEach(function (id) { $(id).value = run[id] == null ? '' : String(run[id]); });
+    pic.existing = run.image || null; pic.remove = false; picShow(); // a newly chosen picture stays
     loadedKey = runKey(run.hash, run.number);
     loadedVals = fieldVals();
     skipKey = null;
@@ -549,6 +662,7 @@
     for (var attempt = 0; attempt < 3; attempt++) {
       var runs = parseRuns(file.text);
       if (!runs) throw new Error('run.js on GitHub could not be read. Please check the file.');
+      var before = parseRuns(file.text);
       apply(runs);
       var text = fileText(runs);
       try {
@@ -561,6 +675,7 @@
       online.runs = runs; online.at = Date.now();
       try { RUNS = runs; } catch (e) {}
       await syncLocal(text);
+      await cleanupImages(before, runs);
       return runs;
     }
     throw new Error('run.js keeps changing on GitHub. Please try again in a moment.');
@@ -583,14 +698,31 @@
     var c = await existingChoice(runs, run, mode);
     if (!c) return;
     var action = 'saved';
-    await commitToGitHub(file, function (list) {
-      var i = findRun(list, run);
-      if (c.type === 'delete') { if (i >= 0) list.splice(i, 1); action = 'deleted'; }
-      else if (i >= 0) { list[i] = run; action = 'updated'; }
-      else { list.push(run); action = 'saved'; }
-    }, function () {
-      return 'Run ' + run.hash + ' #' + run.number + ' ' + action + (who ? ' (' + who + ')' : '');
-    });
+    // Picture: upload a new one first (its own file), then save run.js with its path
+    var newPic = null, dropPic = c.type === 'save' && pic.remove && !pic.blob;
+    if (c.type === 'save' && pic.blob) {
+      saveBtn.textContent = 'Uploading picture …';
+      newPic = picPath(run);
+      await GITHUB.writeBase64(newPic, await blobB64(pic.blob), null,
+        'Picture for ' + run.hash + ' #' + run.number + (who ? ' (' + who + ')' : ''));
+      saveBtn.textContent = 'Saving …';
+    }
+    try {
+      await commitToGitHub(file, function (list) {
+        var i = findRun(list, run);
+        if (c.type === 'delete') { if (i >= 0) list.splice(i, 1); action = 'deleted'; return; }
+        var r = Object.assign({}, run), old = i >= 0 ? list[i] : null;
+        if (newPic) r.image = newPic;
+        else if (!dropPic && old && old.image) r.image = old.image; // no new picture: keep the stored one
+        if (i >= 0) { list[i] = r; action = 'updated'; }
+        else { list.push(r); action = 'saved'; }
+      }, function () {
+        return 'Run ' + run.hash + ' #' + run.number + ' ' + action + (who ? ' (' + who + ')' : '');
+      });
+    } catch (e) {
+      if (newPic) GITHUB.remove(newPic, 'Unused picture removed').catch(function () {}); // run.js not saved: picture not needed
+      throw e;
+    }
     await popup(action === 'deleted' ? 'Deleted' : 'Saved',
       run.hash + ' #' + run.number + ' has been ' + action + ' on GitHub.\nIt will be visible on the website in about 1–2 minutes.', OK);
     resetForm();
@@ -617,7 +749,7 @@
     var c = await existingChoice(runs, run, mode);
     if (!c) return;
     var action = 'saved';
-    if (c.idx >= 0 && c.type === 'save') { runs[c.idx] = run; action = 'updated'; }
+    if (c.idx >= 0 && c.type === 'save') { if (runs[c.idx].image && !run.image) run.image = runs[c.idx].image; runs[c.idx] = run; action = 'updated'; }
     else if (c.type === 'delete') { runs.splice(c.idx, 1); action = 'deleted'; }
     else runs.push(run);
 
@@ -722,7 +854,7 @@
         var e = it.entry, idx = findRun(list, e.run), what;
         if (e.type === 'delete') {
           if (idx >= 0) { list.splice(idx, 1); what = 'deleted'; } else what = 'delete – did not exist';
-        } else if (idx >= 0) { list[idx] = e.run; what = 'changed'; }
+        } else if (idx >= 0) { var nr = Object.assign({}, e.run); if (!nr.image && list[idx].image) nr.image = list[idx].image; list[idx] = nr; what = 'changed'; }
         else { list.push(e.run); what = 'new'; }
         return '• ' + e.run.hash + ' #' + e.run.number + ' (' + (e.run.date || 'no date') + ') – ' + what +
           (e.member ? ', from ' + e.member : '');
@@ -977,6 +1109,7 @@
   window.addEventListener('beforeunload', function (e) { if (hl.dirty) { e.preventDefault(); e.returnValue = ''; } });
 
   if (canPublish) {
+    if (useGitHub()) $('picBox').hidden = false; // pictures need the GitHub access
     $('hareEditor').hidden = false;
     hlLoad();
     $('webmaster').hidden = false;

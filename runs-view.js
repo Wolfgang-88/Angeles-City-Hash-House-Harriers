@@ -43,6 +43,35 @@
   function vals(r) { return [r.number, showDate(r.date), r.location, r.remarks, r.hare]; }
   var LABELS = ['Hash Number', 'Date', 'Location', 'Remarks', 'Hare'];
 
+  // Picture of a run (only "Next run" and "Upcoming runs", not "Past runs").
+  // Click/tap shows it large.
+  var viewer = null;
+  function showLarge(src, alt) {
+    if (!viewer) {
+      viewer = document.createElement('dialog');
+      viewer.className = 'pic-viewer';
+      viewer.innerHTML = '<img alt=""><button type="button" class="pic-close" aria-label="Close">×</button>';
+      viewer.addEventListener('click', function () { viewer.close(); });
+      document.body.appendChild(viewer);
+    }
+    var im = viewer.querySelector('img'); im.src = src; im.alt = alt;
+    if (viewer.showModal) viewer.showModal(); else window.open(src, '_blank');
+  }
+  function runPicture(r, cls) {
+    if (!r || !r.image) return null;
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'run-pic ' + (cls || '');
+    var alt = r.hash + ' #' + r.number;
+    b.setAttribute('aria-label', 'Show picture of ' + alt + ' larger');
+    var im = document.createElement('img');
+    im.src = r.image; im.alt = 'Picture of ' + alt; im.loading = 'lazy';
+    im.onerror = function () { b.remove(); }; // picture missing: just leave it out
+    b.appendChild(im);
+    b.addEventListener('click', function () { showLarge(im.src, im.alt); });
+    return b;
+  }
+
   // "Next run" boxes: <section class="run" data-hash="Angeles Hash">
   document.querySelectorAll('.run[data-hash]').forEach(function (sec) {
     var next = upcoming(sec.getAttribute('data-hash'))[0];
@@ -53,6 +82,8 @@
       dd.textContent = t || 'TBA';
       dd.classList.toggle('tba', !t);
     });
+    var pic = runPicture(next, 'run-pic--next');
+    if (pic) sec.appendChild(pic);
   });
 
   // Activities box on index.html: next run of every hash, sorted by date.
@@ -81,7 +112,7 @@
   });
 
   // One run as a block like "Next run"
-  function runBlock(r) {
+  function runBlock(r, withPic) {
     var dl = document.createElement('dl');
     var v = vals(r);
     LABELS.forEach(function (label, i) {
@@ -92,7 +123,12 @@
       if (!t) dd.className = 'tba';
       dl.appendChild(dt); dl.appendChild(dd);
     });
-    return dl;
+    var pic = withPic && runPicture(r, 'run-pic--list');
+    if (!pic) return dl;
+    var wrap = document.createElement('div');
+    wrap.className = 'run-with-pic';
+    wrap.appendChild(dl); wrap.appendChild(pic);
+    return wrap;
   }
 
   // Run lists on the sub pages: <div class="run-list" data-hash="..." data-when="upcoming|past">
@@ -107,7 +143,7 @@
 
     function render(page, scroll) {
       box.innerHTML = '';
-      list.slice(page * perPage, (page + 1) * perPage).forEach(function (r) { box.appendChild(runBlock(r)); });
+      list.slice(page * perPage, (page + 1) * perPage).forEach(function (r) { box.appendChild(runBlock(r, !isPastList)); });
       if (pages > 1) box.appendChild(pager(page));
       if (scroll) {
         var sec = box.closest('section') || box;

@@ -55,6 +55,18 @@
   <label for="location">Location</label><textarea id="location"></textarea>
   <label for="remarks">Remarks</label><textarea id="remarks"></textarea>
   <label for="hare">Hare</label><input id="hare">
+  <div id="picBox" hidden>
+    <label for="picFile">Picture (optional)</label>
+    <div class="pic-edit">
+      <img id="picPreview" alt="Picture of this run" hidden>
+      <div class="pic-buttons">
+        <label class="btn ghost pic-choose" for="picFile" id="picChoose">Choose picture</label>
+        <input type="file" id="picFile" accept="image/*" class="visually-hidden">
+        <button class="btn ghost danger-ghost" type="button" id="picRemove" hidden>Remove picture</button>
+      </div>
+    </div>
+    <p class="pic-note" id="picNote">One picture per run. It is made smaller automatically and shown with "Next run" and "Upcoming runs".</p>
+  </div>
   <p class="err" id="err" role="alert"></p>
   <div class="actions"><button class="btn ghost danger-ghost" type="submit" id="delBtn" hidden>Delete run</button><button class="btn" type="submit" id="saveBtn">Save</button></div>
 </form>

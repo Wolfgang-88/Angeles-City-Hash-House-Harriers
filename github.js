@@ -105,6 +105,39 @@ var GITHUB = (function () {
     return r.json();
   }
 
+  // Binary file (e.g. a picture), content already Base64. New file: sha = null.
+  async function writeBase64(path, b64, sha, message, t) {
+    t = need(t || sessionToken());
+    var body = { message: message, content: b64, branch: BRANCH };
+    if (sha) body.sha = sha;
+    var r = await fetch(API + '/contents/' + encodePath(path), {
+      method: 'PUT',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, headers(t)),
+      body: JSON.stringify(body)
+    });
+    if (r.status === 409 || r.status === 422) { var e = new Error(path + ' was changed on GitHub in the meantime.'); e.conflict = true; throw e; }
+    if (!r.ok) await fail(r);
+    return r.json();
+  }
+  function encodePath(p) { return String(p).split('/').map(encodeURIComponent).join('/'); }
+
+  // Deletes a file. Does nothing if it does not exist.
+  async function remove(path, message, t) {
+    t = need(t || sessionToken());
+    var g = await fetch(API + '/contents/' + encodePath(path) + '?ref=' + BRANCH + '&t=' + Date.now(), { headers: headers(t), cache: 'no-store' });
+    if (g.status === 404) return false;
+    if (!g.ok) await fail(g);
+    var sha = (await g.json()).sha;
+    var r = await fetch(API + '/contents/' + encodePath(path), {
+      method: 'DELETE',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, headers(t)),
+      body: JSON.stringify({ message: message, sha: sha, branch: BRANCH })
+    });
+    if (r.status === 404) return false;
+    if (!r.ok) await fail(r);
+    return true;
+  }
+
   async function test(t) {
     try { await read('run.js', t); }
     catch (e) {
@@ -134,6 +167,8 @@ var GITHUB = (function () {
     lock: function () { try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {} },
     read: read,
     write: write,
+    writeBase64: writeBase64,
+    remove: remove,
     test: test,
     // Setup: checks the code, encrypts it with the password, writes github-config.js to GitHub.
     // Returns the file text (so it can also be saved in the local website folder).
