@@ -73,7 +73,7 @@
     var im = document.createElement('img');
     im.alt = 'Picture of ' + alt;
     // Size set here as well, so it is right even if the browser still has an old style.css
-    b.style.cssText = 'display:block;padding:0;border:0;background:none;cursor:zoom-in;line-height:0;' + (cls === 'run-pic--next' ? 'margin:16px auto 0' : 'margin-top:12px');
+    b.style.cssText = 'display:block;padding:0;border:0;background:none;cursor:zoom-in;line-height:0;' + 'margin:' + (cls === 'run-pic--next' ? '16px' : '12px') + ' auto 0'; // below the run, centred
     im.style.cssText = 'display:block;height:auto;border-radius:12px;max-width:100%;' +
       'width:180px;max-height:200px;object-fit:cover'; // same size in "Next run" and "Upcoming runs"
     im.onerror = function () {
