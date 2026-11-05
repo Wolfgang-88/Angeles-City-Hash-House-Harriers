@@ -1,53 +1,41 @@
 // upcoming_hares.js – list of upcoming hares for angeles.html
 var upcomingHares = [
   {
-    "date": "20/09/2026",
+    "date": "08/11/2026",
     "hares": [
-      "Brain Dead"
+      "Facilitator",
+      "Bush Wanker",
+      "Yakitty Yak (As Driver)"
     ]
   },
   {
-    "date": "27/09/2026",
+    "date": "15/11/2026",
     "hares": [
-      "Floppy Dick",
-      "Flugnuts"
+      "Wrong Way"
     ]
   },
   {
-    "date": "04/10/2026",
+    "date": "22/11/2026",
     "hares": [
-      "Yakitty Yak",
-      "Two Snakes Fucking"
+      "No Hares Registered for this week, so we need are in need of Volunteers."
     ]
   },
   {
-    "date": "11/10/2026",
+    "date": "29/11/2026",
     "hares": [
-      "Paddy Pacquiao",
-      "Shewee",
-      "Not Yet"
+      "Deviant"
     ]
   },
   {
-    "date": "18/10/2026",
+    "date": "13/12/2026",
     "hares": [
-      "Meatless",
-      "Hot Bum"
+      "No Hares Registered for this week, so we need are in need of Volunteers."
     ]
   },
   {
-    "date": "25/10/2026",
+    "date": "20/12/2026",
     "hares": [
-      "I Choked Linda Lovelace",
-      "Hash Witch",
-      "Whisperer"
-    ]
-  },
-  {
-    "date": "01/11/2026",
-    "hares": [
-      "Stump Jumper",
-      "Facilitator"
+      "No Hares Registered for this week, so we need are in need of Volunteers."
     ]
   }
 ];
