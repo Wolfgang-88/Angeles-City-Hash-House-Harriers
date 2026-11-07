@@ -140,6 +140,9 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .sort-btn:hover{border-color:var(--muted)}
 .sort-btn[aria-pressed="true"]{background:var(--bg-deep);border-color:var(--bg-deep);color:var(--chalk)}
 .sort-btn .dir:empty{display:none}
+/* Hasher list (hashers.html): larger text */
+.hasher-table{font-size:1.15rem}
+.hasher-table th{font-size:.8rem}
 .hasher-table th.num,.hasher-table td.num{text-align:right;white-space:nowrap}
 .hasher-table td:first-child{color:var(--muted);width:3.5em}
 .hasher-table td:nth-child(2){white-space:normal;overflow-wrap:anywhere}
@@ -220,6 +223,7 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .pager-btn[aria-current="page"]{background:var(--bg-deep);border-color:var(--bg-deep);color:var(--chalk);cursor:default}
 .pager-btn:disabled:not([aria-current]){opacity:.4;cursor:default}
 .pager-info{margin:0;font-size:.82rem;color:var(--muted)}
+.pager-gap{align-self:center;padding:0 2px;color:var(--muted)}
 .run-group{scroll-margin-top:16px}
 .wm-actions [hidden]{display:none}
 .form.locked input:disabled,.form.locked textarea:disabled{background:var(--flour);color:var(--muted);cursor:not-allowed}
