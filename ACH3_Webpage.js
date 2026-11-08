@@ -1,10 +1,10 @@
-// ACH3_Webpage.js – created by ACH3 Data on 2026-10-31 16:45
-// 969 hashers with 10+ runs, sorted by runs (descending)
+// ACH3_Webpage.js – created by ACH3 Data on 2026-11-08 13:12
+// 971 hashers with 10+ runs, sorted by runs (descending)
 var hashers = [
   {
     "name": "Saput",
-    "lastRun": 2488,
-    "runs": 1415
+    "lastRun": 2490,
+    "runs": 1417
   },
   {
     "name": "Induces Menstruation (RIP)",
@@ -18,8 +18,8 @@ var hashers = [
   },
   {
     "name": "Dances With Dogs",
-    "lastRun": 2488,
-    "runs": 993
+    "lastRun": 2490,
+    "runs": 995
   },
   {
     "name": "Armpit (RIP)",
@@ -43,8 +43,8 @@ var hashers = [
   },
   {
     "name": "Bum Steer",
-    "lastRun": 2488,
-    "runs": 837
+    "lastRun": 2490,
+    "runs": 839
   },
   {
     "name": "Rusty Nail",
@@ -53,13 +53,13 @@ var hashers = [
   },
   {
     "name": "Cujo",
-    "lastRun": 2487,
-    "runs": 792
+    "lastRun": 2490,
+    "runs": 793
   },
   {
     "name": "Pin Pin",
-    "lastRun": 2488,
-    "runs": 783
+    "lastRun": 2490,
+    "runs": 784
   },
   {
     "name": "Cherry Godfather (RIP)",
@@ -68,8 +68,8 @@ var hashers = [
   },
   {
     "name": "Lost In Subic",
-    "lastRun": 2487,
-    "runs": 742
+    "lastRun": 2489,
+    "runs": 743
   },
   {
     "name": "Gypsy (RIP)",
@@ -103,8 +103,8 @@ var hashers = [
   },
   {
     "name": "Kaput",
-    "lastRun": 2488,
-    "runs": 644
+    "lastRun": 2490,
+    "runs": 645
   },
   {
     "name": "Dragon Lady",
@@ -118,18 +118,18 @@ var hashers = [
   },
   {
     "name": "Answer Do",
-    "lastRun": 2487,
-    "runs": 567
-  },
-  {
-    "name": "Soldermiser",
-    "lastRun": 2488,
-    "runs": 557
+    "lastRun": 2490,
+    "runs": 568
   },
   {
     "name": "Mouse",
-    "lastRun": 2486,
-    "runs": 556
+    "lastRun": 2490,
+    "runs": 558
+  },
+  {
+    "name": "Soldermiser",
+    "lastRun": 2490,
+    "runs": 558
   },
   {
     "name": "Picasso (RIP)",
@@ -148,8 +148,8 @@ var hashers = [
   },
   {
     "name": "Soggy Butt",
-    "lastRun": 2488,
-    "runs": 530
+    "lastRun": 2490,
+    "runs": 532
   },
   {
     "name": "Short Circuit",
@@ -168,8 +168,8 @@ var hashers = [
   },
   {
     "name": "Au Per",
-    "lastRun": 2488,
-    "runs": 503
+    "lastRun": 2490,
+    "runs": 505
   },
   {
     "name": "Union Jack",
@@ -178,8 +178,8 @@ var hashers = [
   },
   {
     "name": "Vendor Bender",
-    "lastRun": 2488,
-    "runs": 492
+    "lastRun": 2490,
+    "runs": 494
   },
   {
     "name": "Pussy Licker",
@@ -208,8 +208,8 @@ var hashers = [
   },
   {
     "name": "Sirena",
-    "lastRun": 2488,
-    "runs": 460
+    "lastRun": 2490,
+    "runs": 462
   },
   {
     "name": "Colonostomy",
@@ -222,14 +222,14 @@ var hashers = [
     "runs": 441
   },
   {
+    "name": "Stump Jumper",
+    "lastRun": 2490,
+    "runs": 440
+  },
+  {
     "name": "Bush Diver (RIP)",
     "lastRun": 2300,
     "runs": 439
-  },
-  {
-    "name": "Stump Jumper",
-    "lastRun": 2487,
-    "runs": 438
   },
   {
     "name": "Nancy Boy",
@@ -243,17 +243,27 @@ var hashers = [
   },
   {
     "name": "Stolen Property",
-    "lastRun": 2488,
-    "runs": 429
-  },
-  {
-    "name": "Sunshine",
-    "lastRun": 2488,
-    "runs": 422
+    "lastRun": 2490,
+    "runs": 431
   },
   {
     "name": "Meatless",
-    "lastRun": 2488,
+    "lastRun": 2490,
+    "runs": 424
+  },
+  {
+    "name": "Wrong Way",
+    "lastRun": 2490,
+    "runs": 423
+  },
+  {
+    "name": "Sunshine",
+    "lastRun": 2489,
+    "runs": 423
+  },
+  {
+    "name": "Beaver Trapper",
+    "lastRun": 2490,
     "runs": 422
   },
   {
@@ -262,14 +272,9 @@ var hashers = [
     "runs": 421
   },
   {
-    "name": "Wrong Way",
-    "lastRun": 2488,
-    "runs": 421
-  },
-  {
-    "name": "Beaver Trapper",
-    "lastRun": 2488,
-    "runs": 420
+    "name": "Kunt Thief",
+    "lastRun": 2490,
+    "runs": 404
   },
   {
     "name": "Hash Cunt Tree (RIP)",
@@ -277,19 +282,19 @@ var hashers = [
     "runs": 402
   },
   {
-    "name": "Kunt Thief",
-    "lastRun": 2475,
-    "runs": 402
-  },
-  {
     "name": "Suso",
-    "lastRun": 2488,
-    "runs": 399
+    "lastRun": 2490,
+    "runs": 401
   },
   {
     "name": "Long Time Coming",
     "lastRun": 2415,
     "runs": 396
+  },
+  {
+    "name": "Deviant",
+    "lastRun": 2489,
+    "runs": 388
   },
   {
     "name": "Malibog D'Vice",
@@ -300,11 +305,6 @@ var hashers = [
     "name": "Kentucky Fried Fuckhead (RIP)",
     "lastRun": 2171,
     "runs": 387
-  },
-  {
-    "name": "Deviant",
-    "lastRun": 2484,
-    "runs": 386
   },
   {
     "name": "Lites (RIP)",
@@ -318,8 +318,8 @@ var hashers = [
   },
   {
     "name": "Moby Vic",
-    "lastRun": 2488,
-    "runs": 365
+    "lastRun": 2490,
+    "runs": 366
   },
   {
     "name": "Maribeth Velasquez",
@@ -338,13 +338,13 @@ var hashers = [
   },
   {
     "name": "Soft Cock",
-    "lastRun": 2487,
-    "runs": 345
+    "lastRun": 2490,
+    "runs": 348
   },
   {
     "name": "Paddy Pacquiao",
-    "lastRun": 2488,
-    "runs": 345
+    "lastRun": 2490,
+    "runs": 347
   },
   {
     "name": "Spiderman 2 - Maverick",
@@ -352,19 +352,19 @@ var hashers = [
     "runs": 342
   },
   {
+    "name": "Conimiser",
+    "lastRun": 2490,
+    "runs": 339
+  },
+  {
     "name": "WC Fields",
     "lastRun": 2479,
     "runs": 338
   },
   {
-    "name": "Conimiser",
-    "lastRun": 2488,
-    "runs": 338
-  },
-  {
     "name": "Mr Quickie",
-    "lastRun": 2487,
-    "runs": 335
+    "lastRun": 2489,
+    "runs": 336
   },
   {
     "name": "Haystack (RIP)",
@@ -393,18 +393,18 @@ var hashers = [
   },
   {
     "name": "Warm Piss",
-    "lastRun": 2482,
-    "runs": 303
+    "lastRun": 2488,
+    "runs": 304
   },
   {
     "name": "Bangka  Blower",
-    "lastRun": 2488,
-    "runs": 300
+    "lastRun": 2490,
+    "runs": 302
   },
   {
     "name": "Mary Poppins",
-    "lastRun": 2378,
-    "runs": 297
+    "lastRun": 2490,
+    "runs": 300
   },
   {
     "name": "Rabbit Lady",
@@ -438,12 +438,17 @@ var hashers = [
   },
   {
     "name": "Shewee",
-    "lastRun": 2488,
-    "runs": 284
+    "lastRun": 2490,
+    "runs": 286
   },
   {
     "name": "Lucky Wife",
-    "lastRun": 2488,
+    "lastRun": 2490,
+    "runs": 285
+  },
+  {
+    "name": "Wait Lang",
+    "lastRun": 2489,
     "runs": 283
   },
   {
@@ -457,29 +462,24 @@ var hashers = [
     "runs": 282
   },
   {
-    "name": "Wait Lang",
-    "lastRun": 2488,
-    "runs": 282
-  },
-  {
     "name": "Panzer",
     "lastRun": 2461,
     "runs": 281
   },
   {
     "name": "Bush Wanker",
-    "lastRun": 2487,
-    "runs": 279
+    "lastRun": 2490,
+    "runs": 281
+  },
+  {
+    "name": "Abandoned Sole",
+    "lastRun": 2490,
+    "runs": 275
   },
   {
     "name": "Shortage",
     "lastRun": 2447,
     "runs": 274
-  },
-  {
-    "name": "Abandoned Sole",
-    "lastRun": 2487,
-    "runs": 273
   },
   {
     "name": "Prima Donna",
@@ -518,8 +518,8 @@ var hashers = [
   },
   {
     "name": "Honey Dew",
-    "lastRun": 2487,
-    "runs": 248
+    "lastRun": 2489,
+    "runs": 249
   },
   {
     "name": "Skywanker",
@@ -538,8 +538,13 @@ var hashers = [
   },
   {
     "name": "Not Yet",
-    "lastRun": 2487,
-    "runs": 236
+    "lastRun": 2490,
+    "runs": 237
+  },
+  {
+    "name": "Facilitator",
+    "lastRun": 2490,
+    "runs": 233
   },
   {
     "name": "Proposition",
@@ -547,18 +552,13 @@ var hashers = [
     "runs": 231
   },
   {
-    "name": "Facilitator",
-    "lastRun": 2488,
-    "runs": 231
+    "name": "Two Snakes Fucking",
+    "lastRun": 2490,
+    "runs": 228
   },
   {
     "name": "Raper Of The Lost Tart",
     "lastRun": 2455,
-    "runs": 227
-  },
-  {
-    "name": "Two Snakes Fucking",
-    "lastRun": 2487,
     "runs": 227
   },
   {
@@ -592,6 +592,11 @@ var hashers = [
     "runs": 214
   },
   {
+    "name": "Hammer",
+    "lastRun": 2490,
+    "runs": 210
+  },
+  {
     "name": "Scrotum",
     "lastRun": 2488,
     "runs": 209
@@ -602,14 +607,19 @@ var hashers = [
     "runs": 209
   },
   {
-    "name": "Hammer",
-    "lastRun": 2488,
-    "runs": 208
-  },
-  {
     "name": "Bleachy (RIP)",
     "lastRun": 2363,
     "runs": 207
+  },
+  {
+    "name": "Long John",
+    "lastRun": 2490,
+    "runs": 206
+  },
+  {
+    "name": "Social Distance",
+    "lastRun": 2490,
+    "runs": 206
   },
   {
     "name": "Carabao Licker",
@@ -622,24 +632,14 @@ var hashers = [
     "runs": 205
   },
   {
-    "name": "Long John",
-    "lastRun": 2488,
-    "runs": 204
-  },
-  {
-    "name": "Social Distance",
-    "lastRun": 2487,
-    "runs": 204
+    "name": "H.I.V.",
+    "lastRun": 2490,
+    "runs": 203
   },
   {
     "name": "Robber",
     "lastRun": 2355,
     "runs": 202
-  },
-  {
-    "name": "H.I.V.",
-    "lastRun": 2488,
-    "runs": 201
   },
   {
     "name": "Hash Discount",
@@ -672,14 +672,14 @@ var hashers = [
     "runs": 186
   },
   {
+    "name": "Titanic Dickhead",
+    "lastRun": 2490,
+    "runs": 183
+  },
+  {
     "name": "Nagging Bitch",
     "lastRun": 1964,
     "runs": 182
-  },
-  {
-    "name": "Titanic Dickhead",
-    "lastRun": 2488,
-    "runs": 181
   },
   {
     "name": "Hypocrite",
@@ -708,8 +708,8 @@ var hashers = [
   },
   {
     "name": "Mega Selfie",
-    "lastRun": 2483,
-    "runs": 169
+    "lastRun": 2489,
+    "runs": 170
   },
   {
     "name": "K Y Ken",
@@ -720,6 +720,11 @@ var hashers = [
     "name": "Bald Eagle",
     "lastRun": 2466,
     "runs": 168
+  },
+  {
+    "name": "Hashibono",
+    "lastRun": 2490,
+    "runs": 167
   },
   {
     "name": "Dodic Master",
@@ -739,11 +744,6 @@ var hashers = [
   {
     "name": "Kuya Gay",
     "lastRun": 2446,
-    "runs": 164
-  },
-  {
-    "name": "Hashibono",
-    "lastRun": 2456,
     "runs": 164
   },
   {
@@ -812,6 +812,11 @@ var hashers = [
     "runs": 153
   },
   {
+    "name": "Yakitty Yak",
+    "lastRun": 2490,
+    "runs": 153
+  },
+  {
     "name": "Bottle Opener",
     "lastRun": 2387,
     "runs": 152
@@ -819,11 +824,6 @@ var hashers = [
   {
     "name": "Mount Isa",
     "lastRun": 1975,
-    "runs": 152
-  },
-  {
-    "name": "Yakitty Yak",
-    "lastRun": 2486,
     "runs": 152
   },
   {
@@ -843,8 +843,8 @@ var hashers = [
   },
   {
     "name": "Fugitive",
-    "lastRun": 2488,
-    "runs": 149
+    "lastRun": 2490,
+    "runs": 150
   },
   {
     "name": "Piss Stop",
@@ -967,14 +967,14 @@ var hashers = [
     "runs": 130
   },
   {
-    "name": "Mango Muncher",
-    "lastRun": 2037,
+    "name": "Flugnuts",
+    "lastRun": 2490,
     "runs": 129
   },
   {
-    "name": "Flugnuts",
-    "lastRun": 2488,
-    "runs": 127
+    "name": "Mango Muncher",
+    "lastRun": 2037,
+    "runs": 129
   },
   {
     "name": "In The Wash",
@@ -1022,6 +1022,11 @@ var hashers = [
     "runs": 124
   },
   {
+    "name": "Mariposa",
+    "lastRun": 2490,
+    "runs": 124
+  },
+  {
     "name": "Bugs Bunny (RIP)",
     "lastRun": 1925,
     "runs": 123
@@ -1049,11 +1054,6 @@ var hashers = [
   {
     "name": "Gold Finger (RIP)",
     "lastRun": 2203,
-    "runs": 122
-  },
-  {
-    "name": "Mariposa",
-    "lastRun": 2486,
     "runs": 122
   },
   {
@@ -1097,19 +1097,24 @@ var hashers = [
     "runs": 116
   },
   {
-    "name": "Devil Dick",
-    "lastRun": 2483,
-    "runs": 114
+    "name": "Bouncer",
+    "lastRun": 2490,
+    "runs": 116
   },
   {
-    "name": "Bouncer",
-    "lastRun": 2487,
+    "name": "Devil Dick",
+    "lastRun": 2483,
     "runs": 114
   },
   {
     "name": "Squidward",
     "lastRun": 2458,
     "runs": 113
+  },
+  {
+    "name": "Sunrise",
+    "lastRun": 2489,
+    "runs": 112
   },
   {
     "name": "BilliBuoy",
@@ -1119,11 +1124,6 @@ var hashers = [
   {
     "name": "Lower Profile.  RIP.",
     "lastRun": 1901,
-    "runs": 111
-  },
-  {
-    "name": "Sunrise",
-    "lastRun": 2488,
     "runs": 111
   },
   {
@@ -1183,8 +1183,8 @@ var hashers = [
   },
   {
     "name": "Kuripot Kunt",
-    "lastRun": 2488,
-    "runs": 106
+    "lastRun": 2490,
+    "runs": 107
   },
   {
     "name": "Bum Follower",
@@ -1253,8 +1253,8 @@ var hashers = [
   },
   {
     "name": "Hash Witch",
-    "lastRun": 2488,
-    "runs": 97
+    "lastRun": 2489,
+    "runs": 98
   },
   {
     "name": "Cinderella",
@@ -1337,6 +1337,11 @@ var hashers = [
     "runs": 88
   },
   {
+    "name": "Takbo",
+    "lastRun": 2489,
+    "runs": 88
+  },
+  {
     "name": "Shit Shoveller (RIP)",
     "lastRun": 1946,
     "runs": 87
@@ -1357,13 +1362,13 @@ var hashers = [
     "runs": 86
   },
   {
-    "name": "Takbo",
-    "lastRun": 2488,
-    "runs": 86
-  },
-  {
     "name": "Big Sister",
     "lastRun": 2411,
+    "runs": 85
+  },
+  {
+    "name": "Hot Bum",
+    "lastRun": 2490,
     "runs": 85
   },
   {
@@ -1389,11 +1394,6 @@ var hashers = [
   {
     "name": "Kock Sucker",
     "lastRun": 2131,
-    "runs": 83
-  },
-  {
-    "name": "Hot Bum",
-    "lastRun": 2488,
     "runs": 83
   },
   {
@@ -1452,13 +1452,13 @@ var hashers = [
     "runs": 78
   },
   {
-    "name": "Hard Drive",
-    "lastRun": 1802,
-    "runs": 77
+    "name": "Madame Kilay",
+    "lastRun": 2490,
+    "runs": 78
   },
   {
-    "name": "Madame Kilay",
-    "lastRun": 2488,
+    "name": "Hard Drive",
+    "lastRun": 1802,
     "runs": 77
   },
   {
@@ -1497,17 +1497,17 @@ var hashers = [
     "runs": 75
   },
   {
+    "name": "Crack Driller",
+    "lastRun": 2490,
+    "runs": 75
+  },
+  {
     "name": "Quick Drawers",
     "lastRun": 2163,
     "runs": 74
   },
   {
     "name": "Lost Soles",
-    "lastRun": 2488,
-    "runs": 74
-  },
-  {
-    "name": "Crack Driller",
     "lastRun": 2488,
     "runs": 74
   },
@@ -1672,6 +1672,11 @@ var hashers = [
     "runs": 66
   },
   {
+    "name": "Kee Mah",
+    "lastRun": 2489,
+    "runs": 66
+  },
+  {
     "name": "B2",
     "lastRun": 2420,
     "runs": 66
@@ -1704,11 +1709,6 @@ var hashers = [
   {
     "name": "Leaky Dick",
     "lastRun": 2071,
-    "runs": 65
-  },
-  {
-    "name": "Key Mah",
-    "lastRun": 2450,
     "runs": 65
   },
   {
@@ -1807,6 +1807,11 @@ var hashers = [
     "runs": 61
   },
   {
+    "name": "Bilge Pump",
+    "lastRun": 2490,
+    "runs": 61
+  },
+  {
     "name": "Clumsy",
     "lastRun": null,
     "runs": 60
@@ -1849,11 +1854,6 @@ var hashers = [
   {
     "name": "Felix Crawford",
     "lastRun": 2429,
-    "runs": 59
-  },
-  {
-    "name": "Bilge Pump",
-    "lastRun": 2488,
     "runs": 59
   },
   {
@@ -2018,8 +2018,8 @@ var hashers = [
   },
   {
     "name": "Shit Retainer",
-    "lastRun": 2488,
-    "runs": 50
+    "lastRun": 2490,
+    "runs": 51
   },
   {
     "name": "Cum on my Tits",
@@ -2049,6 +2049,11 @@ var hashers = [
   {
     "name": "Never Enough",
     "lastRun": 2130,
+    "runs": 48
+  },
+  {
+    "name": "Pink Vibrations",
+    "lastRun": 2490,
     "runs": 48
   },
   {
@@ -2112,11 +2117,6 @@ var hashers = [
     "runs": 46
   },
   {
-    "name": "Pink Vibrations",
-    "lastRun": 2488,
-    "runs": 46
-  },
-  {
     "name": "Nikki Balajadia",
     "lastRun": 2344,
     "runs": 46
@@ -2137,13 +2137,13 @@ var hashers = [
     "runs": 45
   },
   {
-    "name": "Honey Monster",
-    "lastRun": 2168,
-    "runs": 44
+    "name": "Clog Wog",
+    "lastRun": 2490,
+    "runs": 45
   },
   {
-    "name": "Clog Wog",
-    "lastRun": 2488,
+    "name": "Honey Monster",
+    "lastRun": 2168,
     "runs": 44
   },
   {
@@ -2177,6 +2177,11 @@ var hashers = [
     "runs": 43
   },
   {
+    "name": "Dick Toker",
+    "lastRun": 2488,
+    "runs": 43
+  },
+  {
     "name": "Myrna Tyler",
     "lastRun": 1856,
     "runs": 42
@@ -2207,11 +2212,6 @@ var hashers = [
     "runs": 42
   },
   {
-    "name": "Dick Toker",
-    "lastRun": 2487,
-    "runs": 42
-  },
-  {
     "name": "Hidden Veil",
     "lastRun": null,
     "runs": 41
@@ -2229,6 +2229,11 @@ var hashers = [
   {
     "name": "Pornorazzi",
     "lastRun": 2488,
+    "runs": 41
+  },
+  {
+    "name": "Shit Head",
+    "lastRun": 2489,
     "runs": 41
   },
   {
@@ -2254,11 +2259,6 @@ var hashers = [
   {
     "name": "Big Foot",
     "lastRun": 2091,
-    "runs": 40
-  },
-  {
-    "name": "Shit Head",
-    "lastRun": 2488,
     "runs": 40
   },
   {
@@ -2299,6 +2299,11 @@ var hashers = [
   {
     "name": "Bush Dozer",
     "lastRun": 1891,
+    "runs": 39
+  },
+  {
+    "name": "Marie Nicholls",
+    "lastRun": 2488,
     "runs": 39
   },
   {
@@ -2347,8 +2352,8 @@ var hashers = [
     "runs": 38
   },
   {
-    "name": "Marie Nicholls",
-    "lastRun": 2472,
+    "name": "Olive Oil",
+    "lastRun": 2488,
     "runs": 38
   },
   {
@@ -2384,11 +2389,6 @@ var hashers = [
   {
     "name": "Ride a Cowboy (RIP)",
     "lastRun": 2105,
-    "runs": 37
-  },
-  {
-    "name": "Olive Oil",
-    "lastRun": 2474,
     "runs": 37
   },
   {
@@ -2512,6 +2512,11 @@ var hashers = [
     "runs": 34
   },
   {
+    "name": "Minja Turtle",
+    "lastRun": 2487,
+    "runs": 34
+  },
+  {
     "name": "Angel Gonzales",
     "lastRun": 2421,
     "runs": 34
@@ -2592,6 +2597,11 @@ var hashers = [
     "runs": 32
   },
   {
+    "name": "I choked Linda Lovelace",
+    "lastRun": 2489,
+    "runs": 32
+  },
+  {
     "name": "Guts",
     "lastRun": null,
     "runs": 31
@@ -2602,7 +2612,7 @@ var hashers = [
     "runs": 31
   },
   {
-    "name": "David Shefford",
+    "name": "Angel Shefford",
     "lastRun": 2059,
     "runs": 31
   },
@@ -2632,8 +2642,8 @@ var hashers = [
     "runs": 31
   },
   {
-    "name": "I choked Linda Lovelace",
-    "lastRun": 2488,
+    "name": "Sausage Head",
+    "lastRun": 2489,
     "runs": 31
   },
   {
@@ -2687,8 +2697,8 @@ var hashers = [
     "runs": 30
   },
   {
-    "name": "Sausage Head",
-    "lastRun": 2488,
+    "name": "Patricia Rumbold",
+    "lastRun": 2489,
     "runs": 30
   },
   {
@@ -2722,12 +2732,12 @@ var hashers = [
     "runs": 29
   },
   {
-    "name": "Behind the Bush",
-    "lastRun": 2484,
+    "name": "On and Off",
+    "lastRun": 2489,
     "runs": 29
   },
   {
-    "name": "Patricia Rumbold",
+    "name": "Behind the Bush",
     "lastRun": 2484,
     "runs": 29
   },
@@ -2797,11 +2807,6 @@ var hashers = [
     "runs": 28
   },
   {
-    "name": "On and Off",
-    "lastRun": 2480,
-    "runs": 28
-  },
-  {
     "name": "Dumb Cunt (RIP)",
     "lastRun": 2226,
     "runs": 28
@@ -2819,6 +2824,11 @@ var hashers = [
   {
     "name": "Try Me",
     "lastRun": 2488,
+    "runs": 28
+  },
+  {
+    "name": "Mountain Goat",
+    "lastRun": 2490,
     "runs": 28
   },
   {
@@ -2892,11 +2902,6 @@ var hashers = [
     "runs": 27
   },
   {
-    "name": "Mountain Goat",
-    "lastRun": 2487,
-    "runs": 27
-  },
-  {
     "name": "Txt Sex Call",
     "lastRun": null,
     "runs": 26
@@ -2949,6 +2954,11 @@ var hashers = [
   {
     "name": "Wears the Soap",
     "lastRun": 2305,
+    "runs": 26
+  },
+  {
+    "name": "Ferocious Fart",
+    "lastRun": 2489,
     "runs": 26
   },
   {
@@ -3012,11 +3022,6 @@ var hashers = [
     "runs": 25
   },
   {
-    "name": "Ferocious Fart",
-    "lastRun": 2488,
-    "runs": 25
-  },
-  {
     "name": "Maribeth Eichmann",
     "lastRun": 2260,
     "runs": 25
@@ -3042,8 +3047,8 @@ var hashers = [
     "runs": 25
   },
   {
-    "name": "Minja Turtle",
-    "lastRun": 2487,
+    "name": "Palawan",
+    "lastRun": 2490,
     "runs": 25
   },
   {
@@ -3084,6 +3089,11 @@ var hashers = [
   {
     "name": "Donna Reyes",
     "lastRun": 2056,
+    "runs": 24
+  },
+  {
+    "name": "Kate Banaga",
+    "lastRun": 2488,
     "runs": 24
   },
   {
@@ -3142,11 +3152,6 @@ var hashers = [
     "runs": 23
   },
   {
-    "name": "Kate Banaga",
-    "lastRun": 2459,
-    "runs": 23
-  },
-  {
     "name": "Tom Nodzak",
     "lastRun": 2256,
     "runs": 23
@@ -3164,11 +3169,6 @@ var hashers = [
   {
     "name": "Smelling the bush",
     "lastRun": 2484,
-    "runs": 23
-  },
-  {
-    "name": "Palawan",
-    "lastRun": 2488,
     "runs": 23
   },
   {
@@ -3194,6 +3194,11 @@ var hashers = [
   {
     "name": "Sir Clugs",
     "lastRun": 2086,
+    "runs": 22
+  },
+  {
+    "name": "Machinist",
+    "lastRun": 2490,
     "runs": 22
   },
   {
@@ -3229,11 +3234,6 @@ var hashers = [
   {
     "name": "Cervix",
     "lastRun": null,
-    "runs": 21
-  },
-  {
-    "name": "Machinist",
-    "lastRun": 2454,
     "runs": 21
   },
   {
@@ -3279,6 +3279,16 @@ var hashers = [
   {
     "name": "Peter Hachler",
     "lastRun": 2459,
+    "runs": 21
+  },
+  {
+    "name": "HughieeeeBllllaaaghrr",
+    "lastRun": 2490,
+    "runs": 21
+  },
+  {
+    "name": "Leona Parcon",
+    "lastRun": 2489,
     "runs": 21
   },
   {
@@ -3372,11 +3382,6 @@ var hashers = [
     "runs": 20
   },
   {
-    "name": "Leona Parcon",
-    "lastRun": 2487,
-    "runs": 20
-  },
-  {
     "name": "Rose Lopez",
     "lastRun": null,
     "runs": 19
@@ -3457,8 +3462,18 @@ var hashers = [
     "runs": 19
   },
   {
+    "name": "Pergatory",
+    "lastRun": 2246,
+    "runs": 19
+  },
+  {
     "name": "Butt Queen",
     "lastRun": 2387,
+    "runs": 19
+  },
+  {
+    "name": "Bumper Ass",
+    "lastRun": 2488,
     "runs": 19
   },
   {
@@ -3507,11 +3522,6 @@ var hashers = [
     "runs": 18
   },
   {
-    "name": "Pergatory",
-    "lastRun": 2171,
-    "runs": 18
-  },
-  {
     "name": "Ethan Boucher",
     "lastRun": 2450,
     "runs": 18
@@ -3539,16 +3549,6 @@ var hashers = [
   {
     "name": "Katherine Orwin",
     "lastRun": 2480,
-    "runs": 18
-  },
-  {
-    "name": "Bumper Ass",
-    "lastRun": 2471,
-    "runs": 18
-  },
-  {
-    "name": "HughieeeeBllllaaaghrr",
-    "lastRun": 2486,
     "runs": 18
   },
   {
@@ -4067,6 +4067,11 @@ var hashers = [
     "runs": 14
   },
   {
+    "name": "Cock Whisperer",
+    "lastRun": 2489,
+    "runs": 14
+  },
+  {
     "name": "Edith D",
     "lastRun": null,
     "runs": 13
@@ -4109,11 +4114,6 @@ var hashers = [
   {
     "name": "Fallen Angel",
     "lastRun": 2037,
-    "runs": 13
-  },
-  {
-    "name": "",
-    "lastRun": 2487,
     "runs": 13
   },
   {
@@ -4207,8 +4207,18 @@ var hashers = [
     "runs": 13
   },
   {
-    "name": "Cock Whisperer",
-    "lastRun": 2488,
+    "name": "Irina Tsygancov",
+    "lastRun": 2490,
+    "runs": 13
+  },
+  {
+    "name": "Andrei Tsygancov",
+    "lastRun": 2490,
+    "runs": 13
+  },
+  {
+    "name": "Lyca (Soggy Butt)",
+    "lastRun": 2490,
     "runs": 13
   },
   {
@@ -4287,6 +4297,11 @@ var hashers = [
     "runs": 12
   },
   {
+    "name": "",
+    "lastRun": 2141,
+    "runs": 12
+  },
+  {
     "name": "Jeanel Solina",
     "lastRun": 1954,
     "runs": 12
@@ -4304,6 +4319,11 @@ var hashers = [
   {
     "name": "Babe Rider",
     "lastRun": 2141,
+    "runs": 12
+  },
+  {
+    "name": "",
+    "lastRun": 2078,
     "runs": 12
   },
   {
@@ -4387,6 +4407,11 @@ var hashers = [
     "runs": 12
   },
   {
+    "name": "Ass Driller",
+    "lastRun": 2489,
+    "runs": 12
+  },
+  {
     "name": "Rhian Acol",
     "lastRun": 2301,
     "runs": 12
@@ -4402,13 +4427,8 @@ var hashers = [
     "runs": 12
   },
   {
-    "name": "Irina Tsygancov",
-    "lastRun": 2487,
-    "runs": 12
-  },
-  {
-    "name": "Andrei Tsygancov",
-    "lastRun": 2487,
+    "name": "Kirill Tsygancov",
+    "lastRun": 2490,
     "runs": 12
   },
   {
@@ -4607,8 +4627,8 @@ var hashers = [
     "runs": 11
   },
   {
-    "name": "Kirill Tsygancov",
-    "lastRun": 2487,
+    "name": "Andrei Tsygancov jr.",
+    "lastRun": 2490,
     "runs": 11
   },
   {
@@ -4797,11 +4817,6 @@ var hashers = [
     "runs": 10
   },
   {
-    "name": "Ass Driller",
-    "lastRun": 2475,
-    "runs": 10
-  },
-  {
     "name": "Ma Elizabeth Thompson",
     "lastRun": 2300,
     "runs": 10
@@ -4809,6 +4824,11 @@ var hashers = [
   {
     "name": "Lost Suso",
     "lastRun": 2384,
+    "runs": 10
+  },
+  {
+    "name": "Zsanell Nichols",
+    "lastRun": 2489,
     "runs": 10
   },
   {
@@ -4822,11 +4842,6 @@ var hashers = [
     "runs": 10
   },
   {
-    "name": "Andrei Tsygancov jr.",
-    "lastRun": 2487,
-    "runs": 10
-  },
-  {
     "name": "Blake W.",
     "lastRun": 2463,
     "runs": 10
@@ -4834,11 +4849,6 @@ var hashers = [
   {
     "name": "Gly (Do not use)",
     "lastRun": 2452,
-    "runs": 10
-  },
-  {
-    "name": "Lyca (Soggy Butt)",
-    "lastRun": 2484,
     "runs": 10
   },
   {
