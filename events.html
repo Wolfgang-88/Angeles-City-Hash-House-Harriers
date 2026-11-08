@@ -96,7 +96,7 @@
   //   ``` code block ```. Single line breaks are kept, blank lines = new paragraph.
   //   Web and e-mail addresses become links automatically. Raw HTML is escaped.
   function safeUrl(u) {
-    u = String(u || '').trim();
+    u = String(u || '').trim().replace(/^<\s*|\s*>$/g, '').replace(/ /g, '%20');
     if (/^\s*(javascript|vbscript|data):/i.test(u)) return '#';
     return /^www\./i.test(u) ? 'https://' + u : u;
   }
@@ -116,10 +116,10 @@
     s = String(s)
       .replace(/\\([\\`*_{}\[\]()#+\-.!~>|])/g, function (m, c) { return hold(esc(c)); })
       .replace(/`([^`]+)`/g, function (m, c) { return hold('<code>' + esc(c) + '</code>'); })
-      .replace(/!\[([^\]]*)\]\(\s*([^)\s]+)(?:\s+"[^"]*")?\s*\)/g, function (m, alt, src) {
+      .replace(/!\[([^\]]*)\]\(\s*(<[^>]+>|[^)"]+?)(?:\s+"[^"]*")?\s*\)/g, function (m, alt, src) {
         return hold('<img src="' + esc(safeUrl(src)) + '" alt="' + esc(alt) + '" loading="lazy">');
       })
-      .replace(/\[([^\]]+)\]\(\s*([^)\s]+)(?:\s+"[^"]*")?\s*\)/g, function (m, text, href) {
+      .replace(/\[([^\]]+)\]\(\s*(<[^>]+>|[^)"]+?)(?:\s+"[^"]*")?\s*\)/g, function (m, text, href) {
         return hold('<a href="' + esc(safeUrl(href)) + '"' +
           (isExternal(href) ? ' target="_blank" rel="noopener"' : '') + '>' + inline(text) + '</a>');
       })
@@ -212,7 +212,7 @@
 
   box.innerHTML = list.map(function (e, i) {
     var imgs = (Array.isArray(e.Event_Images) ? e.Event_Images : []).map(function (src) {
-      return '<img src="' + esc(src) + '" alt="" loading="lazy">';
+      return '<img src="' + esc(safeUrl(src)) + '" alt="" loading="lazy">';
     }).join('');
     return '<section class="panel event" id="event-' + (i + 1) + '">' +
       '<h3>' + esc(e.Event_Headline) + '</h3>' +
