@@ -11,13 +11,15 @@ var upcomingHares = [
   {
     "date": "15/11/2026",
     "hares": [
-      "Wrong Way"
+      "Wrong Way",
+      "Shann (Wrong Way Son)"
     ]
   },
   {
     "date": "22/11/2026",
     "hares": [
-      "No Hares Registered for this week, so we need are in need of Volunteers."
+      "Soggy Butt",
+      "Bum Steer"
     ]
   },
   {
