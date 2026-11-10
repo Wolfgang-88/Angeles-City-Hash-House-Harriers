@@ -1,5 +1,5 @@
-// ACH3_Webpage.js – created by ACH3 Data on 2026-11-08 13:12
-// 971 hashers with 10+ runs, sorted by runs (descending)
+// ACH3_Webpage.js – created by ACH3 Data on 2026-11-10 11:56
+// 970 hashers with 10+ runs, sorted by runs (descending)
 var hashers = [
   {
     "name": "Saput",
@@ -4297,7 +4297,7 @@ var hashers = [
     "runs": 12
   },
   {
-    "name": "",
+    "name": "Marie Ann Kilario",
     "lastRun": 2141,
     "runs": 12
   },
@@ -4319,11 +4319,6 @@ var hashers = [
   {
     "name": "Babe Rider",
     "lastRun": 2141,
-    "runs": 12
-  },
-  {
-    "name": "",
-    "lastRun": 2078,
     "runs": 12
   },
   {
