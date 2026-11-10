@@ -6,7 +6,7 @@
   var info = document.getElementById('hasher-info');
   var buttons = document.querySelectorAll('.sort-bar .sort-btn');
   var hashers = [];
-  var state = { key: 'name', dir: 1 };
+  var state = { key: 'lastRun', dir: -1 };
   var found = null;   // name of the row found by the search (stays highlighted after re-sorting)
   var lastQ = '', lastIdx = -1;
   var DEFAULT_DIR = { name: 1, lastRun: -1, runs: -1 }; // A–Z, newest first, most runs first
