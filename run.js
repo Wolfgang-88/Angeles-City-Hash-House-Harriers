@@ -181,7 +181,7 @@ var RUNS = [
     "hash": "Angeles Hash",
     "number": "2492",
     "date": "15/11/2026",
-    "location": "Time: 14:00 Jeepneys leave the Premiere Hotel\n\nLocation: Floridablanca. Turn off SCTEX, turn right after about 1.5km, go 120 meters past the Toll Booths, and look for Wrong Way's Silver Hyundai Car on the right. GPS: 15.01396 120.4696. Note: You may be required to pay 50 Pesos per vehicle to the landowner. Jeepney(s) leave the Premiere Hotel at 2.00 pm sharp. Please arrive at least 15 minutes before if you wish to avail of this service. Journey time from the Premiere Hotel is approx 35 minutes.",
+    "location": "Time: 14:00 Jeepneys leave the Premiere Hotel\n\nFloridablanca. Come off the SCTEX at Exit 125, then go approx 120 meters past the Toll Booth, and look for Wrong Way's Silver Hyundai Car on the right. Note: You may be required to pay 50 Pesos per vehicle to the landowner. Jeepney(s) leave the Premiere Hotel at 2.00 pm sharp. Please arrive at least 15 minutes before if you wish to avail of this service. Journey time from the Premiere Hotel is approx 30 minutes.",
     "remarks": "One Trail, approx 4 Km long with 85% in the shade. The On Home is at the Premiere Hotel.",
     "hare": "Hare: Wrong Way & Shann (Wrong Way Son)"
   },
