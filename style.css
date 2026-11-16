@@ -144,8 +144,7 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .hasher-table{font-size:1.15rem}
 .hasher-table th{font-size:.8rem}
 .hasher-table th.num,.hasher-table td.num{text-align:right;white-space:nowrap}
-.hasher-table td:first-child{color:var(--muted);width:3.5em}
-.hasher-table td:nth-child(2){white-space:normal;overflow-wrap:anywhere}
+.hasher-table td:first-child{white-space:normal;overflow-wrap:anywhere}
 .hasher-table th:last-child,.hasher-table td:last-child{padding-right:0}
 
 /* Songbook PDF, horizontally centered on song.html */
@@ -264,3 +263,8 @@ footer{text-align:center;margin-top:40px;font-size:.85rem;color:var(--flour);opa
 .form #picBox > label{margin-top:16px}
 .run dd a.run-link{color:inherit;font-weight:600;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:3px;overflow-wrap:anywhere}
 .run dd a.run-link:hover{color:#a3161a}
+/* Past runs: one size smaller than "Next run" */
+.run-list[data-when="past"] dd{font-size:.9rem}
+.run-list[data-when="past"] dt{font-size:.7rem}
+/* Hashers: pager above the list */
+.pager-wrap--top{margin:0 0 14px}

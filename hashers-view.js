@@ -48,11 +48,11 @@
     sorted.slice(start, start + PER_PAGE).forEach(function (h, i) {
       var tr = document.createElement('tr');
       if (found !== null && h.name === found) tr.className = 'hit';
-      [start + i + 1, h.name || '', h.lastRun == null ? '–' : h.lastRun, h.runs == null ? '–' : h.runs]
+      [h.name || '', h.lastRun == null ? '–' : h.lastRun, h.runs == null ? '–' : h.runs]
         .forEach(function (v, c) {
           var td = document.createElement('td');
           td.textContent = v;
-          if (c !== 1) td.className = 'num';
+          if (c !== 0) td.className = 'num';
           tr.appendChild(td);
         });
       frag.appendChild(tr);
@@ -70,6 +70,10 @@
   var pagerBox = document.createElement('div');
   pagerBox.className = 'pager-wrap';
   box.parentNode.insertBefore(pagerBox, box.nextSibling);
+  // Same pager above the table (page buttons only)
+  var pagerTop = document.createElement('div');
+  pagerTop.className = 'pager-wrap pager-wrap--top';
+  box.parentNode.insertBefore(pagerTop, box);
 
   function goTo(p) {
     page = p;
@@ -79,8 +83,10 @@
 
   function renderPager(pages) {
     pagerBox.replaceChildren();
-    if (pages < 2) { pagerBox.hidden = true; return; }
+    pagerTop.replaceChildren();
+    if (pages < 2) { pagerBox.hidden = true; pagerTop.hidden = true; return; }
     pagerBox.hidden = false;
+    pagerTop.hidden = false;
     var nav = document.createElement('nav');
     nav.className = 'pager';
     nav.setAttribute('aria-label', 'Hasher list pages');
@@ -115,6 +121,16 @@
     pi.textContent = 'Hashers ' + (page * PER_PAGE + 1) + '–' + Math.min(sorted.length, (page + 1) * PER_PAGE) + ' of ' + sorted.length;
     pagerBox.appendChild(nav);
     pagerBox.appendChild(pi);
+    var navTop = nav.cloneNode(false);
+    navTop.setAttribute('aria-label', 'Hasher list pages (top)');
+    nav.querySelectorAll('.pager-btn, .pager-gap').forEach(function (el) {
+      var c = el.cloneNode(true);
+      if (el.tagName === 'BUTTON' && !el.disabled && el.getAttribute('aria-current') !== 'page') {
+        c.addEventListener('click', function () { el.click(); });
+      }
+      navTop.appendChild(c);
+    });
+    pagerTop.appendChild(navTop);
   }
 
   buttons.forEach(function (b) {
