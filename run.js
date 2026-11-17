@@ -186,6 +186,14 @@ var RUNS = [
     "hare": "Hare: Wrong Way & Shann (Wrong Way Son)"
   },
   {
+    "hash": "Angeles Hash",
+    "number": "2493",
+    "date": "22/11/2026",
+    "location": "Trail is at Will’s Farm via Bridge to Nowhere\n\nGo over the Bridge to Nowhere.\nTake a right at the T junction then go approximately just under 1k and turn right .\nThis turning will be marked with calcamite . Follow the track to the farm",
+    "remarks": "Please keep dogs on a lead as there is livestock on the farm.\nShort trail is 4.5k and dry feet and long trail around 6k and wet feet .\n\nOn home is Premier Hotel.\nJeepneys leave Premier at 2 o clock.",
+    "hare": "Soggy Butt and Bum Steer"
+  },
+  {
     "hash": "Beach Hash",
     "number": "461",
     "date": "24/05/2025",
