@@ -1,28 +1,6 @@
 // upcoming_hares.js – list of upcoming hares for angeles.html
 var upcomingHares = [
   {
-    "date": "08/11/2026",
-    "hares": [
-      "Facilitator",
-      "Bush Wanker",
-      "Yakitty Yak (As Driver)"
-    ]
-  },
-  {
-    "date": "15/11/2026",
-    "hares": [
-      "Wrong Way",
-      "Shann (Wrong Way Son)"
-    ]
-  },
-  {
-    "date": "22/11/2026",
-    "hares": [
-      "Soggy Butt",
-      "Bum Steer"
-    ]
-  },
-  {
     "date": "29/11/2026",
     "hares": [
       "Deviant",
@@ -32,19 +10,21 @@ var upcomingHares = [
   {
     "date": "06/12/2026",
     "hares": [
-      "Floppy Dick"
+      "Floppy Dick",
+      "Flug Nuts",
+      "Pink Vibrations"
     ]
   },
   {
     "date": "13/12/2026",
     "hares": [
-      "No Hares Registered for this week, so we need are in need of Volunteers."
+      "Facilitator"
     ]
   },
   {
     "date": "20/12/2026",
     "hares": [
-      "No Hares Registered for this week, so we need are in need of Volunteers."
+      "Nancy Boy"
     ]
   },
   {
