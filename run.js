@@ -354,6 +354,14 @@ var RUNS = [
     "hare": "Bangka Blower, Honeydew, Hughie Bler, Trucka"
   },
   {
+    "hash": "Beach Hash",
+    "number": "481",
+    "date": "28/11/2026",
+    "location": "Time: 3PM start Emotions Bar\nLocation: Emotions Bar",
+    "remarks": "5 KM run taking in the sights of Clark and surrunding areas. No hills or wet feet. 300 PHP per hasher for drinks and entertainment",
+    "hare": "Yakity yak"
+  },
+  {
     "hash": "Full Moon Hash",
     "number": "157",
     "date": "22/05/2025",
