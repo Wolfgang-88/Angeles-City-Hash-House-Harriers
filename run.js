@@ -194,6 +194,14 @@ var RUNS = [
     "hare": "Soggy Butt and Bum Steer"
   },
   {
+    "hash": "Angeles Hash",
+    "number": "2494",
+    "date": "29/11/2026",
+    "location": "Gumain underpass. Over TB2NW (Sacobia bridge), Right at T-junction, Right at Rock Crushing Plant. Cross the Bailey Bridge, after the wall on the left, turn left and proceed to the underpass. Distance to run site: 18km, 35 minutes.",
+    "remarks": "Short trail 4 km, Medium trail 6 km, wet feet and only 1 significant  hill. On home: Premiere Hotel",
+    "hare": "Deviant & Fugitive"
+  },
+  {
     "hash": "Beach Hash",
     "number": "461",
     "date": "24/05/2025",
